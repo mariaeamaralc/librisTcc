@@ -1,68 +1,45 @@
-User Management System
+# User Management System
 
 Este é um sistema de gerenciamento de usuários desenvolvido com Node.js, Express e MySQL. Ele permite a criação, leitura, atualização e exclusão (CRUD) de usuários, com uma interface web para administradores e usuários.
-Funcionalidades
 
-    Cadastro e login de usuários
-    Listagem de usuários
-    Criação, edição e exclusão de usuários
-    Diferenciação entre administradores e usuários comuns
+## Funcionalidades
 
-Tecnologias Utilizadas
+- Cadastro e login de usuários
+- Listagem de usuários
+- Criação, edição e exclusão de usuários
+- Diferenciação entre administradores e usuários comuns
 
-    Node.js: Ambiente de execução para JavaScript no lado do servidor.
-    Express: Framework para construção de aplicativos web com Node.js.
-    MySQL: Sistema de gerenciamento de banco de dados relacional.
-    EJS: Motor de visualização para renderizar páginas HTML.
-    Bootstrap: Framework CSS para estilização das páginas.
+## Tecnologias Utilizadas
 
-Instalação
-1. Clone o Repositório
+- **Node.js**: Ambiente de execução para JavaScript no lado do servidor.
+- **Express**: Framework para construção de aplicativos web com Node.js.
+- **MySQL**: Sistema de gerenciamento de banco de dados relacional.
+- **EJS**: Motor de visualização para renderizar páginas HTML.
+- **Bootstrap**: Framework CSS para estilização das páginas.
 
-sh
+## Instalação
 
-git clone https://github.com/username/repository.git
-cd repository
+### 1. Fork e Clone este Repositório
 
-2. Instale as Dependências
+### 2. Instale as Dependências
 
 Certifique-se de que você tem o Node.js e o MySQL instalados. Em seguida, execute o comando para instalar as dependências do projeto:
 
-sh
+### 3. Configure o Banco de Dados
 
-npm install
+Crie um banco de dados no MySQL, por exemplo, user_management.
 
-3. Configure o Banco de Dados
-
-    Crie um banco de dados no MySQL, por exemplo, user_management.
-
-    No arquivo config/database.js, ajuste as configurações de conexão com o MySQL, como nome do banco de dados, usuário e senha.
-
-javascript
-
-module.exports = {
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'user_management'
-};
-
-    Execute os scripts SQL necessários para criar as tabelas no banco de dados. Normalmente, você pode encontrar esses scripts na pasta db ou similar.
-
-4. Execute o Aplicativo
+### 4. Execute o Aplicativo
 
 Inicie o servidor com o comando:
-
-sh
 
 node app.js
 
 O servidor estará disponível em http://localhost:3000.
-Estrutura do Projeto
 
-bash
+## Estrutura do Projeto
 
-/project-root
+/CRUD
 │
 ├── /views
 │   ├── /partials
