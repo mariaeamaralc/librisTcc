@@ -1,0 +1,10 @@
+//crie o arquivo edit.ejs com o seguinte conteudo: formulario para editar o produto
+<h1>Editar Produto</h1>
+<form action="/produtos/<%= produto.id %>" method="post">
+    <input type="hidden" name="_method" value="put">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="text" name="nome" value="<%= produto.nome %>">
+    <input type="text" name="preco" value="<%= produto.preco %>">
+    <textarea name="descricao"><%= produto.descricao %></textarea>
+    <button type="submit">Salvar</button>
+</form>
