@@ -1,4 +1,3 @@
-//crie o arquivo edit.ejs com o seguinte conteudo: formulario para editar o produto
 <h1>Editar Produto</h1>
 <form action="/produtos/<%= produto.id %>" method="post">
     <input type="hidden" name="_method" value="put">
@@ -8,3 +7,4 @@
     <textarea name="descricao"><%= produto.descricao %></textarea>
     <button type="submit">Salvar</button>
 </form>
+
