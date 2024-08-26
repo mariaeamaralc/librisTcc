@@ -1,15 +1,9 @@
-//crie o conteudo para este arquivo categoriaController.js com o seguinte conteudo: tabela de categorias com os campos: id, nome, preco, descricao, quantidade, categoria_id
-
 const Categoria = require('../models/categoriaModel');
 
 const categoriaController = {
     createCategoria: (req, res) => {
         const newCategoria = {
-            nome: req.body.nome,
-            descricao: req.body.descricao,
-            preco: req.body.preco,
-            quantidade: req.body.quantidade,
-            categoria: req.body.categoria,
+            nome: req.body.nome
         };
 
         Categoria.create(newCategoria, (err, categoriaId) => {
@@ -64,11 +58,7 @@ const categoriaController = {
     updateCategoria: (req, res) => {
         const categoriaId = req.params.id;
         const updatedCategoria = {
-            nome: req.body.nome,
-            preco: req.body.preco,
-            descricao: req.body.descricao,
-            quantidade: req.body.quantidade,
-            categoria: req.body.categoria,
+            nome: req.body.nome
         };
 
         Categoria.update(categoriaId, updatedCategoria, (err) => {

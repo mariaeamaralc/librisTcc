@@ -1,6 +1,5 @@
-//crie o conteudo para este arquivo produtoController.js com o seguinte conteudo: tabela de produtos com os campos: id, nome, preco, descricao, quantidade, categoria_id
-
-const Produto = require('../models/produtoModel');
+const Produto = require('../models/produtoModel'); //importar o model de produto
+const Categoria = require('../models/categoriaModel'); //importar o model de categoria
 
 const produtoController = {
     createProduto: (req, res) => {
@@ -23,15 +22,32 @@ const produtoController = {
     getProdutoById: (req, res) => {
         const produtoId = req.params.id;
 
-        Produto.findById(produtoId, (err, produto) => {
+    // Consultar o produto pelo ID
+    db.query('SELECT * FROM produtos WHERE id = ?', [produtoId], (err, produtoResult) => {
+        if (err) {
+            return res.status(500).send('Erro ao buscar o produto.');
+        }
+
+        // Verificar se o produto existe
+        if (produtoResult.length === 0) {
+            return res.status(404).send('Produto não encontrado.');
+        }
+
+        const produto = produtoResult[0];
+        
+        // Consultar todas as categorias
+        Categoria.getAll((err, categoriasResult) => {
             if (err) {
-                return res.status(500).json({ error: err });
+                return res.status(500).send('Erro ao buscar categorias.');
             }
-            if (!produto) {
-                return res.status(404).json({ message: 'Produto not found' });
-            }
-            res.render('produtos/show', { produto });
+        
+            // Renderizar a view passando o produto e as categorias
+            res.render('produtos/edit', {
+                produto: produto,
+                categorias: categoriasResult // Passa as categorias para a view
+            });
         });
+    });
     },
 
     getAllProdutos: (req, res) => {
@@ -44,21 +60,40 @@ const produtoController = {
     },
 
     renderCreateForm: (req, res) => {
-        res.render('produtos/create');
+        try {
+            Categoria.getAll((err, categorias) => {
+                if (err) {
+                    return res.status(500).json({ error: err });
+                }
+                res.render('produtos/create', { categorias });
+            });
+        } catch (error) {
+            console.error('Erro ao buscar categorias:', error);
+            res.status(500).send('Erro ao carregar o formulário de criação de produto.');
+        }
     },
 
     renderEditForm: (req, res) => {
         const produtoId = req.params.id;
 
-        Produto.findById(produtoId, (err, produto) => {
+        // Consulta o produto e as categorias
+        db.query('SELECT * FROM produtos WHERE id = ?', [produtoId], (err, produtoResult) => {
             if (err) {
-                return res.status(500).json({ error: err });
+                return res.status(500).send('Erro ao buscar produto');
             }
-            if (!produto) {
-                return res.status(404).json({ message: 'Produto not found' });
+
+        db.query('SELECT * FROM categorias', (err, categoriasResult) => {
+            if (err) {
+                return res.status(500).send('Erro ao buscar categorias');
             }
-            res.render('produtos/edit', { produto });
+
+            // Renderiza a view passando o produto e as categorias
+            res.render('produtos/edit', {
+                produto: produtoResult[0], 
+                categorias: categoriasResult
+            });
         });
+    });
     },
 
     updateProduto: (req, res) => {
