@@ -12,7 +12,7 @@ const Produto = {
     },
 
     findById: (id, callback) => {
-        const query = 'SELECT produtos.id, produtos.nome, produtos.descricao, produtos.preco, produtos.quantidade, produtos.categoria, categorias.nome AS categoria_nome FROM produtos JOIN categorias ON produtos.categoria = categorias.id WHERE produtos.id = ?';
+        const query = 'SELECT produtos.*, categorias.nome AS categoria_nome FROM produtos JOIN categorias ON produtos.categoria = categorias.id WHERE produtos.id = ?';
         db.query(query, [id], (err, results) => {
             if (err) {
                 return callback(err);
