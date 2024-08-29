@@ -33,8 +33,7 @@ const produtoController = {
             }
             res.render('produtos/show', { produto });
         });
-    }
-    ,
+    },
     
     getAllProdutos: (req, res) => {
         Produto.getAll((err, produtos) => {
@@ -43,8 +42,16 @@ const produtoController = {
             }
             res.render('produtos/index', { produtos });
         });
-    }
-    ,
+    },
+
+    getAllProdutos2: (req, res) => {
+        Produto.getAll((err, produtos) => {
+            if (err) {
+                return res.status(500).json({ error: err });
+            }
+            res.render('produtos/list', { produtos });
+        });
+    },
 
     renderCreateForm: (req, res) => {
         Categoria.getAll((err, categorias) => {
@@ -53,8 +60,7 @@ const produtoController = {
             }
             res.render('produtos/create', { categorias });
         });
-    }
-    ,
+    },
 
     renderEditForm: (req, res) => {
         const produtoId = req.params.id;
@@ -74,8 +80,7 @@ const produtoController = {
                 res.render('produtos/edit', { produto, categorias });
             });
         });
-    }
-    ,
+    },
 
     updateProduto: (req, res) => {
         const produtoId = req.params.id;
@@ -94,8 +99,7 @@ const produtoController = {
             }
             res.redirect('/produtos');
         });
-    }
-    ,
+    },
 
     deleteProduto: (req, res) => {
         const produtoId = req.params.id;

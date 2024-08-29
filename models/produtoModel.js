@@ -29,8 +29,7 @@ const Produto = {
             }
             callback(null, results);
         });
-    }
-    ,
+    },
 
     delete: (id, callback) => {
         const query = 'DELETE FROM produtos WHERE id = ?';
@@ -40,18 +39,19 @@ const Produto = {
             }
             callback(null, results);
         });
-    }
-    ,
+    },
 
     getAll: (callback) => {
         const query = 'SELECT produtos.id, produtos.nome, produtos.descricao, produtos.preco, produtos.quantidade, categorias.nome AS categoria_nome FROM produtos JOIN categorias ON produtos.categoria = categorias.id';
+        
         db.query(query, (err, results) => {
             if (err) {
                 return callback(err);
             }
             callback(null, results);
         });
-    },
+    }
+
 };
 
 module.exports = Produto;
