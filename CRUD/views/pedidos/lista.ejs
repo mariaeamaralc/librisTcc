@@ -1,0 +1,23 @@
+<h2>Lista de Pedidos</h2>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Usuário</th>
+      <th>Produto</th>
+      <th>Quantidade</th>
+      <th>Data</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% pedidos.forEach(pedido => { %>
+      <tr>
+        <td><%= pedido.id %></td>
+        <td><%= pedido.username %></td>
+        <td><%= pedido.produto_nome %></td>
+        <td><%= pedido.quantidade %></td>
+        <td><%= pedido.data_pedido.toLocaleString() %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

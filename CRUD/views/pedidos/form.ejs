@@ -1,0 +1,21 @@
+<h2>Novo Pedido</h2>
+<form action="/pedidos/novo" method="POST">
+  <label>Usuário:</label>
+  <select name="user_id">
+    <% users.forEach(user => { %>
+      <option value="<%= user.id %>"><%= user.username %></option>
+    <% }) %>
+  </select>
+
+  <label>Produto:</label>
+  <select name="produto_id">
+    <% produtos.forEach(produto => { %>
+      <option value="<%= produto.id %>"><%= produto.nome %></option>
+    <% }) %>
+  </select>
+
+  <label>Quantidade:</label>
+  <input type="number" name="quantidade" min="1" required>
+
+  <button type="submit">Registrar Pedido</button>
+</form>
