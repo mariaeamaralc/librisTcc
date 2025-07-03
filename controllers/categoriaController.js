@@ -24,7 +24,7 @@ const categoriaController = {
             if (!categoria) {
                 return res.status(404).json({ message: 'Categoria not found' });
             }
-            res.render('categorias/show', { categoria });
+            res.render('categorias/show', { categoria, isLoginPage: false, error: null });
         });
     },
 
@@ -33,12 +33,12 @@ const categoriaController = {
             if (err) {
                 return res.status(500).json({ error: err });
             }
-            res.render('categorias/index', { categorias });
+            res.render('categorias/index', { categorias, isLoginPage: false, error: null });
         });
     },
 
     renderCreateForm: (req, res) => {
-        res.render('categorias/create');
+        res.render('categorias/create', { isLoginPage: false, error: null });
     },
 
     renderEditForm: (req, res) => {
@@ -51,7 +51,7 @@ const categoriaController = {
             if (!categoria) {
                 return res.status(404).json({ message: 'Categoria not found' });
             }
-            res.render('categorias/edit', { categoria });
+            res.render('categorias/edit', { categoria, isLoginPage: false, error: null });
         });
     },
 
