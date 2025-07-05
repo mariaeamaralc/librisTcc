@@ -1,9 +1,25 @@
 
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'user') NOT NULL
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('user', 'admin') NOT NULL
+);
+
+CREATE TABLE usuarios (
+  id INT PRIMARY KEY,
+  matricula VARCHAR(20) NOT NULL UNIQUE,
+  nome VARCHAR(255) NOT NULL,
+  FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE administradores (
+  id INT PRIMARY KEY,
+  cpf VARCHAR(11) NOT NULL UNIQUE,
+  codigo_servidor VARCHAR(20) NOT NULL,
+  nome VARCHAR(255) NOT NULL,
+  FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE categorias (

@@ -1,15 +1,161 @@
-<%- include('partials/navbar') %>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Libris | Cadastro</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #151F55, #AD8D8D);
+      color: #cebaba;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
 
-<h2>Cadastro de Usuário</h2>
-<form method="POST" action="/register">
-  <label>Nome:</label><br>
-  <input type="text" name="nome" required><br>
+    .register-container {
+      background-color: #283372;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
 
-  <label>Email:</label><br>
-  <input type="email" name="email" required><br>
+    .form-control {
+      background-color: #1a1a1a;
+      color: #fff;
+      border: 1px solid #555;
+    }
 
-  <label>Senha:</label><br>
-  <input type="password" name="senha" required><br><br>
+    .form-control::placeholder {
+      color: #aaa;
+    }
 
-  <button type="submit">Cadastrar</button>
-</form>
+    .btn-register {
+      background-color: #AD8D8D;
+      border: none;
+    }
+
+    .btn-register:hover {
+      background-color: #090274;
+      color: #AD8D8D;
+    }
+
+    .logo-img {
+      max-width: 180px;
+      margin-bottom: 15px;
+      display: block;
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    .logo-title {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 25px;
+      color: #cebaba;
+      letter-spacing: 1.5px;
+      text-align: left;
+      margin-left: 0;
+    }
+
+    .form-group label {
+      font-weight: 500;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      color: #ccc;
+      text-decoration: underline;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <img src="/img/logoescura.png" alt="Logo Libris" class="logo-img" />
+    <div class="logo-title">Criar Conta</div>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <form action="/register" method="POST">
+      <div class="form-group text-left">
+        <label for="username">Nome</label>
+        <input type="text" name="username" id="username" class="form-control" placeholder="Digite seu nome" required>
+      </div>
+      <div class="form-group text-left">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" class="form-control" placeholder="Digite seu email" required>
+      </div>
+      <div class="form-group text-left">
+        <label for="senha">Senha</label>
+        <input type="password" name="senha" id="senha" class="form-control" placeholder="Digite sua senha" required>
+      </div>
+      <div class="form-group text-left">
+        <label for="tipo">Tipo de usuário</label>
+        <select name="tipo" id="tipo" class="form-control" required>
+          <option value="">Selecione o tipo</option>
+          <option value="user">Usuário</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+
+      <!-- Campos extras para usuário -->
+      <div id="userFields" style="display:none;">
+        <div class="form-group text-left">
+          <label for="matricula">Matrícula</label>
+          <input type="text" name="matricula" id="matricula" class="form-control" placeholder="Digite sua matrícula">
+        </div>
+      </div>
+
+      <!-- Campos extras para administrador -->
+      <div id="adminFields" style="display:none;">
+        <div class="form-group text-left">
+          <label for="cpf">CPF</label>
+          <input type="text" name="cpf" id="cpf" class="form-control" placeholder="Digite seu CPF">
+        </div>
+        <div class="form-group text-left">
+          <label for="codigo_servidor">Código do Servidor</label>
+          <input type="text" name="codigo_servidor" id="codigo_servidor" class="form-control" placeholder="Digite o código do servidor">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-register btn-block">Cadastrar</button>
+    </form>
+
+    <a href="/login" class="back-link">Já tem uma conta? Entrar</a>
+  </div>
+
+  <script>
+    const tipoSelect = document.getElementById('tipo');
+    const userFields = document.getElementById('userFields');
+    const adminFields = document.getElementById('adminFields');
+
+    tipoSelect.addEventListener('change', () => {
+      if (tipoSelect.value === 'user') {
+        userFields.style.display = 'block';
+        adminFields.style.display = 'none';
+      } else if (tipoSelect.value === 'admin') {
+        userFields.style.display = 'none';
+        adminFields.style.display = 'block';
+      } else {
+        userFields.style.display = 'none';
+        adminFields.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
