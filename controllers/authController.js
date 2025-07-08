@@ -1,9 +1,9 @@
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
 
-res.render('login', { error: 'Mensagem do erro' });
-
-
+exports.renderLogin = (req, res) => {
+  res.render('login', { error: null, isLoginPage: true });
+}
 // Processa o login
 exports.login = (req, res) => {
   const { email, senha } = req.body;
@@ -22,8 +22,10 @@ exports.login = (req, res) => {
     const senhaCorreta = await bcrypt.compare(senha, user.password);
 
     if (senhaCorreta) {
+      console.log('Recebido login:', email, senha);
+      console.log('Login bem-sucedido para o usuário:', user.username, '-', user.role);
       req.session.userId = user.id;
-      req.session.userRole = user.role; // "admin" ou "user"
+      req.session.userRole = user.role;
       return res.redirect('/');
     } else {
       return res.render('login', { error: 'Email ou senha inválidos.' });
@@ -90,7 +92,6 @@ exports.register = async (req, res) => {
     res.render('register', { error: 'Erro interno: ' + error.message });
   }
 };
-
 
 // Faz logout
 exports.logout = (req, res) => {

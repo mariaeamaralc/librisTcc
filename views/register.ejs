@@ -13,7 +13,7 @@
     </div>
 
     <div class="form-group text-left">
-      <label for="username">Nome de usuário</label>
+      <label for="username">Login</label>
       <input type="text" name="username" id="username" class="form-control" placeholder="Digite seu nome de usuário" required>
     </div>
 
@@ -28,12 +28,15 @@
     </div>
 
     <div class="form-group text-left">
-      <label for="tipo">Tipo de usuário</label>
-      <select name="role" id="tipo" class="form-control" required>
-        <option value="">Selecione o tipo</option>
-        <option value="user">Usuário</option>
-        <option value="admin">Administrador</option>
-      </select>
+      <label>Tipo de usuário</label><br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="role" id="radioUser" value="user" required>
+        <label class="form-check-label" for="radioUser">Usuário</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="role" id="radioAdmin" value="admin" required>
+        <label class="form-check-label" for="radioAdmin">Administrador</label>
+      </div>
     </div>
 
     <!-- Campos extras para usuário -->
@@ -63,22 +66,34 @@
 </div>
 
 <script>
-  const tipoSelect = document.getElementById('tipo');
   const userFields = document.getElementById('userFields');
   const adminFields = document.getElementById('adminFields');
+  const roleRadios = document.getElementsByName('role');
 
-  tipoSelect.addEventListener('change', () => {
-    if (tipoSelect.value === 'user') {
+  // Função para mostrar/esconder campos
+  function toggleFields() {
+    let selected = Array.from(roleRadios).find(r => r.checked);
+    if (!selected) {
+      userFields.style.display = 'none';
+      adminFields.style.display = 'none';
+      return;
+    }
+    if (selected.value === 'user') {
       userFields.style.display = 'block';
       adminFields.style.display = 'none';
-    } else if (tipoSelect.value === 'admin') {
+    } else if (selected.value === 'admin') {
       userFields.style.display = 'none';
       adminFields.style.display = 'block';
-    } else {
-      userFields.style.display = 'none';
-      adminFields.style.display = 'none';
     }
+  }
+
+  // Event listeners para todos os radios
+  roleRadios.forEach(radio => {
+    radio.addEventListener('change', toggleFields);
   });
+
+  // Chama a função ao carregar para ajustar se estiver editando
+  window.addEventListener('DOMContentLoaded', toggleFields);
 </script>
 
 <style>
@@ -86,11 +101,15 @@
     background: linear-gradient(135deg, #151F55, #AD8D8D);
     color: #cebaba;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  main {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0;
+    min-height: 100vh;
   }
 
   .register-container {
@@ -99,7 +118,7 @@
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.7);
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     text-align: center;
   }
 
@@ -155,5 +174,15 @@
 
   .back-link:hover {
     color: #fff;
+  }
+
+  .form-check-input {
+    margin-right: 5px;
+    transform: scale(1.2);
+    accent-color: #AD8D8D;
+  }
+  .form-check-label {
+    margin-right: 20px;
+    color: #AD8D8D;
   }
 </style>

@@ -1,25 +1,112 @@
-<div class="jumbotron text-center">
-    
-    <h1>Bem-vindo ao Sistema de Gerenciamento de Usuários</h1>
-    <p class="lead">Gerencie seus usuários e produtos sem esforço.</p>
-    <a href="/users" class="btn btn-custom">Gerenciar usuários</a>
-    <a href="/produtos" class="btn btn-custom ml-2">Gerenciar produtos</a>
-</div>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Página Inicial - Libris</title>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="feature-card">
-            <h3>Gerenciamento de usuários</h3>
-            <p>Adicione, edite e exclua usuários facilmente com nossa interface intuitiva.</p>
-            <a href="/users" class="btn btn-primary">Ir para usuários</a>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="feature-card">
-            <h3>Gerenciamento de produtos</h3>
-            <p>Acompanhe seus produtos e seus detalhes perfeitamente.</p>
-            <a href="/produtos" class="btn btn-primary">Is para produtos</a>
-        </div>
-    </div>
-</div>
-</div>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #151F55, #AD8D8D);
+      color: #cebaba;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 700px;
+      background-color: #283372;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      margin: auto;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+    }
+
+    .btn-logout {
+      background-color: #AD8D8D;
+      border: none;
+      color: #151F55;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      float: right;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background-color: #090274;
+      color: #AD8D8D;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    ul li {
+      margin-bottom: 12px;
+    }
+
+    ul li a {
+      color: #AD8D8D;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    ul li a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    p {
+      font-size: 1.1rem;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="btn-logout" onclick="window.location.href='/logout'">Sair</button>
+
+    <h1>Bem-vindo(a) ao Libris!</h1>
+
+    <% if (userRole === 'admin') { %>
+      <h3>Área do Administrador</h3>
+      <p>Você pode cadastrar, editar e gerenciar livros e usuários.</p>
+      <ul>
+        <li><a href="/livros/cadastrar">Cadastrar Livro</a></li>
+        <li><a href="/livros/listar">Listar Livros</a></li>
+        <li><a href="/usuarios/listar">Gerenciar Usuários</a></li>
+      </ul>
+    <% } else if (userRole === 'user') { %>
+      <h3>Área do Usuário</h3>
+      <p>Navegue pelos livros disponíveis e gerencie seus pedidos.</p>
+      <ul>
+        <li><a href="/livros/listar">Ver Livros</a></li>
+        <li><a href="/pedidos/meus">Meus Pedidos</a></li>
+      </ul>
+    <% } else { %>
+      <p>Função desconhecida.</p>
+    <% } %>
+  </div>
+
+</body>
+</html>
