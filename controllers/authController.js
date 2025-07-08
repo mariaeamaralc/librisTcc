@@ -1,10 +1,8 @@
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
 
-// Renderiza a tela de login
-exports.renderLogin = (req, res) => {
-  res.render('login', { error: null });
-};
+res.render('login', { error: 'Mensagem do erro' });
+
 
 // Processa o login
 exports.login = (req, res) => {
@@ -21,11 +19,11 @@ exports.login = (req, res) => {
     }
 
     const user = results[0];
-    const senhaCorreta = await bcrypt.compare(senha, user.senha);
+    const senhaCorreta = await bcrypt.compare(senha, user.password);
 
     if (senhaCorreta) {
       req.session.userId = user.id;
-      req.session.userRole = user.tipo; // "admin" ou "user"
+      req.session.userRole = user.role; // "admin" ou "user"
       return res.redirect('/');
     } else {
       return res.render('login', { error: 'Email ou senha inválidos.' });
@@ -35,10 +33,10 @@ exports.login = (req, res) => {
 
 // Renderiza a tela de cadastro
 exports.renderRegister = (req, res) => {
-  res.render('register', { error: null });
+  res.render('register', { error: null, isRegisterPage: true });
 };
-const bcrypt = require('bcrypt');
-const connection = require('../config/db');
+
+const connection = require('../config/database');
 
 exports.register = async (req, res) => {
   const { username, email, password, role, matricula, cpf, codigo_servidor, nome } = req.body;

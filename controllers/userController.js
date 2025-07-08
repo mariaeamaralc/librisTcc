@@ -1,5 +1,5 @@
 const db = require('../config/database');
-
+const connection = require('../config/database');
 // Listar todos os usuários
 exports.getAllUsers = (req, res) => {
   db.query('SELECT * FROM users', (err, results) => {
@@ -27,7 +27,7 @@ exports.renderCreateForm = (req, res) => {
 // Criar novo usuário
 exports.createUser = (req, res) => {
   const { nome, email, idade } = req.body;
-  const sql = 'INSERT INTO users (nome, email, idade) VALUES (?, ?, ?)';
+  const sql = 'INSERT INTO users (username, email, idade, password) VALUES (?, ?, ?)';
   db.query(sql, [nome, email, idade], (err) => {
     if (err) return res.status(500).send('Erro ao criar usuário');
     res.redirect('/');

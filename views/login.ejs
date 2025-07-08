@@ -76,6 +76,10 @@ html {
     <img src="/img/logoescura.png" alt="Logo Libris" class="logo-img" />
 
     <div class="logo-title">Bem-Vindo!</div>
+    <% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
    <form action="/login" method="POST">
   <div class="form-group text-left">
     <label for="email">E-mail</label>
