@@ -1,5 +1,5 @@
-<!--<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="/">CRUD</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+  <a class="navbar-brand" href="/">Libris</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -13,27 +13,22 @@
           <span class="nav-link disabled">Bem-vindo</span>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/logout">Sair</a>
-        </li> -->
-
-        <!-- Menu só aparece se estiver logada 
-        <li class="nav-item">
           <a class="nav-link" href="/">Home</a>
-        </li>  -->
+        </li>
 
-        <!-- Dropdown Usuários
+        <!-- Dropdown Usuários -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUsers" role="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Usuários  
+            Usuários
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownUsers">
             <a class="dropdown-item" href="/users/new">Cadastrar Usuário</a>
             <a class="dropdown-item" href="/users">Listar Usuários</a>
           </div>
-        </li>  -->
+        </li>
 
-        <!-- Dropdown Categorias
+        <!-- Dropdown Categorias -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCategorias" role="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -43,21 +38,24 @@
             <a class="dropdown-item" href="/categorias/new">Cadastrar Categoria</a>
             <a class="dropdown-item" href="/categorias">Listar Categorias</a>
           </div>
-        </li> -->
-
-        <!-- Dropdown Produtos 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProdutos" role="button"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Produtos
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownProdutos">
-            <a class="dropdown-item" href="/produtos/new">Cadastrar Produto</a>
-            <a class="dropdown-item" href="/produtos">Listar Produtos</a>
-          </div>
         </li>
 
-      <% }  %>
+        <!-- dropdown material-->
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMateriais" role="button"
+  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  Consultar Material
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownMateriais">
+  <a class="dropdown-item" href="/materiais/new">Cadastrar Material</a>
+  <a class="dropdown-item" href="/materiais">Listar Material</a>
+</div>
+
+
+        <li class="nav-item">
+          <a class="nav-link text-danger" href="/logout">Sair</a>
+        </li>
+      <% } %>
+
     </ul>
   </div>
 </nav>

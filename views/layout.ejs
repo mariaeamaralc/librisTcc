@@ -8,36 +8,52 @@
   <!-- Bootstrap (opcional, já está presente) -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-  <!-- Estilo global opcional -->
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+ <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #151F55, #AD8D8D);
+    color: #cebaba;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
 
-    main {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+  main {
+    padding: 40px;
+    min-height: 80vh;
+  }
 
-    /* Evita interferência do Bootstrap */
-    .container, .row, .col {
-      max-width: none !important;
-      width: 100% !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
+  footer {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+  }
 
-    footer {
-      text-align: center;
-      color: #aaa;
-      font-size: 0.8rem;
-      margin-top: 20px;
-    }
-  </style>
+  h1, h2, h3, h4, p {
+    color: #cebaba;
+  }
+
+  .container {
+    background-color: #283372;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    max-width: 700px;
+  }
+
+  a.btn {
+    background-color: #AD8D8D;
+    color: #000;
+    border: none;
+  }
+
+  a.btn:hover {
+    background-color: #090274;
+    color: #AD8D8D;
+  }
+</style>
+
 </head>
 <body>
 

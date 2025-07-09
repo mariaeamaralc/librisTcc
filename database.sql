@@ -28,7 +28,7 @@ CREATE TABLE categorias (
 );
 
 
-CREATE TABLE produtos (
+CREATE TABLE material (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     descricao TEXT NOT NULL,

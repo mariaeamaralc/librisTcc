@@ -1,11 +1,10 @@
-const Produto = require('../models/produtoModel');
+const Material = require('../models/materialModel');
 const Categoria = require('../models/categoriaModel');
 
-const produtoController = {
+const materialController = {
 
-    createProduto: (req, res) => {
-
-        const newProduto = {
+    createMaterial: (req, res) => {
+        const newMaterial = {
             nome: req.body.nome,
             descricao: req.body.descricao,
             preco: req.body.preco,
@@ -13,32 +12,32 @@ const produtoController = {
             categoria: req.body.categoria
         };
 
-        Produto.create(newProduto, (err, produtoId) => {
+        Material.create(newMaterial, (err, materialId) => {
             if (err) {
                 return res.status(500).json({ error: err });
             }
-            res.redirect('/produtos');
+            res.redirect('/materiais');
         });
     },
 
-    getProdutoById: (req, res) => {
-        const produtoId = req.params.id;
+    getMaterialById: (req, res) => {
+        const materialId = req.params.id;
 
-        Produto.findById(produtoId, (err, produto) => {
+        Material.findById(materialId, (err, material) => {
             if (err) {
                 return res.status(500).json({ error: err });
             }
-            if (!produto) {
-                return res.status(404).json({ message: 'Produto not found' });
+            if (!material) {
+                return res.status(404).json({ message: 'Material not found' });
             }
-            res.render('produtos/show', { produto });
+            res.render('materiais/show', { material });
         });
     },
     
-    getAllProdutos: (req, res) => {
+    getAllMateriais: (req, res) => {
         const categoria = req.query.categoria || null;
         
-        Produto.getAll(categoria, (err, produtos) => {
+        Material.getAll(categoria, (err, materiais) => {
             if (err) {
                 return res.status(500).json({ error: err });
             }
@@ -46,7 +45,7 @@ const produtoController = {
                 if (err) {
                     return res.status(500).json({ error: err });
                 }
-                res.render('produtos/index', { produtos, categorias, categoriaSelecionada: categoria });
+                res.render('materiais/index', { materiais, categorias, categoriaSelecionada: categoria });
             });
         });
     },
@@ -56,34 +55,34 @@ const produtoController = {
             if (err) {
                 return res.status(500).json({ error: err });
             }
-            res.render('produtos/create', { categorias });
+            res.render('materiais/create', { categorias });
         });
     },
 
     renderEditForm: (req, res) => {
-        const produtoId = req.params.id;
+        const materialId = req.params.id;
 
-        Produto.findById(produtoId, (err, produto) => {
+        Material.findById(materialId, (err, material) => {
             if (err) {
                 return res.status(500).json({ error: err });
             }
-            if (!produto) {
-                return res.status(404).json({ message: 'Produto not found' });
+            if (!material) {
+                return res.status(404).json({ message: 'Material not found' });
             }
 
             Categoria.getAll((err, categorias) => {
                 if (err) {
                     return res.status(500).json({ error: err });
                 }
-                res.render('produtos/edit', { produto, categorias });
+                res.render('materiais/edit', { material, categorias });
             });
         });
     },
 
-    updateProduto: (req, res) => {
-        const produtoId = req.params.id;
+    updateMaterial: (req, res) => {
+        const materialId = req.params.id;
         
-        const updatedProduto = {
+        const updatedMaterial = {
             nome: req.body.nome,
             descricao: req.body.descricao,
             preco: req.body.preco,
@@ -91,24 +90,24 @@ const produtoController = {
             categoria: req.body.categoria
         };
 
-        Produto.update(produtoId, updatedProduto, (err) => {
+        Material.update(materialId, updatedMaterial, (err) => {
             if (err) {
                 return res.status(500).json({ error: err });
             }
-            res.redirect('/produtos');
+            res.redirect('/materiais');
         });
     },
 
-    deleteProduto: (req, res) => {
-        const produtoId = req.params.id;
+    deleteMaterial: (req, res) => {
+        const materialId = req.params.id;
 
-        Produto.delete(produtoId, (err) => {
+        Material.delete(materialId, (err) => {
             if (err) {
                 return res.status(500).json({ error: err });
             }
-            res.redirect('/produtos');
+            res.redirect('/materiais');
         });
     }
 };
 
-module.exports = produtoController;
+module.exports = materialController;
