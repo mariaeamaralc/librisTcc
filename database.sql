@@ -29,11 +29,16 @@ CREATE TABLE categorias (
 
 
 CREATE TABLE material (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    descricao TEXT NOT NULL,
-    preco DECIMAL(10,2) NOT NULL,
-    quantidade INT NOT NULL,
-    categoria INT NOT NULL,
-    FOREIGN KEY (categoria) REFERENCES categorias(id)
+    n_registro INT(12) PRIMARY KEY,
+    idioma VARCHAR(30),
+    ISBN BIGINT, 
+    autor VARCHAR(100),
+    data_aquisicao DATE,
+    prateleira VARCHAR(10),
+    titulo VARCHAR(150),
+    n_paginas INT,
+    tipo VARCHAR(30),
+    editora VARCHAR(30),
+    ano_publi INT(4)
 );
+

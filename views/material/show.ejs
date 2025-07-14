@@ -1,8 +1,18 @@
-<h1>material Details</h1>
-<p>ID: <%= material.id %></p>
-<p>Nome: <%= material.nome %></p>
-<p>Descrição: <%= material.descricao %></p>
-<p>Preço: <%= material.preco %></p>
-<p>Quantidade: <%= material.quantidade %></p>
-<p>Categoria: <%= material.categoria_nome %></p>
-<a href="/material" class="btn btn-primary">Back to List</a>
+<h1>Detalhes do Material</h1>
+
+<p><strong>Nº de Registro:</strong> <%= material.n_registro %></p>
+<p><strong>Título:</strong> <%= material.titulo %></p>
+<p><strong>Autor:</strong> <%= material.autor %></p>
+<p><strong>Editora:</strong> <%= material.editora %></p>
+<p><strong>Ano de Publicação:</strong> <%= material.ano_publi %></p>
+<p><strong>ISBN:</strong> <%= material.isbn %></p>
+<p><strong>Idioma:</strong> <%= material.idioma %></p>
+<p><strong>Número de Páginas:</strong> <%= material.n_paginas %></p>
+<p><strong>Tipo:</strong> <%= material.tipo %></p>
+<p><strong>Prateleira:</strong> <%= material.prateleira %></p>
+<p><strong>Data de Aquisição:</strong> <%= material.data_aquisicao.toLocaleDateString('pt-BR') %></p>
+<p><strong>Preço:</strong> R$ <%= material.preco.toFixed(2) %></p>
+<p><strong>Quantidade:</strong> <%= material.quantidade %></p>
+<p><strong>Categoria:</strong> <%= material.categoria_nome %></p>
+
+<a href="/material" class="btn btn-primary mt-3">Voltar à Lista</a>

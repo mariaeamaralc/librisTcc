@@ -46,7 +46,7 @@ const materialRoutes = require('./routes/materialRoutes');
 app.use('/', indexRoutes);
 app.use('/', authRoutes);
 app.use('/users', userRoutes);
-app.use('/materiais', materialRoutes);
+app.use('/material', materialRoutes);
 app.use('/categorias', categoriaRoutes);
 
 

@@ -1,0 +1,99 @@
+
+
+<h1>Registrar novo livro</h1>
+
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form action="/material/registrar" method="POST">
+  <div class="form-group">
+    <label for="n_registro">Número de Registro:</label>
+    <input 
+      type="number" class="form-control" id="n_registro" name="n_registro" required
+      value="<%= material.n_registro ? material.n_registro : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="titulo">Título:</label>
+    <input 
+      type="text" class="form-control" id="titulo" name="titulo" required
+      value="<%= material.titulo ? material.titulo : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="autor">Autor:</label>
+    <input 
+      type="text" class="form-control" id="autor" name="autor" required
+      value="<%= material.autor ? material.autor : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="editora">Editora:</label>
+    <input 
+      type="text" class="form-control" id="editora" name="editora" required
+      value="<%= material.editora ? material.editora : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="isbn">ISBN:</label>
+    <input 
+      type="number" class="form-control" id="isbn" name="isbn"
+      value="<%= material.isbn ? material.isbn : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="idioma">Idioma:</label>
+    <input 
+      type="text" class="form-control" id="idioma" name="idioma"
+      value="<%= material.idioma ? material.idioma : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="tipo">Tipo:</label>
+    <input 
+      type="text" class="form-control" id="tipo" name="tipo"
+      value="<%= material.tipo ? material.tipo : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="n_paginas">Número de Páginas:</label>
+    <input 
+      type="number" class="form-control" id="n_paginas" name="n_paginas"
+      value="<%= material.n_paginas ? material.n_paginas : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="ano_publi">Ano de Publicação:</label>
+    <input 
+      type="number" class="form-control" id="ano_publi" name="ano_publi"
+      value="<%= material.ano_publi ? material.ano_publi : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="data_aquisicao">Data de Aquisição:</label>
+    <input 
+      type="date" class="form-control" id="data_aquisicao" name="data_aquisicao"
+      value="<%= material.data_aquisicao ? material.data_aquisicao.toISOString().split('T')[0] : '' %>"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="prateleira">Prateleira:</label>
+    <input 
+      type="text" class="form-control" id="prateleira" name="prateleira"
+      value="<%= material.prateleira ? material.prateleira : '' %>"
+    >
+  </div>
+
+  <button type="submit" class="btn btn-primary">Cadastrar</button>
+</form>

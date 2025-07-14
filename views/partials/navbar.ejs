@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+<nav class="navbar navbar-expand-lg navbar-dark px-4" style="background-color: #1a1a2e;">
   <a class="navbar-brand" href="/">Libris</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,16 +40,14 @@
           </div>
         </li>
 
-        <!-- dropdown material-->
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMateriais" role="button"
-  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  Consultar Material
-</a>
-<div class="dropdown-menu" aria-labelledby="navbarDropdownMateriais">
-  <a class="dropdown-item" href="/materiais/new">Cadastrar Material</a>
-  <a class="dropdown-item" href="/materiais">Listar Material</a>
-</div>
-
+        <!-- Select Material -->
+        <li class="nav-item">
+          <select id="materialSelect" class="form-control mt-2 ml-2" style="width: 200px; background-color: #2c2f4a; color: white; border: 1px solid #4b4b78;">
+            <option selected disabled>Consultar Material</option>
+            <option value="/material/pesquisar">Pesquisar Acervo</option>
+            <option value="/material/registrar">Registrar Livro</option>
+          </select>
+        </li>
 
         <li class="nav-item">
           <a class="nav-link text-danger" href="/logout">Sair</a>
@@ -59,3 +57,14 @@
     </ul>
   </div>
 </nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const materialSelect = document.getElementById('materialSelect');
+    if (materialSelect) {
+      materialSelect.addEventListener('change', function () {
+        if (this.value) window.location.href = this.value;
+      });
+    }
+  });
+</script>

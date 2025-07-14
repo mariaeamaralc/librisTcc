@@ -1,13 +1,10 @@
 const express = require('express');
-const materialController = require('../controllers/materialController'); // vai precisar copiar o controller de produto e renomear pra materialController.js
 const router = express.Router();
+const materialController = require('../controllers/materialController');
 
-router.get('/', materialController.getAllMateriais);
-router.get('/new', materialController.renderCreateForm);
-router.post('/', materialController.createMaterial);
-router.get('/:id', materialController.getMaterialById);
-router.get('/:id/edit', materialController.renderEditForm);
-router.put('/:id', materialController.updateMaterial);
-router.delete('/:id', materialController.deleteMaterial);
+router.get('/', materialController.renderMaterialMenu);
+router.get('/pesquisar', materialController.renderPesquisarAcervo);
+router.get('/registrar', materialController.renderRegistrarMaterial);
+router.post('/registrar', materialController.registrarMaterial);
 
 module.exports = router;
