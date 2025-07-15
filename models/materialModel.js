@@ -1,13 +1,13 @@
 const db = require('../config/database');
 
 const Material = {
-    create: (material, callback) => {
+    registrar: (material, callback) => {
         const query = `
             INSERT INTO material (
                 n_registro, idioma, isbn, autor, data_aquisicao, prateleira, titulo,
-                n_paginas, tipo, editora, ano_publi, preco, quantidade, categoria
+                n_paginas, tipo, editora, ano_publi
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const values = [
             material.n_registro,
@@ -20,10 +20,7 @@ const Material = {
             material.n_paginas,
             material.tipo,
             material.editora,
-            material.ano_publi,
-            material.preco,
-            material.quantidade,
-            material.categoria
+            material.ano_publi
         ];
         db.query(query, values, (err, results) => {
             if (err) return callback(err);
@@ -33,10 +30,7 @@ const Material = {
 
     findById: (n_registro, callback) => {
         const query = `
-            SELECT m.*, c.nome AS categoria_nome
-            FROM material m
-            JOIN categorias c ON m.categoria = c.id
-            WHERE m.n_registro = ?
+            SELECT * FROM material WHERE n_registro = ?
         `;
         db.query(query, [n_registro], (err, results) => {
             if (err) return callback(err);
@@ -48,7 +42,7 @@ const Material = {
         const query = `
             UPDATE material SET
                 idioma = ?, isbn = ?, autor = ?, data_aquisicao = ?, prateleira = ?, titulo = ?,
-                n_paginas = ?, tipo = ?, editora = ?, ano_publi = ?, preco = ?, quantidade = ?, categoria = ?
+                n_paginas = ?, tipo = ?, editora = ?, ano_publi = ?
             WHERE n_registro = ?
         `;
         const values = [
@@ -62,9 +56,6 @@ const Material = {
             material.tipo,
             material.editora,
             material.ano_publi,
-            material.preco,
-            material.quantidade,
-            material.categoria,
             n_registro
         ];
         db.query(query, values, (err, results) => {
@@ -81,21 +72,11 @@ const Material = {
         });
     },
 
-    getAll: (categoria, callback) => {
-        let query = `
-            SELECT m.n_registro, m.titulo, m.autor, m.idioma, m.ano_publi, m.prateleira, m.tipo, 
-                   m.quantidade, c.nome AS categoria_nome
-            FROM material m
-            JOIN categorias c ON m.categoria = c.id
+    getAll: (callback) => {
+        const query = `
+            SELECT * FROM material
         `;
-        const values = [];
-
-        if (categoria) {
-            query += ' WHERE m.categoria = ?';
-            values.push(categoria);
-        }
-
-        db.query(query, values, (err, results) => {
+        db.query(query, (err, results) => {
             if (err) return callback(err);
             callback(null, results);
         });

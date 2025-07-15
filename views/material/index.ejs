@@ -1,4 +1,10 @@
 <h1>Lista de material</h1>
+<% if (success) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    Material cadastrado com sucesso!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% } %>
 
 <!-- Formulário de filtro por categoria -->
 <form method="GET" action="/material">

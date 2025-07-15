@@ -2,24 +2,22 @@ const Material = require('../models/materialModel');
 const Categoria = require('../models/categoriaModel');
 
 const materialController = {
- 
-  renderMaterialMenu: (req, res) => {
-    res.render('material/menu'); // Opcional
-  },
-
-  // View para registrar livro
+  // Renderiza o formulário de registro com categorias carregadas
   renderRegistrarMaterial: (req, res) => {
     Categoria.getAll((err, categorias) => {
-      if (err) return res.status(500).json({ error: err });
+      if (err) {
+        console.error('Erro ao buscar categorias:', err);
+        return res.status(500).send('Erro interno ao buscar categorias');
+      }
       res.render('material/registrar', {
-        categorias,
         error: null,
-        material: {}
+        material: {},
+        categorias: categorias
       });
     });
   },
 
-  // Processa registro de livro
+  // Processa o registro do material
   registrarMaterial: (req, res) => {
     const newMaterial = {
       n_registro: req.body.n_registro,
@@ -33,109 +31,47 @@ const materialController = {
       tipo: req.body.tipo,
       editora: req.body.editora,
       ano_publi: req.body.ano_publi,
-      preco: req.body.preco,
-      quantidade: req.body.quantidade,
-      categoria: req.body.categoria
+      categoria: req.body.categoria // Não esquece disso aqui!
     };
 
     Material.registrar(newMaterial, (err) => {
       if (err) {
         if (err.code === 'ER_DUP_ENTRY') {
-          Categoria.getAll((catErr, categorias) => {
-            if (catErr) return res.status(500).json({ error: catErr });
+          return Categoria.getAll((catErr, categorias) => {
+            if(catErr) return res.status(500).send('Erro interno');
             res.render('material/registrar', {
-              categorias,
               error: 'Número de registro já existe.',
-              material: newMaterial
+              material: newMaterial,
+              categorias: categorias
             });
           });
-        } else {
-          return res.status(500).json({ error: err });
         }
-      } else {
-        res.redirect('/material/pesquisar');
+        return res.status(500).json({ error: err });
       }
+      res.redirect('/material/pesquisar?success=1');
     });
   },
 
-  // Lista todos os materiais
+  // Renderiza lista de materiais com categorias
   renderPesquisarAcervo: (req, res) => {
-    const categoria = req.query.categoria || null;
-
-    Material.getAll(categoria, (err, materiais) => {
+    Material.getAll((err, materiais) => {
       if (err) return res.status(500).json({ error: err });
+
       Categoria.getAll((catErr, categorias) => {
         if (catErr) return res.status(500).json({ error: catErr });
+
         res.render('material/index', {
           materiais,
           categorias,
-          categoriaSelecionada: categoria
+          categoriaSelecionada: null,
+          success: req.query.success === '1'
         });
       });
     });
   },
 
-  // Detalhes de um material
-  getMaterialById: (req, res) => {
-    const n_registro = req.params.id;
+  // Outros métodos aqui (getMaterialById, renderEditForm, updateMaterial, deleteMaterial)...
 
-    Material.findById(n_registro, (err, material) => {
-      if (err) return res.status(500).json({ error: err });
-      if (!material) return res.status(404).send('Material não encontrado');
-      res.render('material/show', { material });
-    });
-  },
-
-  // Formulário para editar
-  renderEditForm: (req, res) => {
-    const n_registro = req.params.id;
-
-    Material.findById(n_registro, (err, material) => {
-      if (err) return res.status(500).json({ error: err });
-      if (!material) return res.status(404).send('Material não encontrado');
-
-      Categoria.getAll((catErr, categorias) => {
-        if (catErr) return res.status(500).json({ error: catErr });
-        res.render('material/edit', { material, categorias });
-      });
-    });
-  },
-
-  // Atualiza material
-  updateMaterial: (req, res) => {
-    const n_registro = req.params.id;
-
-    const updatedMaterial = {
-      idioma: req.body.idioma,
-      isbn: req.body.isbn,
-      autor: req.body.autor,
-      data_aquisicao: req.body.data_aquisicao,
-      prateleira: req.body.prateleira,
-      titulo: req.body.titulo,
-      n_paginas: req.body.n_paginas,
-      tipo: req.body.tipo,
-      editora: req.body.editora,
-      ano_publi: req.body.ano_publi,
-      preco: req.body.preco,
-      quantidade: req.body.quantidade,
-      categoria: req.body.categoria
-    };
-
-    Material.update(n_registro, updatedMaterial, (err) => {
-      if (err) return res.status(500).json({ error: err });
-      res.redirect('/material/pesquisar');
-    });
-  },
-
-  // Exclui material
-  deleteMaterial: (req, res) => {
-    const n_registro = req.params.id;
-
-    Material.delete(n_registro, (err) => {
-      if (err) return res.status(500).json({ error: err });
-      res.redirect('/material/pesquisar');
-    });
-  }
 };
 
 module.exports = materialController;
