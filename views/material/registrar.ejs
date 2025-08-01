@@ -31,7 +31,7 @@
 
       <div class="form-group mb-2">
         <label for="isbn">ISBN:</label>
-        <input type="text" inputmode="numeric" pattern="\\d*" class="form-control form-control-sm" id="isbn" name="isbn" value="<%= material.isbn || '' %>">
+        <input type="number" inputmode="numeric" pattern="\\d*" class="form-control form-control-sm" id="isbn" name="isbn" value="<%= material.isbn || '' %>">
       </div>
 
       <div class="form-group mb-2">
@@ -49,12 +49,12 @@
 
       <div class="form-group mb-2">
         <label for="n_paginas">Número de Páginas:</label>
-        <input type="text" inputmode="numeric" pattern="\\d*" class="form-control form-control-sm" id="n_paginas" name="n_paginas" value="<%= material.n_paginas || '' %>">
+        <input type="number" inputmode="numeric" pattern="\\d*" class="form-control form-control-sm" id="n_paginas" name="n_paginas" value="<%= material.n_paginas || '' %>">
       </div>
 
       <div class="form-group mb-2">
         <label for="ano_publi">Ano de Publicação:</label>
-        <input type="text" inputmode="numeric" pattern="\\d*" class="form-control form-control-sm" id="ano_publi" name="ano_publi" value="<%= material.ano_publi || '' %>">
+        <input type="number" inputmode="numeric" pattern="\\d*" class="form-control form-control-sm" id="ano_publi" name="ano_publi" value="<%= material.ano_publi || '' %>">
       </div>
 
       <div class="form-group mb-2">

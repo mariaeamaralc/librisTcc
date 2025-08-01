@@ -53,22 +53,36 @@ const materialController = {
   },
 
   // Renderiza lista de materiais com categorias
-  renderPesquisarAcervo: (req, res) => {
-    Material.getAll((err, materiais) => {
-      if (err) return res.status(500).json({ error: err });
+ renderPesquisarAcervo: (req, res) => {
+  const n_registro = req.query.n_registro;
 
-      Categoria.getAll((catErr, categorias) => {
-        if (catErr) return res.status(500).json({ error: catErr });
+  const handleRender = (materiais) => {
+    Categoria.getAll((catErr, categorias) => {
+      if (catErr) return res.status(500).json({ error: catErr });
 
-        res.render('material/index', {
-          materiais,
-          categorias,
-          categoriaSelecionada: null,
-          success: req.query.success === '1'
-        });
+      res.render('material/index', {
+        materiais,
+        categorias,
+        categoriaSelecionada: null,
+        success: req.query.success === '1'
       });
     });
-  },
+  };
+
+  if (n_registro) {
+    Material.findById(n_registro, (err, material) => {
+      if (err) return res.status(500).send('Erro ao buscar material');
+      if (!material) return handleRender([]);
+      handleRender([material]); // transforma em array para o forEach funcionar
+    });
+  } else {
+    Material.getAll((err, materiais) => {
+      if (err) return res.status(500).json({ error: err });
+      handleRender(materiais);
+    });
+  }
+},
+
 
   // Outros métodos aqui (getMaterialById, renderEditForm, updateMaterial, deleteMaterial)...
 

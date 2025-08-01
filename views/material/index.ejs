@@ -1,54 +1,161 @@
-<h1>Lista de material</h1>
-<% if (success) { %>
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    Material cadastrado com sucesso!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<% } %>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Libris | Materiais</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #151F55, #AD8D8D);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #cebaba;
+    }
 
-<!-- Formulário de filtro por categoria -->
-<form method="GET" action="/material">
-    <div class="form-group">
+    .container-custom {
+      background-color: #283372;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      max-width: 1000px;
+    }
+
+    h1 {
+      color: #cebaba;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    label, select, input, th, td {
+      color: #cebaba;
+    }
+
+    .form-control {
+      background-color: #1a1a1a;
+      color: #fff;
+      border: 1px solid #555;
+    }
+
+    .btn-custom {
+      background-color: #AD8D8D;
+      color: #fff;
+      border: none;
+    }
+
+    .btn-custom:hover {
+      background-color: #283372;
+      color: #AD8D8D;
+    }
+
+      
+      table {
+        background-color: rgba(255, 255, 255, 0.03); 
+        border-collapse: collapse;
+      }
+
+      .table th, .table td {
+        vertical-align: middle;
+        border: 1px solid rgba(206, 186, 186, 0.3); /* borda clara e suave */
+        background-color: transparent; /* sem fundo escuro */
+        color: #cebaba;
+      }
+
+      .table th {
+        background-color: rgba(255, 255, 255, 0.06); /* cabeçalho um pouco mais opaco */
+      }
+
+      .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+      }
+    
+    .alert {
+      background-color: #444;
+      border: 1px solid #AD8D8D;
+      color: #cebaba;
+    }
+
+    .btn-close {
+      filter: invert(1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container-custom">
+    <h1>Lista de Materiais</h1>
+
+    <% if (success) { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Material cadastrado com sucesso!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+      </div>
+    <% } %>
+
+    <!-- 🔍 Busca -->
+    <form method="GET" action="/material/pesquisar" class="form-row mb-4">
+      <div class="form-group col-md-6">
+        <label for="n_registro">Buscar por Número de Registro:</label>
+        <input type="text" id="n_registro" name="n_registro" class="form-control">
+      </div>
+      <div class="form-group col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-custom w-100">Buscar</button>
+      </div>
+    </form>
+
+    <!-- 🎯 Filtro por Categoria -->
+    <form method="GET" action="/material" class="form-row mb-4">
+      <div class="form-group col-md-6">
         <label for="categoria">Filtrar por Categoria:</label>
         <select id="categoria" name="categoria" class="form-control">
-            <option value="">Todas as Categorias</option>
-            <% categorias.forEach(categoria => { %>
-                <option value="<%= categoria.id %>" <%= categoriaSelecionada == categoria.id ? 'selected' : '' %>><%= categoria.nome %></option>
-            <% }) %>
+          <option value="">Todas as Categorias</option>
+          <% categorias.forEach(categoria => { %>
+            <option value="<%= categoria.id %>" <%= categoriaSelecionada == categoria.id ? 'selected' : '' %>>
+              <%= categoria.nome %>
+            </option>
+          <% }) %>
         </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Filtrar</button>
-</form>
+      </div>
+      <div class="form-group col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-custom w-100">Filtrar</button>
+      </div>
+    </form>
 
-<table class="table">
-    <thead>
+    <!-- 📚 Tabela -->
+    <table class="table table-bordered mt-4">
+      <thead>
         <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Preço</th>
-            <th>Quantidade</th>
-            <th>Categoria</th>
-            <th>Ações</th>
+          <th>Número de Registro</th>
+          <th>Título</th>
+          <th>Autor</th>
+          <th>Editora</th>
+          <th>Idioma</th>
+          <th>Categoria</th>
+          <th>Ações</th>
         </tr>
-    </thead>
-    <tbody>
-        <% material.forEach(material => { %>
-            <tr>
-                <td><%= material.id %></td>
-                <td><%= material.nome %></td>
-                <td><%= material.descricao %></td>
-                <td><%= material.preco %></td>
-                <td><%= material.quantidade %></td>
-                <td><%= material.categoria_nome %></td>
-                <td>
-                    <a href="/material/<%= material.id %>" class="btn btn-primary">View</a>
-                    <a href="/material/<%= material.id %>/edit" class="btn btn-warning">Edit</a>
-                    <form action="/material/<%= material.id %>?_method=DELETE" method="POST" style="display: inline;">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </td>
-            </tr>
+      </thead>
+      <tbody>
+        <% materiais.forEach(material => { %>
+          <tr>
+            <td><%= material.n_registro %></td>
+            <td><%= material.titulo %></td>
+            <td><%= material.autor %></td>
+            <td><%= material.editora %></td>
+            <td><%= material.idioma %></td>
+            <td><%= material.categoria_nome %></td>
+            <td>
+              <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Ver</a>
+              <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
+              <form action="/material/<%= material.n_registro %>?_method=DELETE" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-custom">Excluir</button>
+              </form>
+            </td>
+          </tr>
         <% }) %>
-    </tbody>
-</table>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
