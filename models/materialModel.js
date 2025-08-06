@@ -88,5 +88,10 @@ const Material = {
     });
   }
 };
+exports.excluirPorRegistro = async (n_registro) => {
+  const query = 'DELETE FROM material WHERE n_registro = ?';
+  const [result] = await db.query(query, [n_registro]);
+  return result;
+};
 
 module.exports = Material;

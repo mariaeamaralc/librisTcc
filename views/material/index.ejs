@@ -148,9 +148,12 @@
             <td>
               <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Ver</a>
               <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
-              <form action="/material/<%= material.n_registro %>?_method=DELETE" method="POST" style="display:inline;">
-                <button type="submit" class="btn btn-sm btn-custom">Excluir</button>
-              </form>
+             <form action="/material/<%= material.n_registro %>/delete" method="POST" style="display:inline;">
+  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">
+    Excluir
+  </button>
+</form>
+
             </td>
           </tr>
         <% }) %>

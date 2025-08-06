@@ -31,14 +31,14 @@ const materialController = {
       tipo: req.body.tipo,
       editora: req.body.editora,
       ano_publi: req.body.ano_publi,
-      categoria: req.body.categoria // Não esquece disso aqui!
+      categoria: req.body.categoria
     };
 
     Material.registrar(newMaterial, (err) => {
       if (err) {
         if (err.code === 'ER_DUP_ENTRY') {
           return Categoria.getAll((catErr, categorias) => {
-            if(catErr) return res.status(500).send('Erro interno');
+            if (catErr) return res.status(500).send('Erro interno');
             res.render('material/registrar', {
               error: 'Número de registro já existe.',
               material: newMaterial,
@@ -52,40 +52,48 @@ const materialController = {
     });
   },
 
-  // Renderiza lista de materiais com categorias
- renderPesquisarAcervo: (req, res) => {
-  const n_registro = req.query.n_registro;
+  // Renderiza lista de materiais com busca por número de registro
+  renderPesquisarAcervo: (req, res) => {
+    const n_registro = req.query.n_registro;
 
-  const handleRender = (materiais) => {
-    Categoria.getAll((catErr, categorias) => {
-      if (catErr) return res.status(500).json({ error: catErr });
+    const handleRender = (materiais) => {
+      Categoria.getAll((catErr, categorias) => {
+        if (catErr) return res.status(500).json({ error: catErr });
 
-      res.render('material/index', {
-        materiais,
-        categorias,
-        categoriaSelecionada: null,
-        success: req.query.success === '1'
+        res.render('material/index', {
+          materiais,
+          categorias,
+          categoriaSelecionada: null,
+          success: req.query.success === '1'
+        });
       });
-    });
-  };
+    };
 
-  if (n_registro) {
-    Material.findById(n_registro, (err, material) => {
-      if (err) return res.status(500).send('Erro ao buscar material');
-      if (!material) return handleRender([]);
-      handleRender([material]); // transforma em array para o forEach funcionar
-    });
-  } else {
-    Material.getAll((err, materiais) => {
-      if (err) return res.status(500).json({ error: err });
-      handleRender(materiais);
-    });
+    if (n_registro) {
+      Material.findById(n_registro, (err, material) => {
+        if (err) return res.status(500).send('Erro ao buscar material');
+        if (!material) return handleRender([]);
+        handleRender([material]);
+      });
+    } else {
+      Material.getAll((err, materiais) => {
+        if (err) return res.status(500).json({ error: err });
+        handleRender(materiais);
+      });
+    }
+  },
+
+  // Exclui um material pelo número de registro
+  excluirMaterial: async (req, res) => {
+    const { n_registro } = req.params;
+
+    try {
+      await Material.excluirPorRegistro(n_registro);
+      res.redirect('/material/pesquisar?success=1');
+    } catch (error) {
+      res.status(500).json({ error: 'Erro ao excluir material.' });
+    }
   }
-},
-
-
-  // Outros métodos aqui (getMaterialById, renderEditForm, updateMaterial, deleteMaterial)...
-
 };
 
 module.exports = materialController;
