@@ -2,7 +2,7 @@ const db = require('../config/database');
 
 const Categoria = {
   findById: (id, callback) => {
-    const query = 'SELECT * FROM categorias WHERE id = ?';
+    const query = 'SELECT * FROM categoria WHERE id = ?';
     db.query(query, [id], (err, results) => {
       if (err) {
         return callback(err);
@@ -12,7 +12,7 @@ const Categoria = {
   },
 
   findByCategorianame: (nome, callback) => {
-    const query = 'SELECT * FROM categorias WHERE nome = ?';
+    const query = 'SELECT * FROM categoria WHERE nome = ?';
     db.query(query, [nome], (err, results) => {
       if (err) {
         return callback(err);
@@ -22,7 +22,7 @@ const Categoria = {
   },
 
   update: (id, categoria, callback) => {
-    const query = 'UPDATE categorias SET nome = ? WHERE id = ?';
+    const query = 'UPDATE categoria SET nome = ? WHERE id = ?';
     db.query(query, [categoria.nome, id], (err, results) => {
       if (err) {
         return callback(err);
@@ -32,7 +32,7 @@ const Categoria = {
   },
 
   delete: (id, callback) => {
-    const query = 'DELETE FROM categorias WHERE id = ?';
+    const query = 'DELETE FROM categoria WHERE id = ?';
     db.query(query, [id], (err, results) => {
       if (err) {
         return callback(err);
@@ -42,7 +42,7 @@ const Categoria = {
   },
 
   getAll: (callback) => {
-    const query = 'SELECT * FROM categorias';
+    const query = 'SELECT * FROM categoria';
     db.query(query, (err, results) => {
       if (err) {
         return callback(err);

@@ -22,12 +22,6 @@ CREATE TABLE administradores (
   FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE categorias (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL
-);
-
-
 CREATE TABLE material (
     n_registro INT(12) PRIMARY KEY,
     idioma VARCHAR(30),
@@ -42,3 +36,13 @@ CREATE TABLE material (
     ano_publi INT(4)
 );
 
+CREATE TABLE categoria (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL
+);
+
+INSERT INTO categoria (nome) VALUES
+  ('Romance'),
+  ('Literatura Brasileira'),
+  ('Literatura Inglesa'),
+  ('Material Didático');

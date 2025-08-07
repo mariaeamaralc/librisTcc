@@ -68,17 +68,17 @@
         <input type="text" class="form-control form-control-sm" id="prateleira" name="prateleira" value="<%= material.prateleira || '' %>">
       </div>
 
-      <div class="form-group mb-3">
-        <label for="categoria">Categoria:</label>
-        <select class="form-control form-control-sm" id="categoria" name="categoria" required>
-          <option value="">Selecione</option>
-          <% if (categorias && categorias.length > 0) { %>
-            <% categorias.forEach(cat => { %>
-              <option value="<%= cat.id %>" <%= material.categoria == cat.id ? 'selected' : '' %>><%= cat.nome %></option>
-            <% }) %>
-          <% } %>
-        </select>
-      </div>
+     <div class="form-group mb-3">
+  <label for="categoria">Categoria:</label>
+  <select class="form-control form-control-sm" id="categoria" name="categoria" required>
+    <option value="">Selecione</option>
+    <% if (categorias && categorias.length > 0) { %>
+      <% categorias.forEach(cat => { %>
+        <option value="<%= cat.id %>" <%= String(material.categoria) === String(cat.id) ? 'selected' : '' %>><%= cat.nome %></option>
+      <% }) %>
+    <% } %>
+  </select>
+</div>
     </div>
   </div>
 

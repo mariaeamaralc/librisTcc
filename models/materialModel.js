@@ -5,9 +5,9 @@ const Material = {
     const query = `
       INSERT INTO material (
         n_registro, idioma, isbn, autor, data_aquisicao, prateleira, titulo,
-        n_paginas, tipo, editora, ano_publi, preco, quantidade, categoria
+        n_paginas, tipo, editora, ano_publi, categoria
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       material.n_registro,
@@ -21,8 +21,6 @@ const Material = {
       material.tipo,
       material.editora,
       material.ano_publi,
-      material.preco,
-      material.quantidade,
       material.categoria
     ];
     db.query(query, values, (err, results) => {
@@ -43,7 +41,7 @@ const Material = {
     const query = `
       UPDATE material SET
         idioma = ?, isbn = ?, autor = ?, data_aquisicao = ?, prateleira = ?, titulo = ?,
-        n_paginas = ?, tipo = ?, editora = ?, ano_publi = ?, preco = ?, quantidade = ?, categoria = ?
+        n_paginas = ?, tipo = ?, editora = ?, ano_publi = ?, categoria = ?
       WHERE n_registro = ?
     `;
     const values = [
@@ -57,8 +55,6 @@ const Material = {
       material.tipo,
       material.editora,
       material.ano_publi,
-      material.preco,
-      material.quantidade,
       material.categoria,
       n_registro
     ];
@@ -80,18 +76,19 @@ const Material = {
     const query = `
       SELECT m.*, c.nome AS categoria_nome
       FROM material m
-      LEFT JOIN categorias c ON m.categoria = c.id
+      LEFT JOIN categoria c ON m.categoria = c.id
     `;
     db.query(query, (err, results) => {
       if (err) return callback(err);
       callback(null, results);
     });
+  },
+
+  excluirPorRegistro: async (n_registro) => {
+    const query = 'DELETE FROM material WHERE n_registro = ?';
+    const [result] = await db.query(query, [n_registro]);
+    return result;
   }
-};
-exports.excluirPorRegistro = async (n_registro) => {
-  const query = 'DELETE FROM material WHERE n_registro = ?';
-  const [result] = await db.query(query, [n_registro]);
-  return result;
 };
 
 module.exports = Material;
