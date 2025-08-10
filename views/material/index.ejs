@@ -111,7 +111,7 @@
         <label for="categoria">Filtrar por Categoria:</label>
         <select id="categoria" name="categoria" class="form-control">
           <option value="">Todas as Categorias</option>
-          <% categorias.forEach(categoria => { %>
+          <% categoria.forEach(categoria => { %>
             <option value="<%= categoria.id %>" <%= categoriaSelecionada == categoria.id ? 'selected' : '' %>>
               <%= categoria.nome %>
             </option>
@@ -148,12 +148,11 @@
             <td>
               <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Ver</a>
               <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
-             <form action="/material/<%= material.n_registro %>/delete" method="POST" style="display:inline;">
+            <form action="/material/<%= material.n_registro %>/delete" method="POST" style="display:inline;">
   <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">
     Excluir
   </button>
 </form>
-
             </td>
           </tr>
         <% }) %>

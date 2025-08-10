@@ -1,55 +1,35 @@
 const db = require('../config/database');
 
 const Categoria = {
-  findById: (id, callback) => {
+  findById: async (id) => {
     const query = 'SELECT * FROM categoria WHERE id = ?';
-    db.query(query, [id], (err, results) => {
-      if (err) {
-        return callback(err);
-      }
-      callback(null, results[0]);
-    });
+    const [results] = await db.promise().query(query, [id]);
+    return results[0];
   },
 
-  findByCategorianame: (nome, callback) => {
+  findByCategorianame: async (nome) => {
     const query = 'SELECT * FROM categoria WHERE nome = ?';
-    db.query(query, [nome], (err, results) => {
-      if (err) {
-        return callback(err);
-      }
-      callback(null, results[0]);
-    });
+    const [results] = await db.promise().query(query, [nome]);
+    return results[0];
   },
 
-  update: (id, categoria, callback) => {
+  update: async (id, categoria) => {
     const query = 'UPDATE categoria SET nome = ? WHERE id = ?';
-    db.query(query, [categoria.nome, id], (err, results) => {
-      if (err) {
-        return callback(err);
-      }
-      callback(null, results);
-    });
+    const [result] = await db.promise().query(query, [categoria.nome, id]);
+    return result;
   },
 
-  delete: (id, callback) => {
+  delete: async (id) => {
     const query = 'DELETE FROM categoria WHERE id = ?';
-    db.query(query, [id], (err, results) => {
-      if (err) {
-        return callback(err);
-      }
-      callback(null, results);
-    });
+    const [result] = await db.promise().query(query, [id]);
+    return result;
   },
 
-  getAll: (callback) => {
+  getAll: async () => {
     const query = 'SELECT * FROM categoria';
-    db.query(query, (err, results) => {
-      if (err) {
-        return callback(err);
-      }
-      callback(null, results);
-    });
-  },
+    const [results] = await db.promise().query(query);
+    return results;
+  }
 };
 
 module.exports = Categoria;

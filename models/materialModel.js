@@ -1,7 +1,7 @@
 const db = require('../config/database');
 
 const Material = {
-  registrar: (material, callback) => {
+  registrar: async (material) => {
     const query = `
       INSERT INTO material (
         n_registro, idioma, isbn, autor, data_aquisicao, prateleira, titulo,
@@ -23,21 +23,17 @@ const Material = {
       material.ano_publi,
       material.categoria
     ];
-    db.query(query, values, (err, results) => {
-      if (err) return callback(err);
-      callback(null, results.insertId);
-    });
+    const [result] = await db.promise().query(query, values);
+    return result.insertId;
   },
 
-  findById: (n_registro, callback) => {
+  findById: async (n_registro) => {
     const query = `SELECT * FROM material WHERE n_registro = ?`;
-    db.query(query, [n_registro], (err, results) => {
-      if (err) return callback(err);
-      callback(null, results[0]);
-    });
+    const [results] = await db.promise().query(query, [n_registro]);
+    return results[0];
   },
 
-  update: (n_registro, material, callback) => {
+  update: async (n_registro, material) => {
     const query = `
       UPDATE material SET
         idioma = ?, isbn = ?, autor = ?, data_aquisicao = ?, prateleira = ?, titulo = ?,
@@ -58,35 +54,29 @@ const Material = {
       material.categoria,
       n_registro
     ];
-    db.query(query, values, (err, results) => {
-      if (err) return callback(err);
-      callback(null, results);
-    });
+    const [result] = await db.promise().query(query, values);
+    return result;
   },
 
-  delete: (n_registro, callback) => {
+  delete: async (n_registro) => {
     const query = 'DELETE FROM material WHERE n_registro = ?';
-    db.query(query, [n_registro], (err, results) => {
-      if (err) return callback(err);
-      callback(null, results);
-    });
+    const [result] = await db.promise().query(query, [n_registro]);
+    return result;
   },
 
-  getAll: (callback) => {
+  getAll: async () => {
     const query = `
       SELECT m.*, c.nome AS categoria_nome
       FROM material m
       LEFT JOIN categoria c ON m.categoria = c.id
     `;
-    db.query(query, (err, results) => {
-      if (err) return callback(err);
-      callback(null, results);
-    });
+    const [results] = await db.promise().query(query);
+    return results;
   },
 
   excluirPorRegistro: async (n_registro) => {
     const query = 'DELETE FROM material WHERE n_registro = ?';
-    const [result] = await db.query(query, [n_registro]);
+    const [result] = await db.promise().query(query, [n_registro]);
     return result;
   }
 };
