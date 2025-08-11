@@ -94,7 +94,7 @@
       </div>
     <% } %>
 
-    <!-- 🔍 Busca -->
+    <!-- Busca -->
     <form method="GET" action="/material/pesquisar" class="form-row mb-4">
       <div class="form-group col-md-6">
         <label for="n_registro">Buscar por Número de Registro:</label>
@@ -105,7 +105,7 @@
       </div>
     </form>
 
-    <!-- 🎯 Filtro por Categoria -->
+    <!-- Filtro por Categoria -->
     <form method="GET" action="/material" class="form-row mb-4">
       <div class="form-group col-md-6">
         <label for="categoria">Filtrar por Categoria:</label>
@@ -146,7 +146,7 @@
             <td><%= material.idioma %></td>
             <td><%= material.categoria_nome %></td>
             <td>
-              <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Ver</a>
+              <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Visualizar</a>
               <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
             <form action="/material/<%= material.n_registro %>/delete" method="POST" style="display:inline;">
   <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">

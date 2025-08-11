@@ -149,6 +149,22 @@ updateMaterial: async (req, res) => {
     console.error('Erro ao atualizar material:', err);
     res.status(500).send('Erro interno ao atualizar material');
   }
+},
+verMaterial: async (req, res) => {
+  const { n_registro } = req.params;
+
+  try {
+    const material = await Material.findById(n_registro);
+
+    if (!material) {
+      return res.status(404).send('Material não encontrado');
+    }
+
+    res.render('material/ver', { material });
+  } catch (err) {
+    console.error('Erro ao carregar material:', err);
+    res.status(500).send('Erro interno');
+  }
 }
 };
 module.exports = materialController;
