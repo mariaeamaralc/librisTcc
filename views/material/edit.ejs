@@ -1,76 +1,74 @@
-<h1>Editar Material</h1>
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Editar Material</h1>
 
-<form action="/material/<%= material.n_registro %>?_method=PUT" method="POST">
-  <div class="form-group">
-    <label for="titulo">Título:</label>
-    <input type="text" class="form-control" id="titulo" name="titulo" value="<%= material.titulo %>" required>
-  </div>
+  <form action="/material/<%= material.n_registro %>?_method=PUT" method="POST" class="mx-auto" style="max-width: 800px;">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label for="titulo">Título:</label>
+        <input type="text" class="form-control form-control-sm" id="titulo" name="titulo" value="<%= material.titulo %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="autor">Autor:</label>
-    <input type="text" class="form-control" id="autor" name="autor" value="<%= material.autor %>" required>
-  </div>
+      <div class="col-md-6">
+        <label for="autor">Autor:</label>
+        <input type="text" class="form-control form-control-sm" id="autor" name="autor" value="<%= material.autor %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="editora">Editora:</label>
-    <input type="text" class="form-control" id="editora" name="editora" value="<%= material.editora %>" required>
-  </div>
+      <div class="col-md-6">
+        <label for="editora">Editora:</label>
+        <input type="text" class="form-control form-control-sm" id="editora" name="editora" value="<%= material.editora %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="ano_publi">Ano de Publicação:</label>
-    <input type="number" class="form-control" id="ano_publi" name="ano_publi" value="<%= material.ano_publi %>" required>
-  </div>
+      <div class="col-md-6">
+        <label for="ano_publi">Ano de Publicação:</label>
+        <input type="number" class="form-control form-control-sm" id="ano_publi" name="ano_publi" value="<%= material.ano_publi %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="isbn">ISBN:</label>
-    <input type="number" class="form-control" id="isbn" name="isbn" value="<%= material.isbn %>" required>
-  </div>
+      <div class="col-md-6">
+        <label for="isbn">ISBN:</label>
+        <input type="text" class="form-control form-control-sm" id="isbn" name="isbn" value="<%= material.ISBN %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="idioma">Idioma:</label>
-    <input type="text" class="form-control" id="idioma" name="idioma" value="<%= material.idioma %>" required>
-  </div>
+      <div class="col-md-6">
+        <label for="idioma">Idioma:</label>
+        <input type="text" class="form-control form-control-sm" id="idioma" name="idioma" value="<%= material.idioma %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="n_paginas">Número de Páginas:</label>
-    <input type="number" class="form-control" id="n_paginas" name="n_paginas" value="<%= material.n_paginas %>" required>
-  </div>
+      <div class="col-md-6">
+        <label for="n_paginas">Número de Páginas:</label>
+        <input type="number" class="form-control form-control-sm" id="n_paginas" name="n_paginas" value="<%= material.n_paginas %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="tipo">Tipo:</label>
-    <input type="text" class="form-control" id="tipo" name="tipo" value="<%= material.tipo %>" required>
-  </div>
+      <div class="col-md-6">
+        <label for="tipo">Tipo:</label>
+        <input type="text" class="form-control form-control-sm" id="tipo" name="tipo" value="<%= material.tipo %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="prateleira">Prateleira:</label>
-    <input type="text" class="form-control" id="prateleira" name="prateleira" value="<%= material.prateleira %>" required>
-  </div>
+      <div class="col-md-6">
+        <label for="prateleira">Prateleira:</label>
+        <input type="text" class="form-control form-control-sm" id="prateleira" name="prateleira" value="<%= material.prateleira %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="data_aquisicao">Data de Aquisição:</label>
-    <input type="date" class="form-control" id="data_aquisicao" name="data_aquisicao" value="<%= material.data_aquisicao.toISOString().split('T')[0] %>" required>
-  </div>
+      <div class="col-md-6">
+        <label for="data_aquisicao">Data de Aquisição:</label>
+        <input type="date" class="form-control form-control-sm" id="data_aquisicao" name="data_aquisicao" value="<%= material.data_aquisicao.toISOString().split('T')[0] %>" required>
+      </div>
 
-  <div class="form-group">
-    <label for="preco">Preço:</label>
-    <input type="number" class="form-control" id="preco" name="preco" step="0.01" value="<%= material.preco %>" required>
-  </div>
+      <div class="col-md-12">
+        <label for="categoria">Categoria:</label>
+        <select class="form-control form-control-sm" id="categoria" name="categoria" required>
+          <% categoria.forEach(function(categoria) { %>
+            <option value="<%= categoria.id %>" <%= material.categoria == categoria.id ? 'selected' : '' %>>
+              <%= categoria.nome %>
+            </option>
+          <% }); %>
+        </select>
+      </div>
 
-  <div class="form-group">
-    <label for="quantidade">Quantidade:</label>
-    <input type="number" class="form-control" id="quantidade" name="quantidade" value="<%= material.quantidade %>" required>
-  </div>
-
-  <div class="form-group">
-    <label for="categoria">Categoria:</label>
-    <select class="form-control" id="categoria" name="categoria" required>
-      <% categorias.forEach(function(categoria) { %>
-        <option value="<%= categoria.id %>" <%= material.categoria == categoria.id ? 'selected' : '' %>>
-          <%= categoria.nome %>
-        </option>
-      <% }); %>
-    </select>
-  </div>
-
-  <button type="submit" class="btn btn-warning">Salvar Alterações</button>
-</form>
+      <div class="col-12 text-center mt-4">
+        <button type="submit" class="btn text-white px-4 py-2" style="background-color: #001f3f; font-weight: bold;">
+          Salvar Alterações
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

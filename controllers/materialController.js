@@ -84,7 +84,7 @@ const materialController = {
     }
   },
 
-  // 4️⃣ Exclui um material pelo número de registro
+  //  Exclui um material pelo número de registro
   excluirMaterial: async (req, res) => {
     const { n_registro } = req.params;
     try {
@@ -97,7 +97,58 @@ const materialController = {
       console.error('Erro ao excluir material:', err);
       res.status(500).send('Erro ao excluir material');
     }
-  }
-};
+  },
 
+  //  Renderiza o formulário de edição de material
+renderEditForm: async (req, res) => {
+  const { n_registro } = req.params;
+  try {
+    const material = await Material.findById(n_registro);
+    const categoria = await Categoria.getAll();
+
+    if (!material) {
+      return res.status(404).send('Material não encontrado');
+    }
+
+    res.render('material/edit', {
+      material,
+      categoria,
+      error: null
+    });
+  } catch (err) {
+    console.error('Erro ao carregar formulário de edição:', err);
+    res.status(500).send('Erro interno');
+  }
+},
+
+
+updateMaterial: async (req, res) => {
+  const { n_registro } = req.params;
+  const {
+    titulo, autor, editora, ano_publi, ISBN, idioma,
+    n_paginas, tipo, prateleira, data_aquisicao,
+    preco, quantidade, categoria
+  } = req.body;
+
+  const updatedMaterial = {
+    titulo, autor, editora, ano_publi, ISBN, idioma,
+    n_paginas, tipo, prateleira, data_aquisicao,
+    preco, quantidade, categoria
+  };
+
+  try {
+    const resultado = await Material.update(n_registro, updatedMaterial);
+
+    if (!resultado) {
+      return res.status(404).send('Material não encontrado');
+    }
+
+    // ✅ Redireciona para a lista de materiais
+    res.redirect('/material/pesquisar');
+  } catch (err) {
+    console.error('Erro ao atualizar material:', err);
+    res.status(500).send('Erro interno ao atualizar material');
+  }
+}
+};
 module.exports = materialController;

@@ -72,8 +72,8 @@
   <label for="categoria">Categoria:</label>
   <select class="form-control form-control-sm" id="categoria" name="categoria" required>
     <option value="">Selecione</option>
-    <% if (categorias && categorias.length > 0) { %>
-      <% categorias.forEach(cat => { %>
+    <% if (categoria && categoria.length > 0) { %>
+      <% categoria.forEach(cat => { %>
         <option value="<%= cat.id %>" <%= String(material.categoria) === String(cat.id) ? 'selected' : '' %>><%= cat.nome %></option>
       <% }) %>
     <% } %>
