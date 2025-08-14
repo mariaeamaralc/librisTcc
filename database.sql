@@ -33,7 +33,9 @@ CREATE TABLE material (
     n_paginas INT,
     tipo VARCHAR(30),
     editora VARCHAR(30),
-    ano_publi INT(4)
+    ano_publi INT(4),
+    foto VARCHAR(255)
+
 );
 
 CREATE TABLE categoria (

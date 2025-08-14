@@ -4,7 +4,6 @@ const methodOverride = require('method-override');
 const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
 require('dotenv').config();
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -26,6 +25,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 }));
+
+
 
 // Middleware global para controlar visibilidade de navbar e sessão
 app.use((req, res, next) => {

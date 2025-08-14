@@ -20,7 +20,7 @@ const materialController = {
   // 2️⃣ Processa o registro do material
   registrarMaterial: async (req, res) => {
     const {
-      n_registro, idioma, isbn, autor,
+      n_registro, idioma, ISBN, autor,
       data_aquisicao, prateleira, titulo,
       n_paginas, tipo, editora, ano_publi, categoria
     } = req.body;
@@ -30,7 +30,7 @@ const materialController = {
     }
 
     const newMaterial = {
-      n_registro, idioma, isbn, autor,
+      n_registro, idioma, ISBN, autor,
       data_aquisicao, prateleira, titulo,
       n_paginas, tipo, editora, ano_publi, categoria
     };
@@ -84,7 +84,7 @@ const materialController = {
     }
   },
 
-  //  Exclui um material pelo número de registro
+  // 4️⃣ Exclui um material pelo número de registro
   excluirMaterial: async (req, res) => {
     const { n_registro } = req.params;
     try {
@@ -99,72 +99,74 @@ const materialController = {
     }
   },
 
-  //  Renderiza o formulário de edição de material
-renderEditForm: async (req, res) => {
-  const { n_registro } = req.params;
-  try {
-    const material = await Material.findById(n_registro);
-    const categoria = await Categoria.getAll();
+  // 5️⃣ Renderiza o formulário de edição de material
+  renderEditForm: async (req, res) => {
+    const { n_registro } = req.params;
+    try {
+      const material = await Material.findById(n_registro);
+      const categoria = await Categoria.getAll();
 
-    if (!material) {
-      return res.status(404).send('Material não encontrado');
+      if (!material) {
+        return res.status(404).send('Material não encontrado');
+      }
+
+      res.render('material/edit', {
+        material,
+        categoria,
+        error: null
+      });
+    } catch (err) {
+      console.error('Erro ao carregar formulário de edição:', err);
+      res.status(500).send('Erro interno');
     }
+  },
 
-    res.render('material/edit', {
-      material,
-      categoria,
-      error: null
-    });
-  } catch (err) {
-    console.error('Erro ao carregar formulário de edição:', err);
-    res.status(500).send('Erro interno');
-  }
-},
+  // 6️⃣ Atualiza os dados do material
+  updateMaterial: async (req, res) => {
+    const { n_registro } = req.params;
+    const {
+      titulo, autor, editora, ano_publi, ISBN, idioma,
+      n_paginas, tipo, prateleira, data_aquisicao,
+      preco, quantidade, categoria
+    } = req.body;
 
+    const updatedMaterial = {
+      titulo, autor, editora, ano_publi, ISBN, idioma,
+      n_paginas, tipo, prateleira, data_aquisicao,
+      preco, quantidade, categoria
+    };
 
-updateMaterial: async (req, res) => {
-  const { n_registro } = req.params;
-  const {
-    titulo, autor, editora, ano_publi, ISBN, idioma,
-    n_paginas, tipo, prateleira, data_aquisicao,
-    preco, quantidade, categoria
-  } = req.body;
+    try {
+      const resultado = await Material.update(n_registro, updatedMaterial);
 
-  const updatedMaterial = {
-    titulo, autor, editora, ano_publi, ISBN, idioma,
-    n_paginas, tipo, prateleira, data_aquisicao,
-    preco, quantidade, categoria
-  };
+      if (!resultado) {
+        return res.status(404).send('Material não encontrado');
+      }
 
-  try {
-    const resultado = await Material.update(n_registro, updatedMaterial);
-
-    if (!resultado) {
-      return res.status(404).send('Material não encontrado');
+      res.redirect('/material/pesquisar');
+    } catch (err) {
+      console.error('Erro ao atualizar material:', err);
+      res.status(500).send('Erro interno ao atualizar material');
     }
+  },
 
-    // ✅ Redireciona para a lista de materiais
-    res.redirect('/material/pesquisar');
-  } catch (err) {
-    console.error('Erro ao atualizar material:', err);
-    res.status(500).send('Erro interno ao atualizar material');
-  }
-},
-verMaterial: async (req, res) => {
-  const { n_registro } = req.params;
+  // 7️⃣ Exibe os dados completos do material
+  verMaterial: async (req, res) => {
+    const { n_registro } = req.params;
 
-  try {
-    const material = await Material.findById(n_registro);
+    try {
+      const material = await Material.findById(n_registro);
 
-    if (!material) {
-      return res.status(404).send('Material não encontrado');
+      if (!material) {
+        return res.status(404).send('Material não encontrado');
+      }
+
+      res.render('material/ver', { material });
+    } catch (err) {
+      console.error('Erro ao carregar material:', err);
+      res.status(500).send('Erro interno');
     }
-
-    res.render('material/ver', { material });
-  } catch (err) {
-    console.error('Erro ao carregar material:', err);
-    res.status(500).send('Erro interno');
   }
-}
 };
+
 module.exports = materialController;
