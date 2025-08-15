@@ -82,13 +82,25 @@ const Material = {
   },
 
   // 🔹 Buscar todos os materiais com nome da categoria
-  getAll: async () => {
+  buscarTodos: async () => {
     const query = `
       SELECT m.*, c.nome AS categoria_nome
       FROM material m
       LEFT JOIN categoria c ON m.categoria = c.id
     `;
     const [results] = await db.promise().query(query);
+    return results;
+  },
+
+  // 🔹 Buscar materiais por categoria
+  buscarPorCategoria: async (categoriaId) => {
+    const query = `
+      SELECT m.*, c.nome AS categoria_nome
+      FROM material m
+      LEFT JOIN categoria c ON m.categoria = c.id
+      WHERE m.categoria = ?
+    `;
+    const [results] = await db.promise().query(query, [categoriaId]);
     return results;
   },
 

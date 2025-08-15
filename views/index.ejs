@@ -1,34 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Bem-vindo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #151F55, #AD8D8D);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
 
-<div class="container text-center">
-  <img src="/img/logoescura.png" alt="Logo Libris" class="logo-img mb-4" style="max-width: 180px;">
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
 
-  <h1 class="mb-3">Bem-vindo ao sistema!</h1>
-  <p class="lead">Você foi logado com sucesso!</p>
+    .container {
+      background-color: #283372;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
 
-  <a href="/logout" class="btn btn-lg mt-4">Sair</a>
-</div>
+    .btn {
+      background-color: #AD8D8D;
+      color: #000;
+      border: none;
+    }
 
-<style>
-  .container {
-    background-color: #283372;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.7);
-    max-width: 600px;
-  }
+    .btn:hover {
+      background-color: #090274;
+      color: #AD8D8D;
+    }
 
-  .btn {
-    background-color: #AD8D8D;
-    color: #000;
-    border: none;
-  }
+    h1, p {
+      color: #cebaba;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Conteúdo centralizado -->
+  <div class="main-content">
+    <div class="container">
+      <img src="/img/logoescura.png" alt="Logo Libris" class="logo-img mb-4" style="max-width: 180px;">
+      <h1 class="mb-3">Bem-vindo ao sistema!</h1>
+      <p class="lead">Você foi logado com sucesso!</p>
+      <a href="/logout" class="btn btn-lg btn-block mt-4">Sair</a>
+    </div>
+  </div>
 
-  .btn:hover {
-    background-color: #090274;
-    color: #AD8D8D;
-  }
-
-  h1, p {
-    color: #cebaba;
-  }
-</style>
+</body>
+</html>

@@ -20,7 +20,7 @@
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.6);
-      max-width: 700px;
+      max-width: 1000px;
     }
 
     h1 {
@@ -34,17 +34,17 @@
     }
 
     .form-control,
-select.form-control {
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #ccc;
-  font-size: 0.95rem;
-  padding: 8px 10px;
-  border-radius: 4px;
-  height: 38px;
-  width: 100%;
-  box-sizing: border-box;
-}
+    select.form-control {
+      background-color: #fff;
+      color: #000;
+      border: 1px solid #ccc;
+      font-size: 0.95rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      height: 38px;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
     .btn-custom {
       background-color: #AD8D8D;
@@ -57,28 +57,42 @@ select.form-control {
       color: #AD8D8D;
     }
 
-      
-      table {
-        background-color: rgba(255, 255, 255, 0.03); 
-        border-collapse: collapse;
-      }
+    table {
+      background-color: rgba(255, 255, 255, 0.03);
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+    }
 
-      .table th, .table td {
-        vertical-align: middle;
-        border: 1px solid rgba(206, 186, 186, 0.3); /* borda clara e suave */
-        background-color: transparent; /* sem fundo escuro */
-        color: #cebaba;
-      }
+    .table th, .table td {
+      vertical-align: middle;
+      border: 1px solid rgba(206, 186, 186, 0.3);
+      background-color: transparent;
+      color: #cebaba;
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      line-height: 1.2;
+    }
 
-      .table th {
-        background-color: rgba(255, 255, 255, 0.06); /* cabeçalho um pouco mais opaco */
-      }
+    .table th {
+      background-color: rgba(255, 255, 255, 0.06);
+    }
 
-      .btn-sm {
-        padding: 4px 8px;
-        font-size: 0.8rem;
-      }
-    
+    .table th:nth-child(1),
+    .table td:nth-child(1) {
+      width: 12%;
+    }
+
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+      width: 18%;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.8rem;
+    }
+
     .alert {
       background-color: #444;
       border: 1px solid #AD8D8D;
@@ -87,6 +101,21 @@ select.form-control {
 
     .btn-close {
       filter: invert(1);
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .action-buttons form {
+      margin: 0;
+    }
+
+    .form-wrapper {
+      max-width: 500px;
+      margin-bottom: 30px;
     }
   </style>
 </head>
@@ -101,36 +130,34 @@ select.form-control {
       </div>
     <% } %>
 
-    <!-- Busca -->
-    <form method="GET" action="/material/pesquisar" class="form-row mb-4">
-      <div class="form-group col-md-6">
-        <label for="n_registro">Buscar por Número de Registro:</label>
-        <input type="text" id="n_registro" name="n_registro" class="form-control">
-      </div>
-      <div class="form-group col-md-2 d-flex align-items-end">
-        <button type="submit" class="btn btn-custom w-100">Buscar</button>
-      </div>
-    </form>
+    <!-- Formulário de Busca por Número de Registro -->
+    <!-- Formulário de Busca por Número de Registro -->
+<form method="GET" action="/material/pesquisar" class="d-flex align-items-end mb-3" style="max-width: 500px;">
+  <div class="form-group flex-grow-1 mr-2">
+    <label for="n_registro">Buscar por Número de Registro:</label>
+    <input type="text" id="n_registro" name="n_registro" class="form-control">
+  </div>
+  <button type="submit" class="btn btn-sm btn-custom mb-1">Buscar</button>
+</form>
 
-    <!-- Filtro por Categoria -->
-    <form method="GET" action="/material" class="form-row mb-4">
-      <div class="form-group col-md-6">
-        <label for="categoria">Filtrar por Categoria:</label>
-        <select id="categoria" name="categoria" class="form-control">
-          <option value="">Todas as Categorias</option>
-          <% categoria.forEach(categoria => { %>
-            <option value="<%= categoria.id %>" <%= categoriaSelecionada == categoria.id ? 'selected' : '' %>>
-              <%= categoria.nome %>
-            </option>
-          <% }) %>
-        </select>
-      </div>
-      <div class="form-group col-md-2 d-flex align-items-end">
-        <button type="submit" class="btn btn-custom w-100">Filtrar</button>
-      </div>
-    </form>
+<!-- Formulário de Filtro por Categoria -->
+<form method="GET" action="/material" class="d-flex align-items-end mb-4" style="max-width: 500px;">
+  <div class="form-group flex-grow-1 mr-2">
+    <label for="categoria">Filtrar por Categoria:</label>
+    <select id="categoria" name="categoria" class="form-control text-dark">
+      <option value="">Todas as categorias</option>
+      <% categoria.forEach(cat => { %>
+        <option value="<%= cat.id %>" <%= cat.id == categoriaSelecionada ? 'selected' : '' %>>
+          <%= cat.nome %>
+        </option>
+      <% }) %>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-sm btn-custom mb-1">Filtrar</button>
+</form>
 
-    <!--Tabela -->
+
+    <!-- Tabela de Materiais -->
     <table class="table table-bordered mt-4">
       <thead>
         <tr>
@@ -153,13 +180,15 @@ select.form-control {
             <td><%= material.idioma %></td>
             <td><%= material.categoria_nome %></td>
             <td>
-              <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Visualizar</a>
-              <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
-            <form action="/material/<%= material.n_registro %>/delete" method="POST" style="display:inline;">
-  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">
-    Excluir
-  </button>
-</form>
+              <div class="action-buttons">
+                <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Visualizar</a>
+                <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
+                <form action="/material/<%= material.n_registro %>/delete" method="POST">
+                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">
+                    Excluir
+                  </button>
+                </form>
+              </div>
             </td>
           </tr>
         <% }) %>

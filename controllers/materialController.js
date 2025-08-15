@@ -2,7 +2,6 @@ const Material = require('../models/materialModel');
 const Categoria = require('../models/categoriaModel');
 
 const materialController = {
-  // 1️⃣ Renderiza o formulário de registro com categoria
   renderRegistrarMaterial: async (req, res) => {
     try {
       const categoria = await Categoria.getAll();
@@ -17,7 +16,6 @@ const materialController = {
     }
   },
 
-  // 2️⃣ Processa o registro do material
   registrarMaterial: async (req, res) => {
     const {
       n_registro, idioma, ISBN, autor,
@@ -56,7 +54,6 @@ const materialController = {
     }
   },
 
-  // 3️⃣ Renderiza lista de materiais com ou sem filtro por número
   renderPesquisarAcervo: async (req, res) => {
     const { n_registro } = req.query;
     try {
@@ -66,7 +63,7 @@ const materialController = {
         const material = await Material.findById(n_registro);
         if (material) materiais.push(material);
       } else {
-        materiais = await Material.getAll();
+        materiais = await Material.buscarTodos(); // ✅ corrigido aqui
       }
 
       const categoria = await Categoria.getAll();
@@ -84,7 +81,31 @@ const materialController = {
     }
   },
 
-  // 4️⃣ Exclui um material pelo número de registro
+  listarMateriais: async (req, res) => {
+    try {
+      const categoriaId = req.query.categoria;
+      let materiais;
+
+      if (categoriaId) {
+        materiais = await Material.buscarPorCategoria(categoriaId);
+      } else {
+        materiais = await Material.buscarTodos();
+      }
+
+      const categorias = await Categoria.getAll();
+
+      res.render('material/index', {
+        materiais,
+        categoria: categorias,
+        categoriaSelecionada: categoriaId,
+        success: req.query.success === '1'
+      });
+    } catch (error) {
+      console.error('Erro ao listar materiais:', error);
+      res.status(500).send('Erro ao carregar materiais');
+    }
+  },
+
   excluirMaterial: async (req, res) => {
     const { n_registro } = req.params;
     try {
@@ -99,7 +120,6 @@ const materialController = {
     }
   },
 
-  // 5️⃣ Renderiza o formulário de edição de material
   renderEditForm: async (req, res) => {
     const { n_registro } = req.params;
     try {
@@ -121,7 +141,6 @@ const materialController = {
     }
   },
 
-  // 6️⃣ Atualiza os dados do material
   updateMaterial: async (req, res) => {
     const { n_registro } = req.params;
     const {
@@ -150,7 +169,6 @@ const materialController = {
     }
   },
 
-  // 7️⃣ Exibe os dados completos do material
   verMaterial: async (req, res) => {
     const { n_registro } = req.params;
 
