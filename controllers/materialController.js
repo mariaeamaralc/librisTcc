@@ -55,15 +55,14 @@ const materialController = {
   },
 
   renderPesquisarAcervo: async (req, res) => {
-    const { n_registro } = req.query;
+    const { query } = req.query;
     try {
       let materiais = [];
 
-      if (n_registro) {
-        const material = await Material.findById(n_registro);
-        if (material) materiais.push(material);
+      if (query) {
+        materiais = await Material.buscarPorTermo(query);
       } else {
-        materiais = await Material.buscarTodos(); // ✅ corrigido aqui
+        materiais = await Material.buscarTodos();
       }
 
       const categoria = await Categoria.getAll();

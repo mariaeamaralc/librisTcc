@@ -16,7 +16,7 @@
 
     .container-custom {
       background-color: #283372;
-      margin: 40px auto;
+      margin: 10px auto;
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.6);
@@ -130,20 +130,17 @@
       </div>
     <% } %>
 
-    <!-- Formulário de Busca por Número de Registro -->
-    <!-- Formulário de Busca por Número de Registro -->
-<form method="GET" action="/material/pesquisar" class="d-flex align-items-end mb-3" style="max-width: 500px;">
-  <div class="form-group flex-grow-1 mr-2">
-    <label for="n_registro">Buscar por Número de Registro:</label>
-    <input type="text" id="n_registro" name="n_registro" class="form-control">
-  </div>
-  <button type="submit" class="btn btn-sm btn-custom mb-1">Buscar</button>
+   <!-- Formulário de Busca por Número de Registro, Título ou Autor -->
+<form method="GET" action="/material/pesquisar" class="d-flex flex-column mb-3" style="max-width: 500px;">
+  <label for="query" class="mb-1">Buscar por:</label>
+  <input type="text" id="query" name="query" class="form-control mb-2" placeholder="Digite número de registro, título ou autor">
+  <button type="submit" class="btn btn-sm btn-custom align-self-start">Buscar</button>
 </form>
 
 <!-- Formulário de Filtro por Categoria -->
-<form method="GET" action="/material" class="d-flex align-items-end mb-4" style="max-width: 500px;">
-  <div class="form-group flex-grow-1 mr-2">
-    <label for="categoria">Filtrar por Categoria:</label>
+<form method="GET" action="/material" class="d-flex align-items-center mb-4" style="max-width: 500px;">
+  <div class="form-group flex-grow-1 mr-2 mb-0">
+    <label for="categoria" class="mb-1">Filtrar por Categoria:</label>
     <select id="categoria" name="categoria" class="form-control text-dark">
       <option value="">Todas as categorias</option>
       <% categoria.forEach(cat => { %>
@@ -153,9 +150,13 @@
       <% }) %>
     </select>
   </div>
-  <button type="submit" class="btn btn-sm btn-custom mb-1">Filtrar</button>
+  <div class="d-flex align-items-center mb-0" style="padding-top: 26px;">
+    <button type="submit" class="btn btn-sm btn-custom">Filtrar</button>
+  </div>
 </form>
 
+
+   
 
     <!-- Tabela de Materiais -->
     <table class="table table-bordered mt-4">

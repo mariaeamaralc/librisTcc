@@ -109,6 +109,19 @@ const Material = {
     const query = 'DELETE FROM material WHERE n_registro = ?';
     const [result] = await db.promise().query(query, [n_registro]);
     return result;
+  },
+
+  // 🔹 Buscar por número de registro, título ou autor
+  buscarPorTermo: async (termo) => {
+    const query = `
+      SELECT m.*, c.nome AS categoria_nome
+      FROM material m
+      LEFT JOIN categoria c ON m.categoria = c.id
+      WHERE m.n_registro LIKE ? OR m.titulo LIKE ? OR m.autor LIKE ?
+    `;
+    const likeTerm = `%${termo}%`;
+    const [results] = await db.promise().query(query, [likeTerm, likeTerm, likeTerm]);
+    return results;
   }
 };
 
