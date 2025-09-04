@@ -3,5 +3,7 @@
 <div class="container mt-5 text-center">
   <h2>Consultar Acervo</h2>
   <a href="/material/pesquisar" class="btn btn-primary m-3">Pesquisar Acervo</a>
+<% if (userRole === 'admin') { %>
   <a href="/material/registrar" class="btn btn-success m-3">Registrar Livro</a>
+  <% } %>
 </div>

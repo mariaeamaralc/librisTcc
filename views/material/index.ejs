@@ -183,12 +183,14 @@
             <td>
               <div class="action-buttons">
                 <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Visualizar</a>
-                <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
-                <form action="/material/<%= material.n_registro %>/delete" method="POST">
-                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">
-                    Excluir
-                  </button>
-                </form>
+                <% if (userRole === 'admin') { %>
+                  <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
+                  <form action="/material/<%= material.n_registro %>/delete" method="POST">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">
+                      Excluir
+                    </button>
+                  </form>
+                <% } %>
               </div>
             </td>
           </tr>

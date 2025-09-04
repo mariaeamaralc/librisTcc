@@ -8,7 +8,8 @@ const materialController = {
       res.render('material/registrar', {
         error: null,
         material: {},
-        categoria
+        categoria,
+        userRole: req.session.userRole // Adicionado
       });
     } catch (err) {
       console.error('Erro ao buscar categoria:', err);
@@ -43,7 +44,8 @@ const materialController = {
           return res.render('material/registrar', {
             error: 'Número de registro já existe.',
             material: newMaterial,
-            categoria
+            categoria,
+            userRole: req.session.userRole // Adicionado
           });
         } catch (catErr) {
           return res.status(500).send('Erro interno ao buscar categoria');
@@ -71,7 +73,8 @@ const materialController = {
         materiais,
         categoria,
         categoriaSelecionada: null,
-        success: req.query.success === '1'
+        success: req.query.success === '1',
+        userRole: req.session.userRole // Adicionado
       });
 
     } catch (err) {
@@ -97,7 +100,8 @@ const materialController = {
         materiais,
         categoria: categorias,
         categoriaSelecionada: categoriaId,
-        success: req.query.success === '1'
+        success: req.query.success === '1',
+        userRole: req.session.userRole // Adicionado
       });
     } catch (error) {
       console.error('Erro ao listar materiais:', error);
@@ -132,7 +136,8 @@ const materialController = {
       res.render('material/edit', {
         material,
         categoria,
-        error: null
+        error: null,
+        userRole: req.session.userRole // Adicionado
       });
     } catch (err) {
       console.error('Erro ao carregar formulário de edição:', err);
@@ -178,7 +183,7 @@ const materialController = {
         return res.status(404).send('Material não encontrado');
       }
 
-      res.render('material/ver', { material });
+      res.render('material/ver', { material, userRole: req.session.userRole }); // Adicionado
     } catch (err) {
       console.error('Erro ao carregar material:', err);
       res.status(500).send('Erro interno');
