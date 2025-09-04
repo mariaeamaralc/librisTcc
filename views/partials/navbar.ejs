@@ -30,28 +30,15 @@
           </div>
         </li>
 
-        <!-- Dropdown Categorias -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCategorias" role="button"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Categorias
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownCategorias">
-            <a class="dropdown-item" href="/categorias/new">Cadastrar Categoria</a>
-            <a class="dropdown-item" href="/categorias">Listar Categorias</a>
-          </div>
-        </li>
 
-        <!-- Select Material -->
         <li class="nav-item">
-          <select id="materialSelect" class="form-control mt-2 ml-2"
-            style="width: 200px; background-color: #283372; color: white; border: 1px solid #4b4b78;">
-            <option value="" hidden selected>Consultar Livros </option>
-            <option value="/material/pesquisar">Pesquisar Acervo</option>
-            <option value="/material/registrar">Registrar Livro</option>
-          </select>
+          <a class="nav-link" href="/material/pesquisar">Pesquisar Acervo</a>
         </li>
-
+        <% if (userRole === 'admin') { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/material/registrar">Registrar Livro</a>
+        </li>
+        <% } %>
         <li class="nav-item">
           <a class="nav-link text-danger" href="/logout">Sair</a>
         </li>
