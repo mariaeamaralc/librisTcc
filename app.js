@@ -33,20 +33,26 @@ app.use((req, res, next) => {
   const path = req.path;
   res.locals.isLoginPage = path === '/login';
   res.locals.isRegisterPage = path === '/register';
+  res.locals.usuariosId = req.session.usuariosId || null;
+  next();
+});
+
+app.use((req, res, next) => {
   res.locals.userId = req.session.userId || null;
+  res.locals.userRole = req.session.userRole || null;
   next();
 });
 
 // Rotas
 const indexRoutes = require('./routes/indexRoutes');
 const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
+const usuarioRoutes = require('./routes/usuarioRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
 const materialRoutes = require('./routes/materialRoutes');
 
 app.use('/', indexRoutes);
 app.use('/', authRoutes);
-app.use('/users', userRoutes);
+app.use('/usuarios', usuarioRoutes);
 app.use('/material', materialRoutes);
 app.use('/categorias', categoriaRoutes);
 
