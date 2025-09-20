@@ -125,38 +125,35 @@
 
     <% if (success) { %>
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Material cadastrado com sucesso!
+        Solicitação de empréstimo enviada! Aguarde autorização do administrador.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
       </div>
     <% } %>
 
-   <!-- Formulário de Busca por Número de Registro, Título ou Autor -->
-<form method="GET" action="/material/pesquisar" class="d-flex flex-column mb-3" style="max-width: 500px;">
-  <label for="query" class="mb-1">Buscar por:</label>
-  <input type="text" id="query" name="query" class="form-control mb-2" placeholder="Digite número de registro, título ou autor">
-  <button type="submit" class="btn btn-sm btn-custom align-self-start">Buscar</button>
-</form>
+    <!-- Formulário de Busca por Número de Registro, Título ou Autor -->
+    <form method="GET" action="/material/pesquisar" class="d-flex flex-column mb-3" style="max-width: 500px;">
+      <label for="query" class="mb-1">Buscar por:</label>
+      <input type="text" id="query" name="query" class="form-control mb-2" placeholder="Digite número de registro, título ou autor">
+      <button type="submit" class="btn btn-sm btn-custom align-self-start">Buscar</button>
+    </form>
 
-<!-- Formulário de Filtro por Categoria -->
-<form method="GET" action="/material" class="d-flex align-items-center mb-4" style="max-width: 500px;">
-  <div class="form-group flex-grow-1 mr-2 mb-0">
-    <label for="categoria" class="mb-1">Filtrar por Categoria:</label>
-    <select id="categoria" name="categoria" class="form-control text-dark">
-      <option value="">Todas as categorias</option>
-      <% categoria.forEach(cat => { %>
-        <option value="<%= cat.id %>" <%= cat.id == categoriaSelecionada ? 'selected' : '' %>>
-          <%= cat.nome %>
-        </option>
-      <% }) %>
-    </select>
-  </div>
-  <div class="d-flex align-items-center mb-0" style="padding-top: 26px;">
-    <button type="submit" class="btn btn-sm btn-custom">Filtrar</button>
-  </div>
-</form>
-
-
-   
+    <!-- Formulário de Filtro por Categoria -->
+    <form method="GET" action="/material" class="d-flex align-items-center mb-4" style="max-width: 500px;">
+      <div class="form-group flex-grow-1 mr-2 mb-0">
+        <label for="categoria" class="mb-1">Filtrar por Categoria:</label>
+        <select id="categoria" name="categoria" class="form-control text-dark">
+          <option value="">Todas as categorias</option>
+          <% categoria.forEach(cat => { %>
+            <option value="<%= cat.id %>" <%= cat.id == categoriaSelecionada ? 'selected' : '' %>>
+              <%= cat.nome %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="d-flex align-items-center mb-0" style="padding-top: 26px;">
+        <button type="submit" class="btn btn-sm btn-custom">Filtrar</button>
+      </div>
+    </form>
 
     <!-- Tabela de Materiais -->
     <table class="table table-bordered mt-4">
@@ -175,7 +172,12 @@
         <% materiais.forEach(material => { %>
           <tr>
             <td><%= material.n_registro %></td>
-            <td><%= material.titulo %></td>
+            <td>
+              <%= material.titulo %>
+              <% if (pendente && material.n_registro == pendente) { %>
+                <span class="badge badge-warning ml-2">Pendente</span>
+              <% } %>
+            </td>
             <td><%= material.autor %></td>
             <td><%= material.editora %></td>
             <td><%= material.idioma %></td>
@@ -189,6 +191,12 @@
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">
                       Excluir
                     </button>
+                  </form>
+                <% } %>
+                <% if (userRole === 'user') { %>
+                  <form action="/emprestimos/solicitar" method="POST" style="display:inline;">
+                    <input type="hidden" name="n_registro" value="<%= material.n_registro %>">
+                    <button type="submit" class="btn btn-sm btn-success">Solicitar Empréstimo</button>
                   </form>
                 <% } %>
               </div>

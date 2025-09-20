@@ -21,6 +21,14 @@
         <p><strong>Prateleira:</strong> <%= material.prateleira %></p>
         <p><strong>Data de Aquisição:</strong> <%= material.data_aquisicao.toISOString().split('T')[0] %></p>
         <p><strong>Categoria:</strong> <%= material.categoria_nome || 'Não especificada' %></p>
+        <p>
+          <strong>Situação:</strong>
+          <% if (material.situacao === 'disponivel') { %>
+            <span class="badge badge-success">Disponível</span>
+          <% } else { %>
+            <span class="badge badge-warning">Indisponível</span>
+          <% } %>
+        </p>
       </div>
     </div>
 

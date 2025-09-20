@@ -57,7 +57,7 @@ const materialController = {
   },
 
   renderPesquisarAcervo: async (req, res) => {
-    const { query } = req.query;
+    const { query, pendente} = req.query;
     try {
       let materiais = [];
 
@@ -74,7 +74,9 @@ const materialController = {
         categoria,
         categoriaSelecionada: null,
         success: req.query.success === '1',
-        userRole: req.session.userRole // Adicionado
+        userRole: req.session.userRole, // Adicionado
+        pendente,
+         erro: req.query.erro
       });
 
     } catch (err) {
@@ -95,13 +97,17 @@ const materialController = {
       }
 
       const categorias = await Categoria.getAll();
+      const solicitacao = req.query.solicitacao === 'ok';
+      const pendente = req.query.pendente;
 
       res.render('material/index', {
         materiais,
         categoria: categorias,
         categoriaSelecionada: categoriaId,
-        success: req.query.success === '1',
-        userRole: req.session.userRole // Adicionado
+        success: solicitacao,
+        userRole: req.session.userRole,
+        pendente: pendente,
+         erro: req.query.erro
       });
     } catch (error) {
       console.error('Erro ao listar materiais:', error);
@@ -118,6 +124,11 @@ const materialController = {
       }
       res.redirect('/material/pesquisar?success=1');
     } catch (err) {
+      // Verifica erro de foreign key (material emprestado ou pendente)
+      if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+        // Redireciona com mensagem de erro amigável
+        return res.redirect('/material/pesquisar?erro=Material não pode ser excluído pois está em situação de empréstimo ou pendente.');
+      }
       console.error('Erro ao excluir material:', err);
       res.status(500).send('Erro ao excluir material');
     }
@@ -174,21 +185,30 @@ const materialController = {
   },
 
   verMaterial: async (req, res) => {
-    const { n_registro } = req.params;
+  const { n_registro } = req.params;
+  try {
+    const material = await Material.findById(n_registro);
 
-    try {
-      const material = await Material.findById(n_registro);
-
-      if (!material) {
-        return res.status(404).send('Material não encontrado');
-      }
-
-      res.render('material/ver', { material, userRole: req.session.userRole }); // Adicionado
-    } catch (err) {
-      console.error('Erro ao carregar material:', err);
-      res.status(500).send('Erro interno');
+    if (!material) {
+      return res.status(404).send('Material não encontrado');
     }
+
+    // Consulta empréstimos diretamente
+    const [emprestimos] = await db.promise().query(
+      'SELECT status FROM emprestimos WHERE n_registro = ?', [n_registro]
+    );
+    let situacao = 'disponivel';
+    if (emprestimos.some(e => e.status === 'pendente' || e.status === 'autorizado')) {
+      situacao = 'indisponivel';
+    }
+    material.situacao = situacao;
+
+    res.render('material/ver', { material, userRole: req.session.userRole });
+  } catch (err) {
+    console.error('Erro ao carregar material:', err);
+    res.status(500).send('Erro interno');
   }
+},
 };
 
 module.exports = materialController;

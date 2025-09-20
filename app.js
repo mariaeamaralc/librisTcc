@@ -49,12 +49,14 @@ const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
 const materialRoutes = require('./routes/materialRoutes');
+const emprestimoRoutes = require('./routes/emprestimoRoutes');
 
 app.use('/', indexRoutes);
 app.use('/', authRoutes);
 app.use('/usuarios', usuarioRoutes);
 app.use('/material', materialRoutes);
 app.use('/categorias', categoriaRoutes);
+app.use('/emprestimos', emprestimoRoutes);
 
 
 
