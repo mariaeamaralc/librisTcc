@@ -13,20 +13,51 @@ exports.solicitarEmprestimo = (req, res) => {
 };
 
 // Admin vê solicitações pendentes
-exports.listarPendentes = (req, res) => {
-  db.query('SELECT * FROM emprestimos WHERE status = "pendente"', (err, results) => {
-    if (err) return res.status(500).send('Erro ao buscar empréstimos');
-    res.render('emprestimos/pendentes', { emprestimos: results, userRole: req.session.userRole });
-  });
+exports.listarPendentes = async (req, res) => {
+  try {
+    const [emprestimos] = await db.promise().query(
+      `SELECT e.id, e.n_registro, e.usuario_id, e.status, u.nome AS usuario_nome, m.titulo
+       FROM emprestimos e
+       JOIN usuarios u ON e.usuario_id = u.id
+       JOIN material m ON e.n_registro = m.n_registro
+       WHERE e.status = 'pendente'`
+    );
+    res.render('emprestimos/pendentes', { emprestimos, userRole: req.session.userRole });
+  } catch (err) {
+    console.error('Erro ao buscar empréstimos pendentes:', err);
+    res.status(500).send('Erro ao buscar empréstimos pendentes');
+  }
+};
+// Admin autoriza empréstimo e define data de devolução
+exports.autorizarEmprestimo = async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Define data de devolução para 15 dias a partir de hoje
+    const hoje = new Date();
+    const data_devolucao = new Date(hoje.setDate(hoje.getDate() + 15));
+    const dataFormatada = data_devolucao.toISOString().split('T')[0];
+
+    await db.promise().query(
+      'UPDATE emprestimos SET status = "autorizado", data_devolucao = ? WHERE id = ?',
+      [dataFormatada, id]
+    );
+    res.redirect('/emprestimos/pendentes');
+  } catch (err) {
+    console.error('Erro ao autorizar empréstimo:', err);
+    res.status(500).send('Erro ao autorizar empréstimo');
+  }
 };
 
-// Admin autoriza empréstimo e define data de devolução
-exports.autorizarEmprestimo = (req, res) => {
+exports.recusarEmprestimo = async (req, res) => {
   const { id } = req.params;
-  const { data_devolucao } = req.body;
-  const sql = 'UPDATE emprestimos SET status = "autorizado", data_devolucao = ? WHERE id = ?';
-  db.query(sql, [data_devolucao, id], (err) => {
-    if (err) return res.status(500).send('Erro ao autorizar empréstimo');
+  try {
+    await db.promise().query(
+      'UPDATE emprestimos SET status = "recusado" WHERE id = ?',
+      [id]
+    );
     res.redirect('/emprestimos/pendentes');
-  });
+  } catch (err) {
+    console.error('Erro ao recusar empréstimo:', err);
+    res.status(500).send('Erro ao recusar empréstimo');
+  }
 };

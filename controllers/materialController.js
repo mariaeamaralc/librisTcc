@@ -1,5 +1,6 @@
 const Material = require('../models/materialModel');
 const Categoria = require('../models/categoriaModel');
+const db = require('../config/database');
 
 const materialController = {
   renderRegistrarMaterial: async (req, res) => {
@@ -9,7 +10,7 @@ const materialController = {
         error: null,
         material: {},
         categoria,
-        userRole: req.session.userRole // Adicionado
+        userRole: req.session.userRole
       });
     } catch (err) {
       console.error('Erro ao buscar categoria:', err);
@@ -45,7 +46,7 @@ const materialController = {
             error: 'Número de registro já existe.',
             material: newMaterial,
             categoria,
-            userRole: req.session.userRole // Adicionado
+            userRole: req.session.userRole 
           });
         } catch (catErr) {
           return res.status(500).send('Erro interno ao buscar categoria');
@@ -184,7 +185,7 @@ const materialController = {
     }
   },
 
-  verMaterial: async (req, res) => {
+ verMaterial: async (req, res) => {
   const { n_registro } = req.params;
   try {
     const material = await Material.findById(n_registro);
@@ -193,12 +194,14 @@ const materialController = {
       return res.status(404).send('Material não encontrado');
     }
 
-    // Consulta empréstimos diretamente
+    // Consulta apenas empréstimos pendentes ou autorizados
     const [emprestimos] = await db.promise().query(
-      'SELECT status FROM emprestimos WHERE n_registro = ?', [n_registro]
+      'SELECT status FROM emprestimos WHERE n_registro = ? AND (status = "pendente" OR status = "autorizado")',
+      [n_registro]
     );
+
     let situacao = 'disponivel';
-    if (emprestimos.some(e => e.status === 'pendente' || e.status === 'autorizado')) {
+    if (emprestimos.length > 0) {
       situacao = 'indisponivel';
     }
     material.situacao = situacao;

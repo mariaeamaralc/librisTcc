@@ -11,9 +11,7 @@
     <ul class="navbar-nav ml-auto">
 
       <% if (userId) { %>
-        <li class="nav-item">
-          <span class="nav-link disabled">Bem-vindo</span>
-        </li>
+       
         <li class="nav-item">
           <a class="nav-link" href="/">Home</a>
         </li>
@@ -23,7 +21,11 @@
   <a class="nav-link" href="/usuarios">Usuários</a>
 </li>
  <% } %>
-
+ <% if (userRole === 'admin') { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/emprestimos/pendentes">Solicitações de Empréstimo</a>
+        </li>
+      <% } %>
         <li class="nav-item">
           <a class="nav-link" href="/material/pesquisar">Pesquisar Acervo</a>
         </li>
