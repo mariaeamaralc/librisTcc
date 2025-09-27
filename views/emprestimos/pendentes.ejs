@@ -1,33 +1,149 @@
-<div class="container mt-5">
-  <h2>Solicitações de Empréstimo Pendentes</h2>
-  <table class="table table-bordered mt-3">
-    <thead>
-      <tr>
-        <th>Usuário</th>
-        <th>Título</th>
-        <th>Número de Registro</th>
-        <th>Status</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% emprestimos.forEach(e => { %>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Libris | Empréstimos Pendentes</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #151F55, #AD8D8D);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #cebaba;
+    }
+
+    .container-custom {
+      background-color: #283372;
+      margin: 10px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      max-width: 1000px;
+    }
+
+    h1, h2 {
+      color: #cebaba;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    label, select, input, th, td {
+      color: #cebaba;
+    }
+
+    .form-control, select.form-control {
+      background-color: #fff;
+      color: #000;
+      border: 1px solid #ccc;
+      font-size: 0.95rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      height: 38px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .btn-custom {
+      background-color: #AD8D8D;
+      color: #fff;
+      border: none;
+    }
+
+    .btn-custom:hover {
+      background-color: #283372;
+      color: #AD8D8D;
+    }
+
+    .table th, .table td {
+      vertical-align: middle;
+      border: 1px solid rgba(206, 186, 186, 0.3);
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      line-height: 1.2;
+    }
+
+    .table th {
+      background-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.8rem;
+    }
+
+    .alert {
+      background-color: #444;
+      border: 1px solid #AD8D8D;
+      color: #cebaba;
+    }
+
+    .btn-close {
+      filter: invert(1);
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .action-buttons form {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-custom">
+    <h2>Solicitações de Empréstimo Pendentes</h2>
+
+    <% if (success) { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Solicitação autorizada com sucesso!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+      </div>
+    <% } %>
+
+    <% if (erro) { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= erro %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+      </div>
+    <% } %>
+
+    <table class="table table-bordered mt-3">
+      <thead>
         <tr>
-          <td><%= e.usuario_nome %></td>
-          <td><%= e.titulo %></td>
-          <td><%= e.n_registro %></td>
-          <td><span class="badge badge-warning"><%= e.status %></span></td>
-          <td>
-            <form action="/emprestimos/<%= e.id %>/autorizar" method="POST" style="display:inline;">
-              <input type="date" name="data_devolucao" required>
-              <button type="submit" class="btn btn-sm btn-success">Autorizar</button>
-            </form>
-            <form action="/emprestimos/<%= e.id %>/recusar" method="POST" style="display:inline;">
-              <button type="submit" class="btn btn-sm btn-danger">Recusar</button>
-            </form>
-          </td>
+          <th>Usuário</th>
+          <th>Título</th>
+          <th>Número de Registro</th>
+          <th>Status</th>
+          <th>Ações</th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+        <% emprestimos.forEach(e => { %>
+          <tr>
+            <td><%= e.usuario_nome %></td>
+            <td><%= e.titulo %></td>
+            <td><%= e.n_registro %></td>
+            <td><span class="badge badge-warning"><%= e.status %></span></td>
+            <td>
+              <div class="action-buttons">
+                <form action="/emprestimos/<%= e.id %>/autorizar" method="POST" style="display:inline;">
+                  <input type="date" name="data_devolucao" required class="form-control mb-1">
+                  <button type="submit" class="btn btn-sm btn-success">Autorizar</button>
+                </form>
+                <form action="/emprestimos/<%= e.id %>/recusar" method="POST" style="display:inline;">
+                  <button type="submit" class="btn btn-sm btn-danger">Recusar</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,5 +1,5 @@
 const db = require('../config/database');
-
+const Emprestimo = require('../models/emprestimoModel'); 
 // Usuário solicita empréstimo
 exports.solicitarEmprestimo = (req, res) => {
   const { n_registro } = req.body;
@@ -15,17 +15,23 @@ exports.solicitarEmprestimo = (req, res) => {
 // Admin vê solicitações pendentes
 exports.listarPendentes = async (req, res) => {
   try {
-    const [emprestimos] = await db.promise().query(
-      `SELECT e.id, e.n_registro, e.usuario_id, e.status, u.nome AS usuario_nome, m.titulo
-       FROM emprestimos e
-       JOIN usuarios u ON e.usuario_id = u.id
-       JOIN material m ON e.n_registro = m.n_registro
-       WHERE e.status = 'pendente'`
-    );
-    res.render('emprestimos/pendentes', { emprestimos, userRole: req.session.userRole });
+    const pagina = parseInt(req.query.pagina) || 1;
+    const limite = 10;
+
+    // Buscar empréstimos pendentes do banco (usa o objeto retornado pelo model)
+    const { emprestimos, totalItens, totalPaginas } = await Emprestimo.getPendentesPaginados(pagina, limite);
+
+    res.render('emprestimos/pendentes', {
+      emprestimos,
+      paginaAtual: pagina,
+      totalPaginas,
+      totalItens,
+      success: req.query.success || undefined,
+      erro: req.query.erro || undefined
+    });
   } catch (err) {
-    console.error('Erro ao buscar empréstimos pendentes:', err);
-    res.status(500).send('Erro ao buscar empréstimos pendentes');
+    console.error(err);
+    res.send('Erro ao listar empréstimos pendentes');
   }
 };
 // Admin autoriza empréstimo e define data de devolução

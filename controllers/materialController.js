@@ -3,13 +3,15 @@ const Categoria = require('../models/categoriaModel');
 const db = require('../config/database');
 
 const materialController = {
+
+  // Renderiza a página de registro de material
   renderRegistrarMaterial: async (req, res) => {
     try {
-      const categoria = await Categoria.getAll();
+      const categorias = await Categoria.getAll();
       res.render('material/registrar', {
         error: null,
         material: {},
-        categoria,
+        categoria: categorias,
         userRole: req.session.userRole
       });
     } catch (err) {
@@ -18,6 +20,7 @@ const materialController = {
     }
   },
 
+  // Registrar material
   registrarMaterial: async (req, res) => {
     const {
       n_registro, idioma, ISBN, autor,
@@ -40,44 +43,81 @@ const materialController = {
       res.redirect('/material/pesquisar?success=1');
     } catch (err) {
       if (err.code === 'ER_DUP_ENTRY') {
-        try {
-          const categoria = await Categoria.getAll();
-          return res.render('material/registrar', {
-            error: 'Número de registro já existe.',
-            material: newMaterial,
-            categoria,
-            userRole: req.session.userRole 
-          });
-        } catch (catErr) {
-          return res.status(500).send('Erro interno ao buscar categoria');
-        }
+        const categorias = await Categoria.getAll();
+        return res.render('material/registrar', {
+          error: 'Número de registro já existe.',
+          material: newMaterial,
+          categoria: categorias,
+          userRole: req.session.userRole
+        });
       }
       console.error('Erro ao registrar material:', err);
       res.status(500).send('Erro ao registrar material');
     }
   },
 
-  renderPesquisarAcervo: async (req, res) => {
-    const { query, pendente} = req.query;
+  // Listar materiais filtrando por categoria
+  listarMateriais: async (req, res) => {
     try {
-      let materiais = [];
+      const pagina = parseInt(req.query.pagina, 10) || 1;
+      const limite = 10;
+      const categoriaSelecionada = req.query.categoria || null;
+      const categorias = await Categoria.getAll();
 
-      if (query) {
-        materiais = await Material.buscarPorTermo(query);
-      } else {
-        materiais = await Material.buscarTodos();
-      }
-
-      const categoria = await Categoria.getAll();
+      const { materiais, totalItens } = await Material.getMateriaisPaginados(pagina, limite, categoriaSelecionada);
+      const totalPaginas = Math.ceil(totalItens / limite);
 
       res.render('material/index', {
         materiais,
-        categoria,
-        categoriaSelecionada: null,
+        categoria: categorias,
+        categoriaSelecionada,
+        paginaAtual: pagina,
+        totalPaginas,
         success: req.query.success === '1',
-        userRole: req.session.userRole, // Adicionado
-        pendente,
-         erro: req.query.erro
+        userRole: req.session.userRole,
+        pendente: req.query.pendente,
+        erro: req.query.erro,
+        query: ''
+      });
+
+    } catch (err) {
+      console.error('Erro ao listar materiais:', err);
+      res.status(500).send('Erro ao carregar materiais');
+    }
+  },
+
+  // Pesquisar acervo por termo (n_registro, título ou autor)
+  renderPesquisarAcervo: async (req, res) => {
+    try {
+      const termo = req.query.query || '';
+      const pagina = parseInt(req.query.pagina) || 1;
+      const limite = 10;
+      const offset = (pagina - 1) * limite;
+      const categorias = await Categoria.getAll();
+
+      let materiais, totalItens;
+
+      if (termo) {
+        materiais = await Material.buscarPorTermoPaginado(termo, limite, offset);
+        totalItens = await Material.contarPorTermo(termo);
+      } else {
+        materiais = await Material.buscarTodosPaginado(limite, offset);
+        totalItens = await Material.contarTodos();
+      }
+
+      const totalPaginas = Math.ceil(totalItens / limite);
+
+      res.render('material/index', {
+        materiais,
+        categoria: categorias,
+        categoriaSelecionada: null,
+        paginaAtual: pagina,
+        totalPaginas,
+        success: req.query.success === '1',
+        userRole: req.session.userRole,
+        pendente: req.query.pendente,
+        erro: req.query.erro,
+        query: termo
       });
 
     } catch (err) {
@@ -86,70 +126,42 @@ const materialController = {
     }
   },
 
-  listarMateriais: async (req, res) => {
-    try {
-      const categoriaId = req.query.categoria;
-      let materiais;
-
-      if (categoriaId) {
-        materiais = await Material.buscarPorCategoria(categoriaId);
-      } else {
-        materiais = await Material.buscarTodos();
-      }
-
-      const categorias = await Categoria.getAll();
-      const solicitacao = req.query.solicitacao === 'ok';
-      const pendente = req.query.pendente;
-
-      res.render('material/index', {
-        materiais,
-        categoria: categorias,
-        categoriaSelecionada: categoriaId,
-        success: solicitacao,
-        userRole: req.session.userRole,
-        pendente: pendente,
-         erro: req.query.erro
-      });
-    } catch (error) {
-      console.error('Erro ao listar materiais:', error);
-      res.status(500).send('Erro ao carregar materiais');
-    }
-  },
-
-  excluirMaterial: async (req, res) => {
+  // Visualizar material
+  verMaterial: async (req, res) => {
     const { n_registro } = req.params;
     try {
-      const resultado = await Material.delete(n_registro);
-      if (resultado.affectedRows === 0) {
-        return res.status(404).send('Material não encontrado');
-      }
-      res.redirect('/material/pesquisar?success=1');
+      const material = await Material.findById(n_registro);
+
+      if (!material) return res.status(404).send('Material não encontrado');
+
+      const [emprestimos] = await db.promise().query(
+        'SELECT status FROM emprestimos WHERE n_registro = ? AND (status = "pendente" OR status = "autorizado")',
+        [n_registro]
+      );
+
+      material.situacao = emprestimos.length > 0 ? 'indisponivel' : 'disponivel';
+      res.render('material/ver', { material, userRole: req.session.userRole });
+
     } catch (err) {
-      // Verifica erro de foreign key (material emprestado ou pendente)
-      if (err.code === 'ER_ROW_IS_REFERENCED_2') {
-        // Redireciona com mensagem de erro amigável
-        return res.redirect('/material/pesquisar?erro=Material não pode ser excluído pois está em situação de empréstimo ou pendente.');
-      }
-      console.error('Erro ao excluir material:', err);
-      res.status(500).send('Erro ao excluir material');
+      console.error('Erro ao carregar material:', err);
+      res.status(500).send('Erro interno');
     }
   },
 
+  // Formulário de edição
   renderEditForm: async (req, res) => {
     const { n_registro } = req.params;
     try {
       const material = await Material.findById(n_registro);
-      const categoria = await Categoria.getAll();
+      const categorias = await Categoria.getAll();
 
-      if (!material) {
-        return res.status(404).send('Material não encontrado');
-      }
+      if (!material) return res.status(404).send('Material não encontrado');
 
       res.render('material/edit', {
         material,
-        categoria,
+        categoria: categorias,
         error: null,
-        userRole: req.session.userRole // Adicionado
+        userRole: req.session.userRole
       });
     } catch (err) {
       console.error('Erro ao carregar formulário de edição:', err);
@@ -157,26 +169,14 @@ const materialController = {
     }
   },
 
+  // Atualizar material
   updateMaterial: async (req, res) => {
     const { n_registro } = req.params;
-    const {
-      titulo, autor, editora, ano_publi, ISBN, idioma,
-      n_paginas, tipo, prateleira, data_aquisicao,
-      preco, quantidade, categoria
-    } = req.body;
-
-    const updatedMaterial = {
-      titulo, autor, editora, ano_publi, ISBN, idioma,
-      n_paginas, tipo, prateleira, data_aquisicao,
-      preco, quantidade, categoria
-    };
+    const updatedMaterial = req.body;
 
     try {
       const resultado = await Material.update(n_registro, updatedMaterial);
-
-      if (!resultado) {
-        return res.status(404).send('Material não encontrado');
-      }
+      if (!resultado) return res.status(404).send('Material não encontrado');
 
       res.redirect('/material/pesquisar');
     } catch (err) {
@@ -185,33 +185,22 @@ const materialController = {
     }
   },
 
- verMaterial: async (req, res) => {
-  const { n_registro } = req.params;
-  try {
-    const material = await Material.findById(n_registro);
+  // Excluir material
+  excluirMaterial: async (req, res) => {
+    const { n_registro } = req.params;
+    try {
+      const resultado = await Material.delete(n_registro);
+      if (resultado.affectedRows === 0) return res.status(404).send('Material não encontrado');
 
-    if (!material) {
-      return res.status(404).send('Material não encontrado');
+      res.redirect('/material/pesquisar?success=1');
+    } catch (err) {
+      if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+        return res.redirect('/material/pesquisar?erro=Material não pode ser excluído pois está em situação de empréstimo ou pendente.');
+      }
+      console.error('Erro ao excluir material:', err);
+      res.status(500).send('Erro ao excluir material');
     }
-
-    // Consulta apenas empréstimos pendentes ou autorizados
-    const [emprestimos] = await db.promise().query(
-      'SELECT status FROM emprestimos WHERE n_registro = ? AND (status = "pendente" OR status = "autorizado")',
-      [n_registro]
-    );
-
-    let situacao = 'disponivel';
-    if (emprestimos.length > 0) {
-      situacao = 'indisponivel';
-    }
-    material.situacao = situacao;
-
-    res.render('material/ver', { material, userRole: req.session.userRole });
-  } catch (err) {
-    console.error('Erro ao carregar material:', err);
-    res.status(500).send('Erro interno');
   }
-},
 };
 
 module.exports = materialController;
