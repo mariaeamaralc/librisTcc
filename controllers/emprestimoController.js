@@ -67,3 +67,63 @@ exports.recusarEmprestimo = async (req, res) => {
     res.status(500).send('Erro ao recusar empréstimo');
   }
 };
+
+// Dashboard admin com todos os empréstimos
+exports.dashboardAdmin = async (req, res) => {
+  try {
+    // Buscar empréstimos pendentes
+    const [pendentes] = await db.promise().query(`
+      SELECT e.id, e.n_registro, e.status, u.nome AS usuario_nome, m.titulo
+      FROM emprestimos e
+      JOIN usuarios u ON e.usuario_id = u.id
+      JOIN material m ON e.n_registro = m.n_registro
+      WHERE e.status = 'pendente'
+      ORDER BY e.id DESC
+    `);
+
+    // Buscar empréstimos autorizados (para receber devolução)
+    const [ativos] = await db.promise().query(`
+      SELECT e.id, e.n_registro, e.status, u.nome AS usuario_nome, m.titulo
+      FROM emprestimos e
+      JOIN usuarios u ON e.usuario_id = u.id
+      JOIN material m ON e.n_registro = m.n_registro
+      WHERE e.status = 'autorizado'
+      ORDER BY e.id DESC
+    `);
+
+    res.render('emprestimos/dashboard', { 
+      pendentes,
+      ativos,
+      success: req.query.success || null,
+      erro: req.query.erro || null
+    });
+  } catch (err) {
+    console.error('Erro ao carregar dashboard:', err);
+    res.status(500).send('Erro ao carregar dashboard');
+  }
+};
+
+
+exports.receberDevolucao = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Atualiza o status do empréstimo para 'devolvido'
+    await db.promise().query(
+      'UPDATE emprestimos SET status = "devolvido" WHERE id = ?',
+      [id]
+    );
+
+    // Marca o livro como disponível novamente
+    // Caso tenha um campo 'disponivel' na tabela material
+    await db.promise().query(
+      'UPDATE material SET disponivel = 1 WHERE n_registro = (SELECT n_registro FROM emprestimos WHERE id = ?)',
+      [id]
+    );
+
+    res.redirect('/admin/dashboard');
+  } catch (err) {
+    console.error('Erro ao receber devolução:', err);
+    res.status(500).send('Erro ao processar devolução');
+  }
+};

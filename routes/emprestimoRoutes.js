@@ -3,16 +3,15 @@ const router = express.Router();
 const emprestimoController = require('../controllers/emprestimoController');
 const { requerLogin, isAdmin } = require('../middlewares/auth');
 
-// Usuário solicita empréstimo
+// Fluxo de empréstimo
 router.post('/solicitar', requerLogin, emprestimoController.solicitarEmprestimo);
 
-// Admin vê solicitações pendentes
-router.get('/pendentes', requerLogin, isAdmin, emprestimoController.listarPendentes);
+// Dashboard admin
+router.get('/admin/dashboard', requerLogin, isAdmin, emprestimoController.dashboardAdmin);
 
-// Admin autoriza empréstimo
+// Ações sobre empréstimos
 router.post('/:id/autorizar', requerLogin, isAdmin, emprestimoController.autorizarEmprestimo);
-
-// Admin recusa empréstimo
 router.post('/:id/recusar', requerLogin, isAdmin, emprestimoController.recusarEmprestimo);
+router.post('/:id/receber', requerLogin, isAdmin, emprestimoController.receberDevolucao);
 
 module.exports = router;

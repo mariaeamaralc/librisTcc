@@ -209,7 +209,7 @@
                   </form>
                 <% } %>
                 <% if (userRole === 'user') { %>
-                  <form action="/emprestimos/solicitar" method="POST" style="display:inline;">
+                  <form action="/solicitar" method="POST" style="display:inline;">
                     <input type="hidden" name="n_registro" value="<%= material.n_registro %>">
                     <button type="submit" class="btn btn-sm btn-success">Solicitar Empréstimo</button>
                   </form>

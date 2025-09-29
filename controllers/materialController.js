@@ -185,22 +185,33 @@ const materialController = {
     }
   },
 
-  // Excluir material
-  excluirMaterial: async (req, res) => {
-    const { n_registro } = req.params;
-    try {
-      const resultado = await Material.delete(n_registro);
-      if (resultado.affectedRows === 0) return res.status(404).send('Material não encontrado');
+   excluirMaterial : async (req, res) => {
+  const { n_registro } = req.params;
 
-      res.redirect('/material/pesquisar?success=1');
-    } catch (err) {
-      if (err.code === 'ER_ROW_IS_REFERENCED_2') {
-        return res.redirect('/material/pesquisar?erro=Material não pode ser excluído pois está em situação de empréstimo ou pendente.');
-      }
-      console.error('Erro ao excluir material:', err);
-      res.status(500).send('Erro ao excluir material');
+  try {
+    // Verifica empréstimos ativos
+    const [rows] = await db.promise().query(
+      "SELECT * FROM emprestimos WHERE n_registro = ? AND data_devolucao IS NULL",
+      [n_registro]
+    );
+
+    if (rows.length > 0) {
+      return res.redirect('/material/pesquisar?erro=Material não pode ser excluído pois está em situação de empréstimo ou pendente.');
     }
+
+    const resultado = await Material.delete(n_registro);
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).send('Material não encontrado');
+    }
+
+    res.redirect('/material/pesquisar?success=1');
+
+  } catch (err) {
+    console.error('Erro ao excluir material:', err);
+    res.status(500).send('Erro ao excluir material');
   }
+}
 };
 
 module.exports = materialController;

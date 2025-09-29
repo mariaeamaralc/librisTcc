@@ -13,7 +13,7 @@
       <% if (userId) { %>
        
         <li class="nav-item">
-          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/">Início</a>
         </li>
 
       <% if (userRole === 'admin') { %>
@@ -23,7 +23,7 @@
  <% } %>
  <% if (userRole === 'admin') { %>
         <li class="nav-item">
-          <a class="nav-link" href="/emprestimos/pendentes">Solicitações de Empréstimo</a>
+          <a class="nav-link" href="/admin/dashboard">Empréstimos</a>
         </li>
       <% } %>
         <li class="nav-item">

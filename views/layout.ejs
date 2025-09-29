@@ -52,12 +52,21 @@
     background-color: #283372;
     color: #AD8D8D;
   }
+    .footer-bar {
+    background-color: #283372; 
+    color: #cebaba;
+    text-align: center;
+    padding: 40px;
+    font-size: 0.8rem; 
+    font-weight: 400;
+  }
+
 </style>
 
 </head>
 <body>
 
-  <!-- Exibe a navbar apenas fora das páginas de login e cadastro -->
+
   <% if (!(typeof isLoginPage !== 'undefined' && isLoginPage) && !(typeof isRegisterPage !== 'undefined' && isRegisterPage)) { %>
     <%- include('partials/navbar') %>
   <% } %>
@@ -66,10 +75,13 @@
     <%- body %>
   </main>
 
-  <!-- Rodapé (não aparece no cadastro) -->
-  <% if (typeof isRegisterPage === 'undefined' || !isRegisterPage) { %>
-    <footer>
-      <small>&copy; 2025 Libris.</small>
+   
+   <% if (
+      (typeof isRegisterPage === 'undefined' || !isRegisterPage) &&
+      (typeof isLoginPage === 'undefined' || !isLoginPage)
+    ) { %>
+    <footer class="footer-bar">
+      <small>&copy; 2025 Libris</small>
     </footer>
   <% } %>
 

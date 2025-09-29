@@ -56,7 +56,7 @@ app.use('/', authRoutes);
 app.use('/usuarios', usuarioRoutes);
 app.use('/material', materialRoutes);
 app.use('/categorias', categoriaRoutes);
-app.use('/emprestimos', emprestimoRoutes);
+app.use('/', emprestimoRoutes);
 
 
 

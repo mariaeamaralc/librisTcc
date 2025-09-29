@@ -1,0 +1,149 @@
+<div class="dashboard-container">
+  <h2>Acompanhar Situação</h2>
+
+  <% if (success) { %>
+    <div class="alert alert-success"><%= success %></div>
+  <% } %>
+  <% if (erro) { %>
+    <div class="alert alert-danger"><%= erro %></div>
+  <% } %>
+
+  <h3>Empréstimos Pendentes</h3>
+  <table class="table-custom">
+    <thead>
+      <tr>
+        <th>Livro</th>
+        <th>Usuário</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% pendentes.forEach(e => { %>
+        <tr>
+          <td><%= e.titulo %></td>
+          <td><%= e.usuario_nome %></td>
+          <td>
+            <form action="/autorizar/<%= e.id %>" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-action">Autorizar</button>
+            </form>
+            <form action="/recusar/<%= e.id %>" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-action btn-danger">Recusar</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <h3>Empréstimos Ativos</h3>
+  <table class="table-custom">
+    <thead>
+      <tr>
+        <th>Livro</th>
+        <th>Usuário</th>
+        <th>Data de Devolução</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% ativos.forEach(e => { %>
+        <tr>
+          <td><%= e.titulo %></td>
+          <td><%= e.usuario_nome %></td>
+        <td>
+  <% if (e.data_devolucao) { %>
+    <%= new Date(e.data_devolucao).toISOString().split('T')[0] %>
+  <% } else { %>
+    N/A
+  <% } %>
+</td>
+
+          <td>
+           <form action="/<%= e.id %>/receber" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-action">Receber Devolução</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<style>
+body {
+  background: linear-gradient(135deg, #151F55, #AD8D8D);
+  color: #cebaba;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background-color: #283372;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.7);
+}
+
+h2, h3 {
+  color: #cebaba;
+  margin-bottom: 20px;
+}
+
+.table-custom {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.table-custom th, .table-custom td {
+  border: 1px solid #555;
+  padding: 8px;
+  color: #fff;
+  text-align: left;
+}
+
+.btn {
+  padding: 5px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #AD8D8D;
+  color: #151F55;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #151F55;
+  color: #AD8D8D;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background-color: #fff;
+  color: #dc3545;
+}
+
+.alert {
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.alert-success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.alert-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+</style>

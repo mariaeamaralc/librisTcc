@@ -1,26 +1,56 @@
-<div class="container mt-5">
-  <h1 class="mb-4 text-center">Editar usuário</h1>
-  <form action="/usuarios/<%= user.id %>?_method=PUT" method="POST">
-    <div class="form-group">
-      <label for="matricula">Matrícula</label>
-      <input type="text" class="form-control" id="matricula" name="matricula" value="<%= user.matricula %>" required>
-    </div>
-    <div class="form-group">
-      <label for="nome">Nome</label>
-      <input type="text" class="form-control" id="nome" name="nome" value="<%= user.nome %>" required>
-    </div>
-    <div class="form-group">
-      <label for="email">E-mail</label>
-      <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
-    </div>
-    <div class="form-group">
-      <label for="idade">Idade</label>
-      <input type="number" class="form-control" id="idade" name="idade" value="<%= user.idade %>" required>
-    </div>
-    <div class="form-group">
-      <label for="senha">Senha</label>
-      <input type="password" class="form-control" id="senha" name="senha" value="<%= user.senha %>" required>
-    </div>
-    <button type="submit" class="btn btn-warning btn-block mt-3">Salvar</button>
-  </form>
+<style>
+  .btn-custom {
+    background-color: #283372;
+    color: #AD8D8D;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    transition: 0.3s;
+  }
+
+  .btn-custom:hover {
+    background-color:  #AD8D8D;
+    color: #000000;
+  }
+
+  .form-control-sm {
+    height: 35px;
+    font-size: 0.85rem;
+  }
+</style>
+
+<div class="container-custom" style="margin-top: 20px;">
+  <div style="
+    max-width: 600px;
+    margin: auto;
+    background-color: #283372;
+    border-radius: 20px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+    padding: 20px;
+  ">
+    <h2 class="text-center mb-3" style="color: #cebaba;">Editar Usuário</h2>
+    <form action="/usuarios/<%= user.id %>?_method=PUT" method="POST">
+      <div class="form-group">
+        <label for="matricula" style="color:#cebaba;">Matrícula</label>
+        <input type="text" class="form-control form-control-sm" id="matricula" name="matricula" value="<%= user.matricula %>" required>
+      </div>
+      <div class="form-group">
+        <label for="nome" style="color:#cebaba;">Nome</label>
+        <input type="text" class="form-control form-control-sm" id="nome" name="nome" value="<%= user.nome %>" required>
+      </div>
+      <div class="form-group">
+        <label for="email" style="color:#cebaba;">E-mail</label>
+        <input type="email" class="form-control form-control-sm" id="email" name="email" value="<%= user.email %>" required>
+      </div>
+      <div class="form-group">
+        <label for="idade" style="color:#cebaba;">Idade</label>
+        <input type="number" class="form-control form-control-sm" id="idade" name="idade" value="<%= user.idade %>" required>
+      </div>
+      <div class="form-group">
+        <label for="senha" style="color:#cebaba;">Senha</label>
+        <input type="password" class="form-control form-control-sm" id="senha" name="senha" value="<%= user.senha %>" required>
+      </div>
+      <button type="submit" class="btn btn-custom btn-block mt-3">Salvar</button>
+    </form>
+  </div>
 </div>

@@ -1,20 +1,93 @@
-<div class="container mt-5">
-  <h1 class="mb-4 text-center">Lista de usuários</h1>
+<% /* Estilos só para a página de usuários */ %>
+<style>
+  .container-custom {
+    background-color: #283372;
+    margin: 10px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    max-width: 600px;
+  }
 
-  <form id="searchForm" method="GET" action="/usuarios" class="mb-4">
+  h1 {
+    color: #cebaba;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  label, select, input, th, td {
+    color: #cebaba;
+  }
+
+  .form-control {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    padding: 8px 10px;
+    border-radius: 4px;
+    height: 38px;
+  }
+
+  .btn-custom {
+    background-color: #AD8D8D;
+    color: #fff;
+    border: none;
+  }
+
+  .btn-custom:hover {
+    background-color: #151F55;
+    color: #AD8D8D;
+  }
+
+  .table th, .table td {
+    vertical-align: middle;
+    border: 1px solid rgba(206, 186, 186, 0.3);
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+
+  .table th {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .btn-sm {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .action-buttons form {
+    margin: 0;
+  }
+</style>
+
+<div class="container-custom mt-5">
+  <h1 class="mb-4 text-center">Lista de Usuários</h1>
+
+  <!-- Formulário de busca -->
+  <form id="searchForm" method="GET" action="/usuarios" class="mb-4" style="max-width: 500px; margin: 0 auto;">
     <div class="form-group">
       <label for="search">Buscar Usuário:</label>
       <input type="text" id="search" name="search" class="form-control" placeholder="Digite o nome do usuário" autocomplete="off">
     </div>
+    <button type="submit" class="btn btn-sm btn-custom">Buscar</button>
   </form>
 
-  <table class="table table-bordered table-hover">
+  <!-- Tabela de usuários -->
+  <table class="table table-bordered table-hover mt-4">
     <thead>
       <tr>
         <th>ID</th>
         <th>Nome</th>
-        <th>Regra</th>
-        <th>Ação</th>
+        <th>Possui Empréstimo</th>
+        <th>Opções</th>
       </tr>
     </thead>
     <tbody id="userTableBody">
@@ -24,47 +97,18 @@
           <td><%= user.nome %></td>
           <td><%= user.role %></td>
           <td>
-            <a href="/usuarios/<%= user.id %>" class="btn btn-primary btn-sm">Ver</a>
-            <% if (userRole === 'admin') { %>
-              <a href="/usuarios/<%= user.id %>/edit" class="btn btn-warning btn-sm">Editar</a>
-              <form action="/usuarios/<%= user.id %>?_method=DELETE" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-              </form>
-            <% } %>
+            <div class="action-buttons">
+              <a href="/usuarios/<%= user.id %>" class="btn btn-sm btn-custom">Ver</a>
+              <% if (userRole === 'admin') { %>
+                <a href="/usuarios/<%= user.id %>/edit" class="btn btn-sm btn-custom">Editar</a>
+                <form action="/usuarios/<%= user.id %>?_method=DELETE" method="POST">
+                  <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                </form>
+              <% } %>
+            </div>
           </td>
         </tr>
       <% }) %>
     </tbody>
   </table>
 </div>
-
-<script>
-  document.getElementById('search').addEventListener('input', function() {
-    const searchValue = this.value;
-    fetch(`/usuarios/search?search=${encodeURIComponent(searchValue)}`)
-      .then(response => response.json())
-      .then(data => {
-        const tbody = document.getElementById('userTableBody');
-        tbody.innerHTML = '';
-        data.users.forEach(user => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${user.id}</td>
-            <td>${user.nome}</td>
-            <td>${user.role}</td>
-            <td>
-              <a href="/usuarios/${user.id}" class="btn btn-primary btn-sm">Ver</a>
-              ${data.userRole === 'admin' ? `
-                <a href="/usuarios/${user.id}/edit" class="btn btn-warning btn-sm">Editar</a>
-                <form action="/usuarios/${user.id}?_method=DELETE" method="POST" style="display: inline;">
-                  <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                </form>
-              ` : ''}
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      })
-      .catch(error => console.error('Error:', error));
-  });
-</script>
