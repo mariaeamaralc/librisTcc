@@ -1,6 +1,34 @@
 const db = require('../config/database');
 
 const Material = {
+  // Registrar material
+  registrar: async (novoMaterial) => {
+    const query = `
+      INSERT INTO material
+      (n_registro, idioma, ISBN, autor, data_aquisicao, prateleira, titulo, 
+       n_paginas, tipo, editora, ano_publi, categoria)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [
+      novoMaterial.n_registro,
+      novoMaterial.idioma,
+      novoMaterial.ISBN,
+      novoMaterial.autor,
+      novoMaterial.data_aquisicao,
+      novoMaterial.prateleira,
+      novoMaterial.titulo,
+      novoMaterial.n_paginas,
+      novoMaterial.tipo,
+      novoMaterial.editora,
+      novoMaterial.ano_publi,
+      novoMaterial.categoria
+    ];
+
+    const [result] = await db.promise().query(query, values);
+    return result;
+  },
+
   // Buscar todos os materiais paginados
   buscarTodosPaginado: async (limite, offset) => {
     const query = `
