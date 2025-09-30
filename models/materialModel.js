@@ -38,15 +38,37 @@ const Material = {
       ORDER BY m.titulo
       LIMIT ? OFFSET ?
     `;
-    const [results] = await db.promise().query(query, [limite, offset]);
-    return results;
+    const [rows] = await db.promise().query(query, [limite, offset]);
+    return rows;
+  },
+
+  // Busca todos os materiais com termo e paginação
+  buscarPorTermoPaginado: async (termo, page, limit) => {
+    const offset = (page - 1) * limit;
+
+    const [rows] = await db.promise().query(
+      `SELECT m.*, c.nome AS categoria_nome
+       FROM material m
+       LEFT JOIN categoria c ON m.categoria = c.id
+       WHERE m.titulo LIKE ? OR m.autor LIKE ? OR m.ISBN LIKE ?
+       LIMIT ? OFFSET ?`,
+      [`%${termo}%`, `%${termo}%`, `%${termo}%`, limit, offset]
+    );
+
+    const [countResult] = await db.promise().query(
+      `SELECT COUNT(*) as total
+       FROM material
+       WHERE titulo LIKE ? OR autor LIKE ? OR ISBN LIKE ?`,
+      [`%${termo}%`, `%${termo}%`, `%${termo}%`]
+    );
+
+    return { rows, total: countResult[0].total };
   },
 
   // Contar todos os materiais
   contarTodos: async () => {
-    const query = 'SELECT COUNT(*) AS total FROM material';
-    const [results] = await db.promise().query(query);
-    return parseInt(results[0].total, 10);
+    const [results] = await db.promise().query('SELECT COUNT(*) AS total FROM material');
+    return results[0].total;
   },
 
   // Buscar material por ID
@@ -58,7 +80,7 @@ const Material = {
       WHERE m.n_registro = ?
     `;
     const [results] = await db.promise().query(query, [n_registro]);
-    return results[0];
+    return results[0] || null;
   },
 
   // Atualizar material

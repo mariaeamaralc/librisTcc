@@ -3,7 +3,6 @@ const Categoria = require('../models/categoriaModel');
 const db = require('../config/database');
 
 const materialController = {
-
   // Renderiza a página de registro de material
   renderRegistrarMaterial: async (req, res) => {
     try {
@@ -15,8 +14,8 @@ const materialController = {
         userRole: req.session.userRole
       });
     } catch (err) {
-      console.error('Erro ao buscar categoria:', err);
-      res.status(500).send('Erro interno ao buscar categoria');
+      console.error('Erro ao buscar categorias:', err);
+      res.status(500).send('Erro interno ao buscar categorias');
     }
   },
 
@@ -86,25 +85,36 @@ const materialController = {
     }
   },
 
-  // Pesquisar acervo por termo (n_registro, título ou autor)
+  // Pesquisar no acervo
   renderPesquisarAcervo: async (req, res) => {
     try {
       const termo = req.query.query || '';
-      const pagina = parseInt(req.query.pagina) || 1;
+      const pagina = parseInt(req.query.pagina, 10) || 1;
       const limite = 10;
       const offset = (pagina - 1) * limite;
+
       const categorias = await Categoria.getAll();
 
-      let materiais, totalItens;
-
       if (termo) {
-        materiais = await Material.buscarPorTermoPaginado(termo, limite, offset);
-        totalItens = await Material.contarPorTermo(termo);
-      } else {
-        materiais = await Material.buscarTodosPaginado(limite, offset);
-        totalItens = await Material.contarTodos();
+        const result = await Material.buscarPorTermoPaginado(termo, pagina, limite);
+        const totalPaginas = Math.ceil(result.total / limite);
+
+        return res.render('material/index', {
+          materiais: result.rows,
+          categoria: categorias,
+          categoriaSelecionada: null,
+          paginaAtual: pagina,
+          totalPaginas,
+          success: req.query.success === '1',
+          userRole: req.session.userRole,
+          pendente: req.query.pendente,
+          erro: req.query.erro,
+          query: termo
+        });
       }
 
+      const materiais = await Material.buscarTodosPaginado(limite, offset);
+      const totalItens = await Material.contarTodos();
       const totalPaginas = Math.ceil(totalItens / limite);
 
       res.render('material/index', {
@@ -121,8 +131,8 @@ const materialController = {
       });
 
     } catch (err) {
-      console.error('Erro ao buscar acervo:', err);
-      res.status(500).send('Erro interno ao buscar acervo');
+      console.error('Erro ao pesquisar acervo:', err);
+      res.status(500).send('Erro interno ao pesquisar acervo');
     }
   },
 
@@ -131,7 +141,6 @@ const materialController = {
     const { n_registro } = req.params;
     try {
       const material = await Material.findById(n_registro);
-
       if (!material) return res.status(404).send('Material não encontrado');
 
       const [emprestimos] = await db.promise().query(
@@ -185,33 +194,33 @@ const materialController = {
     }
   },
 
-   excluirMaterial : async (req, res) => {
-  const { n_registro } = req.params;
+  // Excluir material
+  excluirMaterial: async (req, res) => {
+    const { n_registro } = req.params;
 
-  try {
-    // Verifica empréstimos ativos
-    const [rows] = await db.promise().query(
-      "SELECT * FROM emprestimos WHERE n_registro = ? AND data_devolucao IS NULL",
-      [n_registro]
-    );
+    try {
+      const [rows] = await db.promise().query(
+        "SELECT * FROM emprestimos WHERE n_registro = ? AND data_devolucao IS NULL",
+        [n_registro]
+      );
 
-    if (rows.length > 0) {
-      return res.redirect('/material/pesquisar?erro=Material não pode ser excluído pois está em situação de empréstimo ou pendente.');
+      if (rows.length > 0) {
+        return res.redirect('/material/pesquisar?erro=Material não pode ser excluído pois está em situação de empréstimo ou pendente.');
+      }
+
+      const resultado = await Material.delete(n_registro);
+
+      if (resultado.affectedRows === 0) {
+        return res.status(404).send('Material não encontrado');
+      }
+
+      res.redirect('/material/pesquisar?success=1');
+
+    } catch (err) {
+      console.error('Erro ao excluir material:', err);
+      res.status(500).send('Erro ao excluir material');
     }
-
-    const resultado = await Material.delete(n_registro);
-
-    if (resultado.affectedRows === 0) {
-      return res.status(404).send('Material não encontrado');
-    }
-
-    res.redirect('/material/pesquisar?success=1');
-
-  } catch (err) {
-    console.error('Erro ao excluir material:', err);
-    res.status(500).send('Erro ao excluir material');
   }
-}
 };
 
 module.exports = materialController;
