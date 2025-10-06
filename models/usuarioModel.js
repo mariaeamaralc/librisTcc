@@ -1,61 +1,52 @@
 const db = require('../config/database');
 
 const Usuario = {
-    create: (usuario, callback) => {
-        const query = 'INSERT INTO usuarios (matricula, nome, email, idade, senha, role) VALUES (?, ?, ?, ?, ?, ?)';
-        db.query(query, [usuario.matricula, usuario.nome, usuario.email, usuario.idade, usuario.senha, usuario.role], (err, results) => {
-            if (err) return callback(err);
-            callback(null, results.insertId);
-        });
-    },
+  // Listar todos os usuários com flag de empréstimo
+  getAll: (callback) => {
+    const query = `
+      SELECT u.id, u.matricula, u.nome, u.email,
+             CASE WHEN COUNT(e.id) > 0 THEN 'Sim' ELSE 'Não' END AS possuiEmprestimo
+      FROM usuarios u
+      LEFT JOIN emprestimos e ON e.usuario_id = u.id
+      GROUP BY u.id, u.matricula, u.nome, u.email
+    `;
+    db.query(query, callback);
+  },
 
-    findById: (id, callback) => {
-        const query = 'SELECT * FROM usuarios WHERE id = ?';
-        db.query(query, [id], (err, results) => {
-            if (err) return callback(err);
-            callback(null, results[0]);
-        });
-    },
+  // Buscar usuários por nome
+  search: (nome, callback) => {
+    const query = `
+      SELECT u.id, u.matricula, u.nome, u.email,
+             CASE WHEN COUNT(e.id) > 0 THEN 'Sim' ELSE 'Não' END AS possuiEmprestimo
+      FROM usuarios u
+      LEFT JOIN emprestimos e ON e.usuario_id = u.id
+      WHERE u.nome LIKE ?
+      GROUP BY u.id, u.matricula, u.nome, u.email
+    `;
+    db.query(query, [`%${nome}%`], callback);
+  },
 
-    findByMatricula: (matricula, callback) => {
-        const query = 'SELECT * FROM usuarios WHERE matricula = ?';
-        db.query(query, [matricula], (err, results) => {
-            if (err) return callback(err);
-            callback(null, results[0]);
-        });
-    },
+  // Buscar usuário por ID
+  findById: (id, callback) => {
+    db.query('SELECT * FROM usuarios WHERE id = ?', [id], callback);
+  },
 
-    update: (id, usuario, callback) => {
-        const query = 'UPDATE usuarios SET matricula = ?, nome = ?, email = ?, idade = ?, senha = ?, role = ? WHERE id = ?';
-        db.query(query, [usuario.matricula, usuario.nome, usuario.email, usuario.idade, usuario.senha, usuario.role, id], (err, results) => {
-            if (err) return callback(err);
-            callback(null, results);
-        });
-    },
+  // Criar usuário
+  create: (usuario, callback) => {
+    const sql = 'INSERT INTO usuarios (matricula, nome, email, senha) VALUES (?, ?, ?, ?)';
+    db.query(sql, [usuario.matricula, usuario.nome, usuario.email, usuario.senha], callback);
+  },
 
-    delete: (id, callback) => {
-        const query = 'DELETE FROM usuarios WHERE id = ?';
-        db.query(query, [id], (err, results) => {
-            if (err) return callback(err);
-            callback(null, results);
-        });
-    },
+  // Atualizar usuário
+  update: (id, usuario, callback) => {
+    const sql = 'UPDATE usuarios SET matricula = ?, nome = ?, email = ?, senha = ? WHERE id = ?';
+    db.query(sql, [usuario.matricula, usuario.nome, usuario.email, usuario.senha, id], callback);
+  },
 
-    getAll: (callback) => {
-        const query = 'SELECT * FROM usuarios';
-        db.query(query, (err, results) => {
-            if (err) return callback(err);
-            callback(null, results);
-        });
-    },
-
-    searchByName: (name, callback) => {
-        const query = 'SELECT * FROM usuarios WHERE nome LIKE ?';
-        db.query(query, [`%${name}%`], (err, results) => {
-            if (err) return callback(err);
-            callback(null, results);
-        });
-    }
+  // Deletar usuário
+  delete: (id, callback) => {
+    db.query('DELETE FROM usuarios WHERE id = ?', [id], callback);
+  }
 };
 
-module.exports = usuarioController;
+module.exports = Usuario;

@@ -6,7 +6,7 @@
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    max-width: 600px;
+    max-width: 700px;
   }
 
   h1 {
@@ -95,16 +95,13 @@
         <tr>
           <td><%= user.id %></td>
           <td><%= user.nome %></td>
-          <td><%= user.role %></td>
+          <td><%= user.possuiEmprestimo %></td>
           <td>
             <div class="action-buttons">
-              <a href="/usuarios/<%= user.id %>" class="btn btn-sm btn-custom">Ver</a>
-              <% if (userRole === 'admin') { %>
-                <a href="/usuarios/<%= user.id %>/edit" class="btn btn-sm btn-custom">Editar</a>
-                <form action="/usuarios/<%= user.id %>?_method=DELETE" method="POST">
+              <a href="/usuarios/<%= user.id %>/edit" class="btn btn-sm btn-custom">Ver</a>
+                <form action="/usuarios/<%= user.id %>?_method=DELETE" method="POST"></a>
                   <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
                 </form>
-              <% } %>
             </div>
           </td>
         </tr>

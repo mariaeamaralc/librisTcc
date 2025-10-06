@@ -33,7 +33,9 @@
     </div>
 
     <div class="text-center mt-3">
-      <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
+      <% if (userRole === 'admin') { %>
+    <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
+  <% } %>
       <a href="/material/pesquisar" class="btn btn-sm btn-custom">Voltar</a>
     </div>
   </div>

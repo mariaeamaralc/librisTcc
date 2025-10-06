@@ -9,7 +9,7 @@
   }
 
   .btn-custom:hover {
-    background-color:  #AD8D8D;
+    background-color: #AD8D8D;
     color: #000000;
   }
 
@@ -17,40 +17,108 @@
     height: 35px;
     font-size: 0.85rem;
   }
-</style>
 
-<div class="container-custom" style="margin-top: 20px;">
-  <div style="
-    max-width: 600px;
-    margin: auto;
+  .container-custom {
+    max-width: 650px;
+    margin: 20px auto;
     background-color: #283372;
     border-radius: 20px;
     box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
-    padding: 20px;
-  ">
-    <h2 class="text-center mb-3" style="color: #cebaba;">Editar Usuário</h2>
-    <form action="/usuarios/<%= user.id %>?_method=PUT" method="POST">
-      <div class="form-group">
-        <label for="matricula" style="color:#cebaba;">Matrícula</label>
-        <input type="text" class="form-control form-control-sm" id="matricula" name="matricula" value="<%= user.matricula %>" required>
-      </div>
-      <div class="form-group">
-        <label for="nome" style="color:#cebaba;">Nome</label>
-        <input type="text" class="form-control form-control-sm" id="nome" name="nome" value="<%= user.nome %>" required>
-      </div>
-      <div class="form-group">
-        <label for="email" style="color:#cebaba;">E-mail</label>
-        <input type="email" class="form-control form-control-sm" id="email" name="email" value="<%= user.email %>" required>
-      </div>
-      <div class="form-group">
-        <label for="idade" style="color:#cebaba;">Idade</label>
-        <input type="number" class="form-control form-control-sm" id="idade" name="idade" value="<%= user.idade %>" required>
-      </div>
-      <div class="form-group">
-        <label for="senha" style="color:#cebaba;">Senha</label>
-        <input type="password" class="form-control form-control-sm" id="senha" name="senha" value="<%= user.senha %>" required>
-      </div>
-      <button type="submit" class="btn btn-custom btn-block mt-3">Salvar</button>
-    </form>
-  </div>
+    padding: 25px;
+  }
+
+  h2 {
+    color: #cebaba;
+    text-align: center;
+  }
+
+  label {
+    color: #cebaba;
+  }
+
+  .info-section {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+  }
+
+  .info-section p {
+    color: #cebaba;
+    margin: 4px 0;
+    font-size: 0.9rem;
+  }
+
+  .emprestimo-box {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin-top: 15px;
+  }
+
+  .emprestimo-box p {
+    color: #cebaba;
+    font-size: 0.9rem;
+    margin: 3px 0;
+  }
+</style>
+
+<div class="container-custom">
+  <h2 class="mb-3">Editar Usuário</h2>
+
+  <form action="/usuarios/<%= user.id %>?_method=PUT" method="POST">
+    <div class="form-group">
+      <label for="matricula">Matrícula</label>
+      <input 
+        type="text" 
+        class="form-control form-control-sm" 
+        id="matricula" 
+        name="matricula" 
+        value="<%= user.matricula %>" 
+        required>
+    </div>
+
+    <div class="form-group">
+      <label for="nome">Nome</label>
+      <input 
+        type="text" 
+        class="form-control form-control-sm" 
+        id="nome" 
+        name="nome" 
+        value="<%= user.nome %>" 
+        required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input 
+        type="email" 
+        class="form-control form-control-sm" 
+        id="email" 
+        name="email" 
+        value="<%= user.email %>" 
+        required>
+    </div>
+
+    <div class="info-section">
+      <p><strong>Tipo de Usuário:</strong> <%= user.tipo %></p>
+      <p><strong>ID:</strong> <%= user.id %></p>
+      <p><strong>Data de Cadastro:</strong> <%= user.data_criacao ? user.data_criacao.toISOString().split('T')[0] : '—' %></p>
+    </div>
+
+    <div class="emprestimo-box">
+      <h5 style="color: #AD8D8D;">Empréstimo</h5>
+      <% if (emprestimo) { %>
+        <p><strong>Livro:</strong> <%= emprestimo.titulo %></p>
+        <p><strong>Data de devolução:</strong> 
+          <%= emprestimo.data_devolucao ? emprestimo.data_devolucao.toISOString().split('T')[0] : 'Data não registrada' %>
+        </p>
+      <% } else { %>
+        <p>Não possui empréstimo ativo.</p>
+      <% } %>
+    </div>
+
+    <button type="submit" class="btn btn-custom btn-block mt-3">Salvar Alterações</button>
+    <a href="/usuarios" class="btn btn-custom btn-block mt-2">Voltar</a>
+  </form>
 </div>
