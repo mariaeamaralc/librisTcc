@@ -12,6 +12,6 @@ router.get('/dashboard', requerLogin, isAdmin, emprestimoController.dashboardAdm
 // Ações sobre empréstimos
 router.post('/autorizar/:id', requerLogin, isAdmin, emprestimoController.autorizarEmprestimo);
 router.post('/recusar/:id', requerLogin, isAdmin, emprestimoController.recusarEmprestimo);
-router.post('/:id/receber', requerLogin, isAdmin, emprestimoController.receberDevolucao);
+router.post('/receber/:id', requerLogin, isAdmin, emprestimoController.receberDevolucao);
 
 module.exports = router;

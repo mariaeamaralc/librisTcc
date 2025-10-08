@@ -118,14 +118,12 @@ exports.receberDevolucao = async (req, res) => {
       [id]
     );
 
-    // Marca o livro como disponível novamente
-    // Caso tenha um campo 'disponivel' na tabela material
     await db.promise().query(
       'UPDATE material SET disponivel = 1 WHERE n_registro = (SELECT n_registro FROM emprestimos WHERE id = ?)',
       [id]
     );
 
-    res.redirect('/admin/dashboard');
+    res.redirect('/dashboard');
   } catch (err) {
     console.error('Erro ao receber devolução:', err);
     res.status(500).send('Erro ao processar devolução');
