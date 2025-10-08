@@ -36,38 +36,42 @@ exports.listarPendentes = async (req, res) => {
 };
 // Admin autoriza empréstimo e define data de devolução
 exports.autorizarEmprestimo = async (req, res) => {
-  const { id } = req.params;
-  try {
-    // Define data de devolução para 15 dias a partir de hoje
-    const hoje = new Date();
-    const data_devolucao = new Date(hoje.setDate(hoje.getDate() + 15));
-    const dataFormatada = data_devolucao.toISOString().split('T')[0];
+  const { id } = req.params;
+  try {
+    // Define data de devolução para 15 dias a partir de hoje
+    const hoje = new Date();
+    const data_devolucao = new Date(hoje.setDate(hoje.getDate() + 15));
+    const dataFormatada = data_devolucao.toISOString().split('T')[0];
 
-    await db.promise().query(
-      'UPDATE emprestimos SET status = "autorizado", data_devolucao = ? WHERE id = ?',
-      [dataFormatada, id]
-    );
-    res.redirect('/emprestimos/pendentes');
-  } catch (err) {
-    console.error('Erro ao autorizar empréstimo:', err);
-    res.status(500).send('Erro ao autorizar empréstimo');
-  }
+    await db.promise().query(
+      'UPDATE emprestimos SET status = "autorizado", data_devolucao = ? WHERE id = ?',
+      [dataFormatada, id]
+    );
+    
+    // CORREÇÃO AQUI: Redireciona para o dashboard admin, preferencialmente com uma mensagem de sucesso.
+    // Use '/emprestimos/dashboard' se for a rota que você definiu para o dashboard admin
+    res.redirect('/dashboard?success=' + encodeURIComponent('Empréstimo autorizado com sucesso!'));
+  } catch (err) {
+    console.error('Erro ao autorizar empréstimo:', err);
+    res.status(500).send('Erro ao autorizar empréstimo');
+  }
 };
 
+// Admin recusa empréstimo
 exports.recusarEmprestimo = async (req, res) => {
-  const { id } = req.params;
-  try {
-    await db.promise().query(
-      'UPDATE emprestimos SET status = "recusado" WHERE id = ?',
-      [id]
-    );
-    res.redirect('/emprestimos/pendentes');
-  } catch (err) {
-    console.error('Erro ao recusar empréstimo:', err);
-    res.status(500).send('Erro ao recusar empréstimo');
-  }
+  const { id } = req.params;
+  try {
+    await db.promise().query(
+      'UPDATE emprestimos SET status = "recusado" WHERE id = ?',
+      [id]
+    );
+    
+    res.redirect('/dashboard?success=' + encodeURIComponent('Empréstimo recusado com sucesso!'));
+  } catch (err) {
+    console.error('Erro ao recusar empréstimo:', err);
+    res.status(500).send('Erro ao recusar empréstimo');
+  }
 };
-
 // Dashboard admin com todos os empréstimos
 exports.dashboardAdmin = async (req, res) => {
   try {

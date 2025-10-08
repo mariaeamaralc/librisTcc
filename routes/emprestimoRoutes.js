@@ -7,11 +7,11 @@ const { requerLogin, isAdmin } = require('../middlewares/auth');
 router.post('/solicitar', requerLogin, emprestimoController.solicitarEmprestimo);
 
 // Dashboard admin
-router.get('/admin/dashboard', requerLogin, isAdmin, emprestimoController.dashboardAdmin);
+router.get('/dashboard', requerLogin, isAdmin, emprestimoController.dashboardAdmin);
 
 // Ações sobre empréstimos
-router.post('/:id/autorizar', requerLogin, isAdmin, emprestimoController.autorizarEmprestimo);
-router.post('/:id/recusar', requerLogin, isAdmin, emprestimoController.recusarEmprestimo);
+router.post('/autorizar/:id', requerLogin, isAdmin, emprestimoController.autorizarEmprestimo);
+router.post('/recusar/:id', requerLogin, isAdmin, emprestimoController.recusarEmprestimo);
 router.post('/:id/receber', requerLogin, isAdmin, emprestimoController.receberDevolucao);
 
 module.exports = router;
