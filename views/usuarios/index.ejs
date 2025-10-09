@@ -1,111 +1,154 @@
-<% /* Estilos só para a página de usuários */ %>
-<style>
-  .container-custom {
-    background-color: #283372;
-    margin: 10px auto;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    max-width: 700px;
-  }
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Libris | Usuários</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <% /* Estilos só para a página de usuários */ %>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #151F55, #AD8D8D);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #cebaba;
+        }
 
-  h1 {
-    color: #cebaba;
-    text-align: center;
-    margin-bottom: 30px;
-  }
+        .container-custom {
+            background-color: #283372;
+            margin: 10px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            max-width: 700px;
+        }
 
-  label, select, input, th, td {
-    color: #cebaba;
-  }
+        h1 {
+            color: #cebaba;
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-  .form-control {
-    background-color: #fff;
-    color: #000;
-    border: 1px solid #ccc;
-    font-size: 0.95rem;
-    padding: 8px 10px;
-    border-radius: 4px;
-    height: 38px;
-  }
+        label, select, input, th, td {
+            color: #cebaba;
+        }
 
-  .btn-custom {
-    background-color: #AD8D8D;
-    color: #fff;
-    border: none;
-  }
+        .form-control {
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            font-size: 0.95rem;
+            padding: 8px 10px;
+            border-radius: 4px;
+            height: 38px;
+        }
+        
+        /* NOVO ESTILO: Aumenta o input de busca */
+        .form-group-search .form-control {
+            font-size: 1.0rem; 
+            padding: 10px 12px;
+            height: 44px; /* Aumenta a altura */
+        }
 
-  .btn-custom:hover {
-    background-color: #151F55;
-    color: #AD8D8D;
-  }
+        .btn-custom {
+            background-color: #AD8D8D;
+            color: #fff;
+            border: none;
+        }
 
-  .table th, .table td {
-    vertical-align: middle;
-    border: 1px solid rgba(206, 186, 186, 0.3);
-    padding: 6px 10px;
-    font-size: 0.85rem;
-    line-height: 1.2;
-  }
+        .btn-custom:hover {
+            background-color: #151F55;
+            color: #AD8D8D;
+        }
+        
+        /* NOVO ESTILO: Botão maior para a busca */
+        .btn-lg-custom {
+            padding: 8px 16px; 
+            font-size: 1rem;
+            height: 44px; /* Garante que fique alinhado com o input */
+        }
 
-  .table th {
-    background-color: rgba(255, 255, 255, 0.06);
-  }
+        .table th, .table td {
+            vertical-align: middle;
+            border: 1px solid rgba(206, 186, 186, 0.3);
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            line-height: 1.2;
+        }
 
-  .btn-sm {
-    padding: 4px 8px;
-    font-size: 0.8rem;
-  }
+        .table th {
+            background-color: rgba(255, 255, 255, 0.06);
+        }
 
-  .action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.8rem;
+        }
 
-  .action-buttons form {
-    margin: 0;
-  }
-</style>
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .action-buttons form {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
 
 <div class="container-custom mt-5">
-  <h1 class="mb-4 text-center">Lista de Usuários</h1>
+    <h1 class="mb-4 text-center">Lista de Usuários</h1>
 
-  <!-- Formulário de busca -->
-  <form id="searchForm" method="GET" action="/usuarios" class="mb-4" style="max-width: 500px; margin: 0 auto;">
-    <div class="form-group">
-      <label for="search">Buscar Usuário:</label>
-      <input type="text" id="search" name="search" class="form-control" placeholder="Digite o nome do usuário" autocomplete="off">
-    </div>
-    <button type="submit" class="btn btn-sm btn-custom">Buscar</button>
-  </form>
-
-  <!-- Tabela de usuários -->
-  <table class="table table-bordered table-hover mt-4">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Possui Empréstimo</th>
-        <th>Opções</th>
-      </tr>
-    </thead>
-    <tbody id="userTableBody">
-      <% usuarios.forEach(user => { %>
-        <tr>
-          <td><%= user.id %></td>
-          <td><%= user.nome %></td>
-          <td><%= user.possuiEmprestimo %></td>
-          <td>
-            <div class="action-buttons">
-              <a href="/usuarios/<%= user.id %>/edit" class="btn btn-sm btn-custom">Ver</a>
-                <form action="/usuarios/<%= user.id %>?_method=DELETE" method="POST"></a>
-                  <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
-                </form>
+    <div class="d-flex justify-content-start mb-4">
+        <form id="searchForm" method="GET" action="/usuarios" style="max-width: 450px;">
+            <div class="form-group mb-2 form-group-search">
+                <label for="search">Buscar Usuário:</label>
+                <div class="input-group">
+                     <input type="text" id="search" name="search" class="form-control" placeholder="Digite o nome do usuário" autocomplete="off">
+                     <div class="input-group-append">
+                        <button type="submit" class="btn btn-custom btn-lg-custom">Buscar</button>
+                    </div>
+                </div>
             </div>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+        </form>
+    </div>
+
+    <table class="table table-bordered table-hover mt-4">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Possui Empréstimo</th>
+                <th>Opções</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            <% usuarios.forEach(user => { %>
+                <tr>
+                    <td><%= user.id %></td>
+                    <td><%= user.nome %></td>
+                    <td><%= user.possuiEmprestimo %></td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="/usuarios/<%= user.id %>/edit" class="btn btn-sm btn-custom">Ver/Editar</a>
+                            <form action="/usuarios/<%= user.id %>?_method=DELETE" method="POST">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

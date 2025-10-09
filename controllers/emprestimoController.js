@@ -38,18 +38,16 @@ exports.listarPendentes = async (req, res) => {
 exports.autorizarEmprestimo = async (req, res) => {
   const { id } = req.params;
   try {
-    // Define data de devolução para 15 dias a partir de hoje
-    const hoje = new Date();
-    const data_devolucao = new Date(hoje.setDate(hoje.getDate() + 15));
-    const dataFormatada = data_devolucao.toISOString().split('T')[0];
+const hoje = new Date();
+const data_devolucao = new Date(hoje); 
+data_devolucao.setDate(hoje.getDate() + 15); 
+const dataFormatada = data_devolucao.toISOString().split('T')[0];
 
-    await db.promise().query(
-      'UPDATE emprestimos SET status = "autorizado", data_devolucao = ? WHERE id = ?',
-      [dataFormatada, id]
-    );
-    
-    // CORREÇÃO AQUI: Redireciona para o dashboard admin, preferencialmente com uma mensagem de sucesso.
-    // Use '/emprestimos/dashboard' se for a rota que você definiu para o dashboard admin
+await db.promise().query(
+  'UPDATE emprestimos SET status = "autorizado", data_devolucao = ? WHERE id = ?',
+  [dataFormatada, id]
+);
+
     res.redirect('/dashboard?success=' + encodeURIComponent('Empréstimo autorizado com sucesso!'));
   } catch (err) {
     console.error('Erro ao autorizar empréstimo:', err);
@@ -87,7 +85,7 @@ exports.dashboardAdmin = async (req, res) => {
 
     // Buscar empréstimos autorizados (para receber devolução)
     const [ativos] = await db.promise().query(`
-      SELECT e.id, e.n_registro, e.status, u.nome AS usuario_nome, m.titulo
+      SELECT e.id, e.n_registro, e.status, e.data_devolucao, u.nome AS usuario_nome, m.titulo
       FROM emprestimos e
       JOIN usuarios u ON e.usuario_id = u.id
       JOIN material m ON e.n_registro = m.n_registro
@@ -110,12 +108,12 @@ exports.dashboardAdmin = async (req, res) => {
 
 exports.receberDevolucao = async (req, res) => {
   const { id } = req.params;
+  const dataDevolucao = new Date().toISOString().split('T')[0];
 
   try {
-    // Atualiza o status do empréstimo para 'devolvido'
     await db.promise().query(
-      'UPDATE emprestimos SET status = "devolvido" WHERE id = ?',
-      [id]
+      'UPDATE emprestimos SET status = "devolvido", data_devolucao = ? WHERE id = ?',
+      [dataDevolucao, id] 
     );
 
     await db.promise().query(
@@ -123,7 +121,7 @@ exports.receberDevolucao = async (req, res) => {
       [id]
     );
 
-    res.redirect('/dashboard');
+    res.redirect('/dashboard?success=' + encodeURIComponent('Devolução recebida e material liberado com sucesso!'));
   } catch (err) {
     console.error('Erro ao receber devolução:', err);
     res.status(500).send('Erro ao processar devolução');

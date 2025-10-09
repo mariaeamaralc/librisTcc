@@ -1,261 +1,255 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Libris | Materiais</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #151F55, #AD8D8D);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #cebaba;
-    }
+    <meta charset="UTF-8">
+    <title>Libris | Materiais</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #151F55, #AD8D8D);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #cebaba;
+        }
 
-    .container-custom {
-      background-color: #283372;
-      margin: 10px auto;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
-      max-width: 1000px;
-    }
+        .container-custom {
+            background-color: #283372;
+            margin: 10px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            max-width: 1000px;
+        }
 
-    h1 {
-      color: #cebaba;
-      text-align: center;
-      margin-bottom: 30px;
-    }
+        h1 {
+            color: #cebaba;
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    label, select, input, th, td {
-      color: #cebaba;
-    }
+        label, select, input, th, td {
+            color: #cebaba;
+        }
 
-    .form-control,
-    select.form-control {
-      background-color: #fff;
-      color: #000;
-      border: 1px solid #ccc;
-      font-size: 0.95rem;
-      padding: 8px 10px;
-      border-radius: 4px;
-      height: 38px;
-      width: 100%;
-      box-sizing: border-box;
-    }
+        .form-control,
+        select.form-control {
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            font-size: 0.95rem;
+            padding: 8px 10px;
+            border-radius: 4px;
+            height: 38px;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-    .btn-custom {
-      background-color: #AD8D8D;
-      color: #fff;
-      border: none;
-    }
+        .btn-custom {
+            background-color: #AD8D8D;
+            color: #fff;
+            border: none;
+        }
 
-    .btn-custom:hover {
-      background-color: #283372;
-      color: #AD8D8D;
-    }
+        .btn-custom:hover {
+            background-color: #283372;
+            color: #AD8D8D;
+        }
 
-    .table th, .table td {
-      vertical-align: middle;
-      border: 1px solid rgba(206, 186, 186, 0.3);
-      padding: 6px 10px;
-      font-size: 0.85rem;
-      line-height: 1.2;
-    }
+        .table th, .table td {
+            vertical-align: middle;
+            border: 1px solid rgba(206, 186, 186, 0.3);
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            line-height: 1.2;
+        }
 
-    .table th {
-      background-color: rgba(255, 255, 255, 0.06);
-    }
+        .table th {
+            background-color: rgba(255, 255, 255, 0.06);
+        }
 
-    .btn-sm {
-      padding: 4px 8px;
-      font-size: 0.8rem;
-    }
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.8rem;
+        }
 
-    .alert {
-      background-color: #444;
-      border: 1px solid #AD8D8D;
-      color: #cebaba;
-    }
+        .alert {
+            background-color: #444;
+            border: 1px solid #AD8D8D;
+            color: #cebaba;
+        }
 
-    .btn-close {
-      filter: invert(1);
-    }
+        .btn-close {
+            filter: invert(1);
+        }
 
-    .action-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
 
-    .action-buttons form {
-      margin: 0;
-    }
+        .action-buttons form {
+            margin: 0;
+        }
 
-    .pagination .page-link {
-      background-color: #AD8D8D;
-      color: #fff;
-      border: none;
-      margin: 0 2px;
-      border-radius: 4px;
-      padding: 6px 12px;
-      font-size: 0.85rem;
-    }
+        .pagination .page-link {
+            background-color: #AD8D8D;
+            color: #fff;
+            border: none;
+            margin: 0 2px;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
 
-    .pagination .page-link:hover {
-      background-color: #283372;
-      color: #AD8D8D;
-    }
+        .pagination .page-link:hover {
+            background-color: #283372;
+            color: #AD8D8D;
+        }
 
-    .pagination .page-item.active .page-link {
-      background-color: #283372;
-      color: #AD8D8D;
-      border: none;
-    }
-  </style>
+        .pagination .page-item.active .page-link {
+            background-color: #283372;
+            color: #AD8D8D;
+            border: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container-custom">
-    <h1>Materiais Cadastrados</h1>
+    <div class="container-custom">
+        <h1>Materiais Cadastrados</h1>
 
-    <% const termoBusca = typeof query !== 'undefined' ? query : ''; %>
-
-    <% 
-      // Função para montar URL da paginação
-      function makeUrl(pagina) {
-        if (termoBusca) {
-          return `/material/pesquisar?query=${termoBusca}&pagina=${pagina}`;
-        } else if (categoriaSelecionada) {
-          return `/material?categoria=${categoriaSelecionada}&pagina=${pagina}`;
-        } else {
-          return `/material?pagina=${pagina}`;
-        }
-      }
-    %>
-
-    <% if (success) { %>
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Solicitação de empréstimo enviada! Aguarde autorização do administrador.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-      </div>
-    <% } %>
-
-    <% if (erro) { %>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <%= erro %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-      </div>
-    <% } %>
-
-    <!-- Formulário de Busca -->
-    <form method="GET" action="/material/pesquisar" class="d-flex flex-column mb-3" style="max-width: 500px;">
-      <label for="query" class="mb-1">Buscar por:</label>
-      <input type="text" id="query" name="query" class="form-control mb-2" placeholder="Digite número de registro, título ou autor" value="<%= termoBusca %>">
-      <button type="submit" class="btn btn-sm btn-custom align-self-start">Buscar</button>
-    </form>
-
-    <!-- Filtro por Categoria -->
-    <form method="GET" action="/material" class="d-flex align-items-center mb-4" style="max-width: 500px;">
-      <div class="form-group flex-grow-1 mr-2 mb-0">
-        <label for="categoria" class="mb-1">Filtrar por Categoria:</label>
-        <select id="categoria" name="categoria" class="form-control text-dark">
-          <option value="">Todas as categorias</option>
-          <% categoria.forEach(cat => { %>
-            <option value="<%= cat.id %>" <%= cat.id == categoriaSelecionada ? 'selected' : '' %>><%= cat.nome %></option>
-          <% }) %>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-0" style="padding-top: 26px;">
-        <button type="submit" class="btn btn-sm btn-custom">Filtrar</button>
-      </div>
-    </form>
-
-    <!-- Tabela de Materiais -->
-    <table class="table table-bordered mt-4">
-      <thead>
-        <tr>
-          <th>Número de Registro</th>
-          <th>Título</th>
-          <th>Autor</th>
-          <th>Editora</th>
-          <th>Idioma</th>
-          <th>Categoria</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% materiais.forEach(material => { %>
-          <tr>
-            <td><%= material.n_registro %></td>
-            <td>
-              <%= material.titulo %>
-              <% if (pendente && material.n_registro == pendente) { %>
-                <span class="badge badge-warning ml-2">Pendente</span>
-              <% } %>
-            </td>
-            <td><%= material.autor %></td>
-            <td><%= material.editora %></td>
-            <td><%= material.idioma %></td>
-            <td><%= material.categoria_nome %></td>
-            <td>
-              <div class="action-buttons">
-                <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Visualizar</a>
-                <% if (userRole === 'admin') { %>
-                  <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
-                  <form action="/material/<%= material.n_registro %>/delete" method="POST">
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">Excluir</button>
-                  </form>
-                <% } %>
-                <% if (userRole === 'user') { %>
-                  <form action="/solicitar" method="POST" style="display:inline;">
-                    <input type="hidden" name="n_registro" value="<%= material.n_registro %>">
-                    <button type="submit" class="btn btn-sm btn-success">Solicitar Empréstimo</button>
-                  </form>
-                <% } %>
-              </div>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-
-    <!-- Paginação -->
-    <nav aria-label="Navegação de página">
-      <ul class="pagination justify-content-center mt-4">
-        <% if (paginaAtual > 1) { %>
-          <li class="page-item">
-            <a class="page-link btn-custom" href="<%= makeUrl(1) %>">Primeira</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link btn-custom" href="<%= makeUrl(paginaAtual - 1) %>">&laquo; Anterior</a>
-          </li>
-        <% } %>
+        <% const termoBusca = typeof query !== 'undefined' ? query : ''; %>
 
         <% 
-          let maxPaginas = 5;
-          let inicio = Math.max(1, paginaAtual - Math.floor(maxPaginas / 2));
-          let fim = Math.min(totalPaginas, inicio + maxPaginas - 1);
-          if (fim - inicio < maxPaginas - 1) inicio = Math.max(1, fim - maxPaginas + 1);
+          // Função para montar URL da paginação
+          function makeUrl(pagina) {
+            if (termoBusca) {
+              return `/material/pesquisar?query=${termoBusca}&pagina=${pagina}`;
+            } else if (categoriaSelecionada) {
+              return `/material?categoria=${categoriaSelecionada}&pagina=${pagina}`;
+            } else {
+              return `/material?pagina=${pagina}`;
+            }
+          }
         %>
 
-        <% for (let i = inicio; i <= fim; i++) { %>
-          <li class="page-item <%= i === paginaAtual ? 'active' : '' %>">
-            <a class="page-link btn-custom" href="<%= makeUrl(i) %>"><%= i %></a>
-          </li>
+        <form method="GET" action="/material/pesquisar" class="d-flex flex-column mb-3" style="max-width: 500px;">
+            <label for="query" class="mb-1">Buscar por:</label>
+            <input type="text" id="query" name="query" class="form-control mb-2" placeholder="Digite número de registro, título ou autor" value="<%= termoBusca %>">
+            <button type="submit" class="btn btn-sm btn-custom align-self-start">Buscar</button>
+        </form>
+
+        <form method="GET" action="/material" class="d-flex align-items-center mb-4" style="max-width: 500px;">
+            <div class="form-group flex-grow-1 mr-2 mb-0">
+                <label for="categoria" class="mb-1">Filtrar por Categoria:</label>
+                <select id="categoria" name="categoria" class="form-control text-dark">
+                    <option value="">Todas as categorias</option>
+                    <% categoria.forEach(cat => { %>
+                        <option value="<%= cat.id %>" <%= cat.id == categoriaSelecionada ? 'selected' : '' %>><%= cat.nome %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="d-flex align-items-center mb-0" style="padding-top: 26px;">
+                <button type="submit" class="btn btn-sm btn-custom">Filtrar</button>
+            </div>
+        </form>
+
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>Número de Registro</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Editora</th>
+                    <th>Idioma</th>
+                    <th>Categoria</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% materiais.forEach(material => { %>
+                    <tr>
+                        <td><%= material.n_registro %></td>
+                        <td>
+                            <%= material.titulo %>
+                            <% if (pendente && material.n_registro == pendente) { %>
+                                <span class="badge badge-warning ml-2">Pendente</span>
+                            <% } %>
+                        </td>
+                        <td><%= material.autor %></td>
+                        <td><%= material.editora %></td>
+                        <td><%= material.idioma %></td>
+                        <td><%= material.categoria_nome %></td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Visualizar</a>
+                                <% if (userRole === 'admin') { %>
+                                    <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
+                                    <form action="/material/<%= material.n_registro %>/delete" method="POST">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">Excluir</button>
+                                    </form>
+                                <% } %>
+                                <% if (userRole === 'user') { %>
+                                    <form action="/solicitar" method="POST" style="display:inline;">
+                                        <input type="hidden" name="n_registro" value="<%= material.n_registro %>">
+                                        <button type="submit" class="btn btn-sm btn-success">Solicitar Empréstimo</button>
+                                    </form>
+                                <% } %>
+                            </div>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <nav aria-label="Navegação de página">
+            <ul class="pagination justify-content-center mt-4">
+                <% if (paginaAtual > 1) { %>
+                    <li class="page-item">
+                        <a class="page-link btn-custom" href="<%= makeUrl(1) %>">Primeira</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn-custom" href="<%= makeUrl(paginaAtual - 1) %>">&laquo; Anterior</a>
+                    </li>
+                <% } %>
+
+                <% 
+                  let maxPaginas = 5;
+                  let inicio = Math.max(1, paginaAtual - Math.floor(maxPaginas / 2));
+                  let fim = Math.min(totalPaginas, inicio + maxPaginas - 1);
+                  if (fim - inicio < maxPaginas - 1) inicio = Math.max(1, fim - maxPaginas + 1);
+                %>
+
+                <% for (let i = inicio; i <= fim; i++) { %>
+                    <li class="page-item <%= i === paginaAtual ? 'active' : '' %>">
+                        <a class="page-link btn-custom" href="<%= makeUrl(i) %>"><%= i %></a>
+                    </li>
+                <% } %>
+
+                <% if (paginaAtual < totalPaginas) { %>
+                    <li class="page-item">
+                        <a class="page-link btn-custom" href="<%= makeUrl(paginaAtual + 1) %>">Próxima &raquo;</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn-custom" href="<%= makeUrl(totalPaginas) %>">Última</a>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+    
+    <script>
+        // Verifica e exibe a mensagem de sucesso (success é a variável EJS que recebe a query string)
+        <% if (typeof success === 'string' && success) { %>
+            alert(decodeURIComponent('<%= success %>'));
         <% } %>
 
-        <% if (paginaAtual < totalPaginas) { %>
-          <li class="page-item">
-            <a class="page-link btn-custom" href="<%= makeUrl(paginaAtual + 1) %>">Próxima &raquo;</a>
-          </li>
-          <li class="page-item">
-            <a class="page-link btn-custom" href="<%= makeUrl(totalPaginas) %>">Última</a>
-          </li>
+        // Verifica e exibe a mensagem de erro (erro é a variável EJS que recebe a query string)
+        <% if (typeof erro === 'string' && erro) { %>
+            alert(decodeURIComponent('<%= erro %>'));
         <% } %>
-      </ul>
-    </nav>
-  </div>
+    </script>
 </body>
 </html>
