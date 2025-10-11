@@ -76,7 +76,7 @@
       <div class="alert alert-danger"><%= error %></div>
     <% } %>
 
-    <form action="/material/registrar" method="POST">
+    <form id="materialForm" action="/material/registrar" method="POST">
       <div class="row">
         <!-- Coluna Esquerda -->
         <div class="col-md-6">
@@ -161,5 +161,33 @@
       </div>
     </form>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Pega o formulário e o campo de registro pelo ID
+      const form = document.getElementById('materialForm');
+      const nRegistroInput = document.getElementById('n_registro');
+
+      if (form && nRegistroInput) {
+        form.addEventListener('submit', function(e) {
+          
+          // Pega o valor e remove espaços, garantindo que seja tratado como texto
+          const valor = String(nRegistroInput.value).trim(); 
+          
+          // Verifica se o tamanho do valor é diferente de 8
+          if (valor.length !== 8) {
+            
+            // Impede que o formulário seja enviado ao servidor
+            e.preventDefault(); 
+            
+            // Mostra o alerta que você solicitou
+            alert('O número de registro precisa ter 8 números. Por favor, corrija.');
+
+            // Devolve o foco ao campo
+            nRegistroInput.focus();
+          }
+        });
+      }
+    });
+</script>
 </body>
 </html>
