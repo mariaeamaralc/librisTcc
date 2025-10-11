@@ -35,6 +35,7 @@
             color: #cebaba;
         }
 
+
         .form-control {
             background-color: #fff;
             color: #000;
@@ -108,7 +109,15 @@
             <div class="form-group mb-2 form-group-search">
                 <label for="search">Buscar Usuário:</label>
                 <div class="input-group">
-                     <input type="text" id="search" name="search" class="form-control" placeholder="Digite o nome do usuário" autocomplete="off">
+                    <input 
+                            type="text" 
+                            id="search" 
+                            name="search" 
+                            class="form-control" 
+                            placeholder="Digite o nome do usuário" 
+                            autocomplete="off"
+                            value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+                        >
                      <div class="input-group-append">
                         <button type="submit" class="btn btn-custom btn-lg-custom">Buscar</button>
                     </div>

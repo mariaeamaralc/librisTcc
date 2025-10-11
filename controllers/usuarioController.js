@@ -1,64 +1,55 @@
 const db = require('../config/database');
 const Usuario = require('../models/usuarioModel');
 
-// Listar todos os usuários
+// Listar todos os usuários (com ou sem filtro de busca)
 exports.getAllUsuarios = (req, res) => {
-  const query = `
-    SELECT 
-      u.id, 
-      u.matricula, 
-      u.nome, 
-      u.email,
-      CASE 
-        WHEN COUNT(e.id) > 0 THEN 'Sim' 
-        ELSE 'Não' 
-      END AS possuiEmprestimo
-    FROM usuarios u
-    LEFT JOIN emprestimos e ON e.usuario_id = u.id
-    GROUP BY u.id, u.matricula, u.nome, u.email
-  `;
+    // 1. Pega o termo de busca da query string (ex: /usuarios?search=joao)
+    // Se não houver termo, 'termo' será uma string vazia ('').
+    const termo = req.query.search || ''; 
+    
+    // 2. Define as cláusulas WHERE e os parâmetros para o SQL
+    let whereClause = '';
+    let params = [];
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Erro ao buscar usuários:', err);
-      return res.status(500).send('Erro ao buscar usuários');
+    if (termo) {
+        // Se houver termo, adicionamos a cláusula WHERE e o parâmetro com o curinga
+        whereClause = `WHERE u.nome LIKE ?`;
+        params.push(`%${termo}%`);
     }
-    res.render('usuarios/index', {
-      usuarios: results,
-      userRole: req.session.role
-    });
-  });
-};
 
-// Buscar usuários por nome
-exports.searchUsuarios = (req, res) => {
-  const termo = req.query.search || '';
-  const query = `
-    SELECT 
-      u.id, 
-      u.matricula, 
-      u.nome, 
-      u.email,
-      CASE 
-        WHEN COUNT(e.id) > 0 THEN 'Sim' 
-        ELSE 'Não' 
-      END AS possuiEmprestimo
-    FROM usuarios u
-    LEFT JOIN emprestimos e ON e.usuario_id = u.id
-    WHERE u.nome LIKE ?
-    GROUP BY u.id, u.matricula, u.nome, u.email
-  `;
+    // 3. Monta a query SQL dinamicamente
+    const query = `
+        SELECT 
+            u.id, 
+            u.matricula, 
+            u.nome, 
+            u.email,
+            CASE 
+                WHEN COUNT(e.id) > 0 THEN 'Sim' 
+                ELSE 'Não' 
+            END AS possuiEmprestimo
+        FROM usuarios u
+        LEFT JOIN emprestimos e ON e.usuario_id = u.id
+        ${whereClause} 
+        GROUP BY u.id, u.matricula, u.nome, u.email
+        ORDER BY u.nome 
+    `;
 
-  db.query(query, [`%${termo}%`], (err, results) => {
-    if (err) {
-      console.error('Erro ao buscar usuários:', err);
-      return res.status(500).send('Erro ao buscar usuários');
-    }
-    res.render('usuarios/index', {
-      usuarios: results,
-      userRole: req.session.role
+    // 4. Executa a query com os parâmetros corretos (se houver)
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error('Erro ao buscar usuários:', err);
+            return res.status(500).send('Erro ao buscar usuários');
+        }
+        
+        // 5. Renderiza a view, passando o termo de busca de volta para o input
+        res.render('usuarios/index', {
+            usuarios: results,
+            userRole: req.session.role,
+            // Adiciona o termo de busca atual para preencher o input do frontend
+            searchTerm: termo 
+        });
     });
-  });
 };
 
 // Renderizar formulário de criação
