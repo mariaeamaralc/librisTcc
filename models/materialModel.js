@@ -43,27 +43,31 @@ const Material = {
   },
 
   // Busca todos os materiais com termo e paginação
-  buscarPorTermoPaginado: async (termo, page, limit) => {
+buscarPorTermoPaginado: async (termo, page, limit) => {
     const offset = (page - 1) * limit;
+    const termoBuscaParcial = `%${termo}%`; // Para Título, Autor, ISBN
 
+    // 1. QUERY DE BUSCA
     const [rows] = await db.promise().query(
       `SELECT m.*, c.nome AS categoria_nome
        FROM material m
        LEFT JOIN categoria c ON m.categoria = c.id
-       WHERE m.titulo LIKE ? OR m.autor LIKE ? OR m.ISBN LIKE ?
+       WHERE m.titulo LIKE ? OR m.autor LIKE ? OR m.ISBN LIKE ? OR m.n_registro = ?
        LIMIT ? OFFSET ?`,
-      [`%${termo}%`, `%${termo}%`, `%${termo}%`, limit, offset]
+      [termoBuscaParcial, termoBuscaParcial, termoBuscaParcial, termo, limit, offset]
+      // Note que o termo (variável original) é usado para n_registro (pesquisa exata)
     );
 
+    // 2. QUERY DE CONTAGEM
     const [countResult] = await db.promise().query(
       `SELECT COUNT(*) as total
        FROM material
-       WHERE titulo LIKE ? OR autor LIKE ? OR ISBN LIKE ?`,
-      [`%${termo}%`, `%${termo}%`, `%${termo}%`]
+       WHERE titulo LIKE ? OR autor LIKE ? OR ISBN LIKE ? OR n_registro = ?`,
+      [termoBuscaParcial, termoBuscaParcial, termoBuscaParcial, termo]
     );
 
     return { rows, total: countResult[0].total };
-  },
+},
 
   // Contar todos os materiais
   contarTodos: async () => {
