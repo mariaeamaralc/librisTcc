@@ -13,7 +13,7 @@
 
     .container-custom {
       background-color: #283372;
-      margin: 10px auto; /* margem ajustada para subir o container */
+      margin: 10px auto; 
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.6);
@@ -41,7 +41,7 @@
       font-size: 0.95rem;
       padding: 8px 10px;
       border-radius: 4px;
-      height: 38px;
+      height: 38px; 
       width: 100%;
       box-sizing: border-box;
     }
@@ -87,27 +87,29 @@
 
           <div class="form-group mb-2">
             <label for="titulo">Título:</label>
-            <input type="text" class="form-control" id="titulo" name="titulo"  placeholder="Digite aqui..." required value="<%= material.titulo || '' %>">
+            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Digite aqui..." required value="<%= material.titulo || '' %>">
           </div>
 
           <div class="form-group mb-2">
             <label for="autor">Autor:</label>
-            <input type="text" class="form-control" id="autor" name="autor"  placeholder="Digite aqui..." required value="<%= material.autor || '' %>">
+            <input type="text" class="form-control" id="autor" name="autor" placeholder="Digite aqui..." required value="<%= material.autor || '' %>">
           </div>
 
           <div class="form-group mb-2">
             <label for="editora">Editora:</label>
-            <input type="text" class="form-control" id="editora" name="editora"  placeholder="Digite aqui..." required value="<%= material.editora || '' %>">
+            <input type="text" class="form-control" id="editora" name="editora" placeholder="Digite aqui..." required value="<%= material.editora || '' %>">
           </div>
 
           <div class="form-group mb-2">
             <label for="isbn">ISBN:</label>
-            <input type="number" class="form-control" id="isbn" name="ISBN"  placeholder="Digite aqui..." value="<%= material.ISBN || '' %>">
+            <input type="text" class="form-control" id="isbn" name="ISBN" placeholder="Digite aqui..." 
+              pattern="[0-9]{13}" title="O ISBN deve conter exatamente 13 dígitos numéricos." inputmode="numeric"
+              value="<%= material.ISBN || '' %>">
           </div>
 
           <div class="form-group mb-2">
             <label for="idioma">Idioma:</label>
-            <input type="text" class="form-control" id="idioma" name="idioma"  placeholder="Digite aqui..." value="<%= material.idioma || '' %>">
+            <input type="text" class="form-control" id="idioma" name="idioma" placeholder="Digite aqui..." value="<%= material.idioma || '' %>">
           </div>
         </div>
 
@@ -115,33 +117,33 @@
         <div class="col-md-6">
           <div class="form-group mb-2">
             <label for="tipo">Tipo:</label>
-            <input type="text" class="form-control" id="tipo" name="tipo"  placeholder="Digite aqui..." value="<%= material.tipo || '' %>">
+            <input type="text" class="form-control" id="tipo" name="tipo" placeholder="Digite aqui..." value="<%= material.tipo || '' %>">
           </div>
 
           <div class="form-group mb-2">
             <label for="n_paginas">Número de Páginas:</label>
-            <input type="number" class="form-control" id="n_paginas" name="n_paginas"  placeholder="Digite aqui..." value="<%= material.n_paginas || '' %>">
+            <input type="number" class="form-control" id="n_paginas" name="n_paginas" placeholder="Digite aqui..." value="<%= material.n_paginas || '' %>">
           </div>
 
           <div class="form-group mb-2">
             <label for="ano_publi">Ano de Publicação:</label>
-            <input type="number" class="form-control" id="ano_publi" name="ano_publi"   placeholder="Digite aqui..." value="<%= material.ano_publi || '' %>">
+            <input type="number" class="form-control" id="ano_publi" name="ano_publi" placeholder="Digite aqui..." value="<%= material.ano_publi || '' %>">
           </div>
 
           <div class="form-group mb-2">
             <label for="data_aquisicao">Data de Aquisição:</label>
-            <input type="date" class="form-control" id="data_aquisicao"  placeholder="Digite aqui..." name="data_aquisicao"
+            <input type="date" class="form-control" id="data_aquisicao" name="data_aquisicao"
               value="<%= (material.data_aquisicao instanceof Date) ? material.data_aquisicao.toISOString().split('T')[0] : material.data_aquisicao || '' %>">
           </div>
 
           <div class="form-group mb-2">
             <label for="prateleira">Prateleira:</label>
-            <input type="text" class="form-control" id="prateleira" name="prateleira"  placeholder="Digite aqui..." value="<%= material.prateleira || '' %>">
+            <input type="text" class="form-control" id="prateleira" name="prateleira" placeholder="Digite aqui..." value="<%= material.prateleira || '' %>">
           </div>
 
           <div class="form-group mb-2">
             <label for="categoria">Categoria:</label>
-            <select class="form-control" id="categoria"  placeholder="Digite aqui..." name="categoria" required>
+            <select class="form-control" id="categoria" name="categoria" required>
               <option value="">Selecione</option>
               <% if (categoria && categoria.length > 0) { %>
                 <% categoria.forEach(cat => { %>
@@ -161,33 +163,37 @@
       </div>
     </form>
   </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Pega o formulário e o campo de registro pelo ID
       const form = document.getElementById('materialForm');
       const nRegistroInput = document.getElementById('n_registro');
+      const isbnInput = document.getElementById('isbn');
+      const ISBN_LENGTH = 13;
 
-      if (form && nRegistroInput) {
+      if (form && nRegistroInput && isbnInput) {
         form.addEventListener('submit', function(e) {
+          const registroValor = String(nRegistroInput.value).trim();
           
-          // Pega o valor e remove espaços, garantindo que seja tratado como texto
-          const valor = String(nRegistroInput.value).trim(); 
-          
-          // Verifica se o tamanho do valor é diferente de 8
-          if (valor.length !== 8) {
-            
-            // Impede que o formulário seja enviado ao servidor
-            e.preventDefault(); 
-            
-            // Mostra o alerta que você solicitou
+          if (registroValor.length !== 8) {
+            e.preventDefault();
             alert('O número de registro precisa ter 8 números. Por favor, corrija.');
-
-            // Devolve o foco ao campo
             nRegistroInput.focus();
+            return;
+          }
+
+          if (isbnInput.value.trim() !== '') {
+            const isbnValor = String(isbnInput.value).trim();
+
+            if (isbnValor.length !== ISBN_LENGTH) {
+              e.preventDefault();
+              alert(`O ISBN precisa ter ${ISBN_LENGTH} números. Por favor, corrija.`);
+              isbnInput.focus();
+            }
           }
         });
       }
     });
-</script>
+  </script>
 </body>
 </html>
