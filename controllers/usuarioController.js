@@ -45,8 +45,8 @@ exports.getAllUsuarios = (req, res) => {
         // 5. Renderiza a view, passando o termo de busca de volta para o input
         res.render('usuarios/index', {
             usuarios: results,
+            userId: req.session.userId, 
             userRole: req.session.role,
-            // Adiciona o termo de busca atual para preencher o input do frontend
             searchTerm: termo 
         });
     });
@@ -66,7 +66,7 @@ exports.renderEditForm = (req, res) => {
       return res.status(500).send('Erro ao buscar usuário');
     }
 
-    const user = results[0]; // pega o objeto do array retornado pelo db.query
+    const user = results[0]; 
 
     const queryEmprestimo = `
       SELECT m.titulo, e.data_devolucao
@@ -109,16 +109,72 @@ exports.updateUsuarios = (req, res) => {
   });
 };
 
-// Excluir usuário
+// Excluir usuário (AGORA COMPLETO E SEGURO)
 exports.deleteUsuarios = (req, res) => {
-  const id = req.params.id;
-  const query = 'DELETE FROM usuarios WHERE id = ?';
+    const userIdToDelete = req.params.id;
 
-  db.query(query, [id], (err) => {
-    if (err) {
-      console.error('Erro ao excluir usuário:', err);
-      return res.status(500).send('Erro ao excluir usuário');
-    }
-    res.redirect('/usuarios');
-  });
+    // 1. Inicia a Transação
+    db.beginTransaction(err => {
+        if (err) {
+            console.error('Erro ao iniciar transação:', err);
+            return res.status(500).send('Erro ao excluir usuário.');
+        }
+
+        // 2. Query para obter a role do usuário (necessário para deletar o perfil)
+        const findRoleQuery = 'SELECT role FROM users WHERE id = ?';
+        db.query(findRoleQuery, [userIdToDelete], (err, results) => {
+            if (err) return db.rollback(() => {
+                console.error('Erro ao buscar role:', err);
+                return res.status(500).send('Erro ao excluir usuário.');
+            });
+
+            if (results.length === 0) return db.commit(() => res.redirect('/usuarios')); // Usuário não existe, continua
+
+            const userRole = results[0].role;
+            let deleteProfileQuery = '';
+
+            // 3. Define qual tabela de perfil deletar
+            if (userRole === 'user') {
+                deleteProfileQuery = 'DELETE FROM usuarios WHERE id = ?';
+            } else if (userRole === 'admin') {
+                deleteProfileQuery = 'DELETE FROM administradores WHERE id = ?';
+            } else {
+                // Se a role for inválida, apenas tenta deletar o registro principal
+                deleteProfileQuery = null; 
+            }
+
+            // 4. Deleta o Perfil (se a role for válida)
+            if (deleteProfileQuery) {
+                db.query(deleteProfileQuery, [userIdToDelete], (err) => {
+                    if (err) return db.rollback(() => {
+                        console.error(`Erro ao deletar de ${userRole === 'user' ? 'usuarios' : 'administradores'}:`, err);
+                        return res.status(500).send('Erro ao excluir perfil do usuário.');
+                    });
+
+                    // 5. Deleta o registro principal (da tabela users)
+                    const deleteUserQuery = 'DELETE FROM users WHERE id = ?';
+                    db.query(deleteUserQuery, [userIdToDelete], (err) => {
+                        if (err) return db.rollback(() => {
+                            console.error('Erro ao deletar de users:', err);
+                            return res.status(500).send('Erro ao excluir conta principal.');
+                        });
+
+                        // 6. Confirma (Commit) a transação
+                        db.commit(() => res.redirect('/usuarios'));
+                    });
+                });
+            } else {
+                // Se o perfil não foi deletado (role desconhecida), tenta deletar só o users
+                const deleteUserQuery = 'DELETE FROM users WHERE id = ?';
+                db.query(deleteUserQuery, [userIdToDelete], (err) => {
+                    if (err) return db.rollback(() => {
+                        console.error('Erro ao deletar de users:', err);
+                        return res.status(500).send('Erro ao excluir conta principal.');
+                    });
+
+                    db.commit(() => res.redirect('/usuarios'));
+                });
+            }
+        });
+    });
 };
