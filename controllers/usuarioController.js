@@ -59,35 +59,62 @@ exports.renderCreateForm = (req, res) => {
 
 // Renderizar formulário de edição + empréstimo ativo
 exports.renderEditForm = (req, res) => {
-  const id = req.params.id;
+    const id = req.params.id;
+    let user = {};
 
-  Usuario.findById(id, (err, results) => {
-    if (err || results.length === 0) {
-      return res.status(500).send('Erro ao buscar usuário');
-    }
+    // 1. Busca os dados de login/email na tabela principal 'users'
+    const findUserQuery = 'SELECT username, email FROM users WHERE id = ?';
 
-    const user = results[0]; 
+    db.query(findUserQuery, [id], (errUser, userResults) => {
+        if (errUser || userResults.length === 0) {
+            console.error('Erro ao buscar dados do user:', errUser);
+            return res.status(404).send('Usuário não encontrado ou erro ao buscar dados principais.');
+        }
 
-    const queryEmprestimo = `
-      SELECT m.titulo, e.data_devolucao
-      FROM emprestimos e
-      JOIN material m ON e.n_registro = m.n_registro
-      WHERE e.usuario_id = ? AND e.status = 'ativo'
-      LIMIT 1
-    `;
+        // Combina o ID, email e username
+        user = { 
+            id: id, 
+            username: userResults[0].username, 
+            email: userResults[0].email 
+        };
+        
+        // 2. Busca os dados do perfil (matrícula, nome) na tabela 'usuarios'
+        Usuario.findById(id, (errPerfil, perfilResults) => {
+            if (errPerfil || perfilResults.length === 0) {
+                // Se o perfil não for encontrado, tratamos como erro 404 (embora o 'user' exista)
+                console.error('Erro ao buscar dados do perfil:', errPerfil);
+                return res.status(404).send('Dados do perfil (Matrícula, Nome) não encontrados.');
+            }
 
-    db.query(queryEmprestimo, [id], (err, result) => {
-      if (err) {
-        console.error('Erro ao buscar empréstimo:', err);
-        return res.render('usuarios/edit', { user, emprestimo: null });
-      }
+            // Adiciona Matrícula e Nome ao objeto user
+            user.matricula = perfilResults[0].matricula;
+            user.nome = perfilResults[0].nome;
 
-      const emprestimo = result.length > 0 ? result[0] : null;
-      res.render('usuarios/edit', { user, emprestimo });
+          // 3. Busca o empréstimo ativo
+            const queryEmprestimo = `
+                SELECT m.titulo, e.data_devolucao
+                FROM emprestimos e
+                JOIN material m ON e.n_registro = m.n_registro
+                -- MUDANÇA AQUI: Buscando status 'autorizado'
+                WHERE e.usuario_id = ? AND LOWER(e.status) = 'autorizado'
+                LIMIT 1
+            `;
+
+            db.query(queryEmprestimo, [id], (errEmprestimo, resultEmprestimo) => {
+                if (errEmprestimo) {
+                    console.error('Erro ao buscar empréstimo:', errEmprestimo);
+                    const emprestimo = null; 
+                    return res.render('usuarios/edit', { user, emprestimo });
+                }
+                
+                const emprestimo = (resultEmprestimo && resultEmprestimo.length > 0) ? resultEmprestimo[0] : null;
+                
+                // 4. Renderiza a view com TODOS os dados
+                res.render('usuarios/edit', { user, emprestimo });
+            });
+        });
     });
-  });
 };
-
 
 // Atualizar usuário
 exports.updateUsuarios = (req, res) => {

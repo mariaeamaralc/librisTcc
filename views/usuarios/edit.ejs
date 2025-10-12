@@ -101,9 +101,8 @@
     </div>
 
     <div class="info-section">
-      <p><strong>Tipo de Usuário:</strong> <%= user.tipo %></p>
       <p><strong>ID:</strong> <%= user.id %></p>
-      <p><strong>Data de Cadastro:</strong> <%= user.data_criacao ? user.data_criacao.toISOString().split('T')[0] : '—' %></p>
+     <p><strong>Login:</strong> <%= user.username %></p> 
     </div>
 
     <div class="emprestimo-box">
