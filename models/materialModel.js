@@ -87,31 +87,31 @@ buscarPorTermoPaginado: async (termo, page, limit) => {
     return results[0] || null;
   },
 
-  // Atualizar material
+ // Atualizar material
   update: async (n_registro, updatedMaterial) => {
-    const query = `
-      UPDATE material
-      SET titulo = ?, autor = ?, editora = ?, ano_publi = ?, ISBN = ?, idioma = ?,
-          n_paginas = ?, tipo = ?, prateleira = ?, data_aquisicao = ?, categoria = ?
-      WHERE n_registro = ?
-    `;
+   const query = `
+    UPDATE material
+     SET titulo = ?, autor = ?, editora = ?, ano_publi = ?, ISBN = ?, idioma = ?,
+      n_paginas = ?, tipo = ?, prateleira = ?, data_aquisicao = ?, categoria = ?
+       WHERE n_registro = ? `;
+
     const values = [
-      updatedMaterial.titulo,
-      updatedMaterial.autor,
-      updatedMaterial.editora,
-      updatedMaterial.ano_publi,
-      updatedMaterial.ISBN,
-      updatedMaterial.idioma,
-      updatedMaterial.n_paginas,
-      updatedMaterial.tipo,
-      updatedMaterial.prateleira,
-      updatedMaterial.data_aquisicao,
-      updatedMaterial.categoria,
-      n_registro
-    ];
-    const [result] = await db.promise().query(query, values);
-    return result;
-  },
+    updatedMaterial.titulo,
+    updatedMaterial.autor,
+    updatedMaterial.editora,
+    updatedMaterial.ano_publi,
+    updatedMaterial.ISBN || null, // Se for vazio, envia NULL (A validação no Controller impede que o ISBN obrigatório chegue aqui vazio)
+    updatedMaterial.idioma,
+    updatedMaterial.n_paginas || null, 
+    updatedMaterial.tipo,
+    updatedMaterial.prateleira,
+    updatedMaterial.data_aquisicao || null, 
+    updatedMaterial.categoria,
+    n_registro
+];
+ const [result] = await db.promise().query(query, values);
+return result;
+ },
 
   // Excluir material
   delete: async (n_registro) => {

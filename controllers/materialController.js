@@ -169,22 +169,42 @@ const materialController = {
         }
     },
 
-    // Atualizar material
-    updateMaterial: async (req, res) => {
-        const { n_registro } = req.params;
-        const updatedMaterial = req.body;
+// Atualizar material
+updateMaterial: async (req, res) => {
+    const { n_registro } = req.params;
+    const updatedMaterial = req.body;
 
-        try {
-            const resultado = await Material.update(n_registro, updatedMaterial);
-            if (!resultado) return res.status(404).send('Material não encontrado');
-
-            res.redirect('/material/pesquisar?success=' + encodeURIComponent('Material atualizado com sucesso!'));
-        } catch (err) {
-            console.error('Erro ao atualizar material:', err);
-            res.status(500).send('Erro interno ao atualizar material');
+    if (!updatedMaterial.ISBN || updatedMaterial.ISBN.trim() === '' || updatedMaterial.ISBN.length !== 13) {
+        const categorias = await Categoria.getAll();
+        const materialOriginal = await Material.findById(n_registro); 
+        let errorMessage = 'O campo ISBN é obrigatório.';
+        if (updatedMaterial.ISBN && updatedMaterial.ISBN.trim() !== '' && updatedMaterial.ISBN.length !== 13) {
+             errorMessage = 'O ISBN deve conter exatamente 13 dígitos.';
         }
-    },
 
+        return res.render('material/edit', {
+            material: { ...materialOriginal, ...updatedMaterial }, 
+            categoria: categorias,
+            error: errorMessage,
+            userRole: req.session.userRole
+        });
+    }
+    
+    // Garantir que a string seja limpa antes de enviar (remove espaços extras)
+    updatedMaterial.ISBN = updatedMaterial.ISBN.trim(); 
+
+    try {
+        const resultado = await Material.update(n_registro, updatedMaterial);
+        // ... (o resto do código de sucesso)
+        if (!resultado) return res.status(404).send('Material não encontrado');
+        res.redirect('/material/pesquisar?success=' + encodeURIComponent('Material atualizado com sucesso!'));
+        
+    } catch (err) {
+        // Tratamento de erro de chave estrangeira ou duplicidade
+        console.error('Erro ao atualizar material:', err);
+        res.status(500).send('Erro interno ao atualizar material');
+    }
+},
     // Excluir material
     excluirMaterial: async (req, res) => {
         const { n_registro } = req.params;
