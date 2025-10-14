@@ -203,45 +203,10 @@
                 <% }) %>
             </tbody>
         </table>
-
-        <nav aria-label="Navegação de página">
-            <ul class="pagination justify-content-center mt-4">
-                <% if (paginaAtual > 1) { %>
-                    <li class="page-item">
-                        <a class="page-link btn-custom" href="<%= makeUrl(1) %>">Primeira</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link btn-custom" href="<%= makeUrl(paginaAtual - 1) %>">&laquo; Anterior</a>
-                    </li>
-                <% } %>
-
-                <% 
-                  let maxPaginas = 5;
-                  let inicio = Math.max(1, paginaAtual - Math.floor(maxPaginas / 2));
-                  let fim = Math.min(totalPaginas, inicio + maxPaginas - 1);
-                  if (fim - inicio < maxPaginas - 1) inicio = Math.max(1, fim - maxPaginas + 1);
-                %>
-
-                <% for (let i = inicio; i <= fim; i++) { %>
-                    <li class="page-item <%= i === paginaAtual ? 'active' : '' %>">
-                        <a class="page-link btn-custom" href="<%= makeUrl(i) %>"><%= i %></a>
-                    </li>
-                <% } %>
-
-                <% if (paginaAtual < totalPaginas) { %>
-                    <li class="page-item">
-                        <a class="page-link btn-custom" href="<%= makeUrl(paginaAtual + 1) %>">Próxima &raquo;</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link btn-custom" href="<%= makeUrl(totalPaginas) %>">Última</a>
-                    </li>
-                <% } %>
-            </ul>
-        </nav>
-    </div>
+         </div>
     
     <script>
-        // Verifica e exibe a mensagem de sucesso (success é a variável EJS que recebe a query string)
+        
         <% if (typeof success === 'string' && success) { %>
             alert(decodeURIComponent('<%= success %>'));
         <% } %>

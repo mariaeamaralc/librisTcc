@@ -58,25 +58,26 @@ const materialController = {
     // Listar materiais filtrando por categoria
     listarMateriais: async (req, res) => {
         try {
-            const pagina = parseInt(req.query.pagina, 10) || 1;
-            const limite = 10;
             const categoriaSelecionada = req.query.categoria || null;
             const categorias = await Categoria.getAll();
-
-            const { materiais, totalItens } = await Material.getMateriaisPaginados(pagina, limite, categoriaSelecionada);
-            const totalPaginas = Math.ceil(totalItens / limite);
-
-            // Nota: Esta rota é a principal para a listagem (ex: /material)
+            const filtros = {};
+            
+            if (categoriaSelecionada) {
+                filtros.categoria = categoriaSelecionada;
+            }
+            
+            const materiais = await Material.buscarPorFiltros(filtros); 
+            
             res.render('material/index', {
                 materiais,
                 categoria: categorias,
                 categoriaSelecionada,
-                paginaAtual: pagina,
-                totalPaginas,
-                success: req.query.success || null, // Passa a mensagem de sucesso
+                paginaAtual: 1, 
+                totalPaginas: 1, 
+                success: req.query.success || null, 
                 userRole: req.session.userRole,
                 pendente: req.query.pendente,
-                erro: req.query.erro || null,       // Passa a mensagem de erro
+                erro: req.query.erro || null, 
                 query: ''
             });
 
@@ -90,39 +91,31 @@ const materialController = {
     renderPesquisarAcervo: async (req, res) => {
         try {
             const termo = req.query.query || '';
-            const pagina = parseInt(req.query.pagina, 10) || 1;
-            const limite = 10;
-            const offset = (pagina - 1) * limite;
+            let materiais;
 
             const categorias = await Categoria.getAll();
 
-            const renderData = async (materiais, totalItens) => {
-                const totalPaginas = Math.ceil(totalItens / limite);
-                res.render('material/index', {
-                    materiais,
-                    categoria: categorias,
-                    categoriaSelecionada: null,
-                    paginaAtual: pagina,
-                    totalPaginas,
-                    success: req.query.success || null,
-                    userRole: req.session.userRole,
-                    pendente: req.query.pendente,
-                    erro: req.query.erro || null,
-                    query: termo
-                });
-            };
-
             if (termo) {
-                const result = await Material.buscarPorTermoPaginado(termo, pagina, limite);
-                return renderData(result.rows, result.total);
+                materiais = await Material.buscarPorTermo(termo);
+            } else {
+                materiais = await Material.buscarTodos(); 
             }
 
-            const materiais = await Material.buscarTodosPaginado(limite, offset);
-            const totalItens = await Material.contarTodos();
-            return renderData(materiais, totalItens);
+            res.render('material/index', {
+                materiais,
+                categoria: categorias,
+                categoriaSelecionada: null,
+                paginaAtual: 1,
+                totalPaginas: 1,
+                success: req.query.success || null,
+                userRole: req.session.userRole,
+                pendente: req.query.pendente,
+                erro: req.query.erro || null,
+                query: termo
+            });
 
         } catch (err) {
-            console.error('Erro ao pesquisar acervo:', err);
+            console.error('Erro ao pesquisar acervo:', err); 
             res.status(500).send('Erro interno ao pesquisar acervo');
         }
     },
@@ -169,42 +162,42 @@ const materialController = {
         }
     },
 
-// Atualizar material
-updateMaterial: async (req, res) => {
-    const { n_registro } = req.params;
-    const updatedMaterial = req.body;
+    // Atualizar material
+    updateMaterial: async (req, res) => {
+        const { n_registro } = req.params;
+        const updatedMaterial = req.body;
 
-    if (!updatedMaterial.ISBN || updatedMaterial.ISBN.trim() === '' || updatedMaterial.ISBN.length !== 13) {
-        const categorias = await Categoria.getAll();
-        const materialOriginal = await Material.findById(n_registro); 
-        let errorMessage = 'O campo ISBN é obrigatório.';
-        if (updatedMaterial.ISBN && updatedMaterial.ISBN.trim() !== '' && updatedMaterial.ISBN.length !== 13) {
-             errorMessage = 'O ISBN deve conter exatamente 13 dígitos.';
+        if (!updatedMaterial.ISBN || updatedMaterial.ISBN.trim() === '' || updatedMaterial.ISBN.length !== 13) {
+            const categorias = await Categoria.getAll();
+            const materialOriginal = await Material.findById(n_registro); 
+            let errorMessage = 'O campo ISBN é obrigatório.';
+            if (updatedMaterial.ISBN && updatedMaterial.ISBN.trim() !== '' && updatedMaterial.ISBN.length !== 13) {
+                errorMessage = 'O ISBN deve conter exatamente 13 dígitos.';
+            }
+
+            return res.render('material/edit', {
+                material: { ...materialOriginal, ...updatedMaterial }, 
+                categoria: categorias,
+                error: errorMessage,
+                userRole: req.session.userRole
+            });
         }
-
-        return res.render('material/edit', {
-            material: { ...materialOriginal, ...updatedMaterial }, 
-            categoria: categorias,
-            error: errorMessage,
-            userRole: req.session.userRole
-        });
-    }
-    
-    // Garantir que a string seja limpa antes de enviar (remove espaços extras)
-    updatedMaterial.ISBN = updatedMaterial.ISBN.trim(); 
-
-    try {
-        const resultado = await Material.update(n_registro, updatedMaterial);
-        // ... (o resto do código de sucesso)
-        if (!resultado) return res.status(404).send('Material não encontrado');
-        res.redirect('/material/pesquisar?success=' + encodeURIComponent('Material atualizado com sucesso!'));
         
-    } catch (err) {
-        // Tratamento de erro de chave estrangeira ou duplicidade
-        console.error('Erro ao atualizar material:', err);
-        res.status(500).send('Erro interno ao atualizar material');
-    }
-},
+        updatedMaterial.ISBN = updatedMaterial.ISBN.trim(); 
+
+        try {
+            const resultado = await Material.update(n_registro, updatedMaterial);
+            
+            if (!resultado) return res.status(404).send('Material não encontrado');
+            res.redirect('/material/pesquisar?success=' + encodeURIComponent('Material atualizado com sucesso!'));
+            
+        } catch (err) {
+            
+            console.error('Erro ao atualizar material:', err);
+            res.status(500).send('Erro interno ao atualizar material');
+        }
+    },
+    
     // Excluir material
     excluirMaterial: async (req, res) => {
         const { n_registro } = req.params;
@@ -217,25 +210,22 @@ updateMaterial: async (req, res) => {
             );
 
             if (bloqueio[0].count > 0) {
-                // MENSAGEM DE ERRO FORMATADA
                 const erroMsg = 'Material não pode ser excluído pois está em situação de empréstimo ou pendente.';
                 return res.redirect('/material/pesquisar?erro=' + encodeURIComponent(erroMsg));
             }
 
-            // 2. EXCLUSÃO DO MATERIAL (assume que ON DELETE CASCADE está configurado no DB para o histórico)
+            // 2. EXCLUSÃO DO MATERIAL
             const resultado = await Material.delete(n_registro);
 
             if (resultado.affectedRows === 0) {
                 return res.status(404).send('Material não encontrado');
             }
 
-            // MENSAGEM DE SUCESSO FORMATADA
             const successMsg = 'Material excluído com sucesso!';
             res.redirect('/material/pesquisar?success=' + encodeURIComponent(successMsg));
 
         } catch (err) {
             console.error('Erro ao excluir material:', err);
-            // Redireciona com uma mensagem de erro genérica em caso de falha no DB/Servidor
             const erroMsg = 'Erro interno ao tentar excluir o material. Verifique as configurações do banco.';
             res.redirect('/material/pesquisar?erro=' + encodeURIComponent(erroMsg));
         }
