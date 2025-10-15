@@ -93,27 +93,6 @@
         .action-buttons form {
             margin: 0;
         }
-
-        .pagination .page-link {
-            background-color: #AD8D8D;
-            color: #fff;
-            border: none;
-            margin: 0 2px;
-            border-radius: 4px;
-            padding: 6px 12px;
-            font-size: 0.85rem;
-        }
-
-        .pagination .page-link:hover {
-            background-color: #283372;
-            color: #AD8D8D;
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #283372;
-            color: #AD8D8D;
-            border: none;
-        }
     </style>
 </head>
 <body>
@@ -123,16 +102,7 @@
         <% const termoBusca = typeof query !== 'undefined' ? query : ''; %>
 
         <% 
-          // Função para montar URL da paginação
-          function makeUrl(pagina) {
-            if (termoBusca) {
-              return `/material/pesquisar?query=${termoBusca}&pagina=${pagina}`;
-            } else if (categoriaSelecionada) {
-              return `/material?categoria=${categoriaSelecionada}&pagina=${pagina}`;
-            } else {
-              return `/material?pagina=${pagina}`;
-            }
-          }
+        // A função makeUrl foi removida
         %>
 
         <form method="GET" action="/material/pesquisar" class="d-flex flex-column mb-3" style="max-width: 500px;">
@@ -203,15 +173,15 @@
                 <% }) %>
             </tbody>
         </table>
-         </div>
+    </div>
     
     <script>
-        
+        // Lógica para exibir a notificação de sucesso (Solicitação recebida!)
         <% if (typeof success === 'string' && success) { %>
             alert(decodeURIComponent('<%= success %>'));
         <% } %>
 
-        // Verifica e exibe a mensagem de erro (erro é a variável EJS que recebe a query string)
+        // Verifica e exibe a mensagem de erro
         <% if (typeof erro === 'string' && erro) { %>
             alert(decodeURIComponent('<%= erro %>'));
         <% } %>

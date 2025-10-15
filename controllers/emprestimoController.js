@@ -2,37 +2,36 @@ const db = require('../config/database');
 const Emprestimo = require('../models/emprestimoModel'); 
 // Usuário solicita empréstimo
 exports.solicitarEmprestimo = (req, res) => {
-  const { n_registro } = req.body;
-  const usuario_id = req.session.userId; // ou req.session.usuarioId
-  const sql = 'INSERT INTO emprestimos (usuario_id, n_registro, status) VALUES (?, ?, "pendente")';
-  db.query(sql, [usuario_id, n_registro], (err) => {
-    console.error('Erro MySQL:', err);
-    if (err) return res.status(500).send('Erro ao solicitar empréstimo');
-    res.redirect('/material/pesquisar');
-  });
+    const { n_registro } = req.body;
+    const usuario_id = req.session.userId; 
+    const sql = 'INSERT INTO emprestimos (usuario_id, n_registro, status) VALUES (?, ?, "pendente")';
+    
+    db.query(sql, [usuario_id, n_registro], (err, results) => { 
+        if (err) {
+            console.error('Erro MySQL ao solicitar empréstimo:', err);
+            return res.status(500).send('Erro ao solicitar empréstimo');
+        }
+        const successMsg = 'Solicitação recebida! Aguarde a autorização do administrador.';
+        return res.redirect('/material/pesquisar?success=' + encodeURIComponent(successMsg));
+    });
 };
 
 // Admin vê solicitações pendentes
 exports.listarPendentes = async (req, res) => {
-  try {
-    const pagina = parseInt(req.query.pagina) || 1;
-    const limite = 10;
+    try {
+        const emprestimos = await Emprestimo.getAllPendentes(); 
 
-    // Buscar empréstimos pendentes do banco (usa o objeto retornado pelo model)
-    const { emprestimos, totalItens, totalPaginas } = await Emprestimo.getPendentesPaginados(pagina, limite);
-
-    res.render('emprestimos/pendentes', {
-      emprestimos,
-      paginaAtual: pagina,
-      totalPaginas,
-      totalItens,
-      success: req.query.success || undefined,
-      erro: req.query.erro || undefined
-    });
-  } catch (err) {
-    console.error(err);
-    res.send('Erro ao listar empréstimos pendentes');
-  }
+        res.render('emprestimos/pendentes', {
+            emprestimos,
+            paginaAtual: 1, 
+            totalPaginas: 1, 
+            success: req.query.success || undefined,
+            erro: req.query.erro || undefined
+        });
+    } catch (err) {
+        console.error(err);
+        res.send('Erro ao listar empréstimos pendentes');
+    }
 };
 // Admin autoriza empréstimo e define data de devolução
 exports.autorizarEmprestimo = async (req, res) => {
