@@ -1,0 +1,227 @@
+<div class="dashboard-container">
+  <h2>Detalhes do Material</h2>
+
+  <% 
+    let atrasado = false;
+    if (emprestimo && emprestimo.dataDevolucaoOriginal) {
+      const dataDevolucao = new Date(emprestimo.dataDevolucaoOriginal);
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0); 
+      dataDevolucao.setHours(0, 0, 0, 0); 
+      atrasado = hoje > dataDevolucao; 
+    }
+  %>
+
+  <% if (success) { %>
+    <div class="alert alert-success"><%= decodeURIComponent(success) %></div>
+  <% } %>
+  <% if (erro) { %>
+    <div class="alert alert-danger"><%= decodeURIComponent(erro) %></div>
+  <% } %>
+
+  <% if (emprestimo) { %>
+   
+    <div class="table-wrapper">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Data de Devolução</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= emprestimo.titulo %></td>
+            <td><%= emprestimo.autor %></td>
+            <td>
+              <span class="status-date <%= atrasado ? 'atrasado' : 'ativo' %>">
+                <%= emprestimo.dataDevolucaoFormatada %>
+              </span>
+            </td>
+            <td>
+              <span class="status-badge <%= atrasado ? 'badge-danger' : 'badge-success' %>">
+                <%= atrasado ? 'Em Atraso' : 'Ativo' %>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <% if (atrasado) { %>
+      <div class="alert alert-danger">
+        Não é possível solicitar a renovação. O livro está em atraso.  
+        Por favor, devolva o material na biblioteca.
+      </div>
+    <% } else { %>
+        <br>
+      <form action="/emprestimo/renovar" method="POST">
+        <input type="hidden" name="emprestimoId" value="<%= emprestimo.emprestimoId %>">
+        <button type="submit" class="btn btn-action">Renovar</button>
+        <p class="text-info">
+          *A renovação será aplicada imediatamente se solicitada antes da data de devolução.
+        </p>
+      </form>
+    <% } %>
+
+  <% } else { %>
+    <div class="alert alert-success">
+      Você não possui nenhum empréstimo ativo no momento.
+    </div>
+    <p class="text-info">
+      <a href="/material/pesquisar" class="link-acervo">Clique aqui</a> para navegar pelo acervo.
+    </p>
+  <% } %>
+</div>
+
+<style>
+body {
+  background: linear-gradient(135deg, #151F55, #AD8D8D);
+  color: #cebaba;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background-color: #283372;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.7);
+}
+
+h2, h3 {
+  color: #cebaba;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* ===== TABELA ===== */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+
+.table-custom {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #1e285e;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-custom thead tr {
+  background-color: #3b4a8a;
+}
+
+.table-custom th {
+  color: #AD8D8D;
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.table-custom td {
+  color: #AD8D8D;
+  padding: 14px;
+  text-align: center;
+  border-top: 1px solid #444;
+  font-size: 0.95rem;
+}
+
+.table-custom tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.3s ease;
+}
+
+/* ===== STATUS ===== */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.badge-success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.badge-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.status-date.ativo {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.status-date.atrasado {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* ===== BOTÕES ===== */
+.btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #AD8D8D;
+  color: #040404;
+  font-weight: normal;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #151F55;
+  color: #AD8D8D;
+}
+
+/* ===== ALERTAS ===== */
+.alert {
+  padding: 12px 18px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.alert-success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.alert-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* ===== TEXTO ===== */
+.text-info {
+  color: #cebaba;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.link-acervo {
+  color: #AD8D8D;
+  text-decoration: underline;
+}
+
+.link-acervo:hover {
+  color: #151414;
+}
+</style>
