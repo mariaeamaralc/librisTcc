@@ -5,21 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Libris | Login</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <style>
- body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  color: #cebaba;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
- 
-}
-html {
- background: linear-gradient(135deg, #151F55, #AD8D8D);
-}
+   
+      .password-container {
+        position: relative; /* Importante para o posicionamento do ícone */
+      }
+
+      .toggle-password {
+        position: absolute;
+        top: 50%; /* Centraliza verticalmente */
+        right: 10px; /* Distância da borda direita */
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #aaa; /* Cor do ícone */
+        z-index: 10; /* Garante que o ícone fique acima do input */
+      }
+
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        color: #cebaba;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      
+      }
+      html {
+      background: linear-gradient(135deg, #151F55, #AD8D8D);
+      }
+
     .login-container {
       background-color: #283372;
       padding: 40px;
@@ -31,6 +48,7 @@ html {
     }
 
     .form-control {
+      padding-right: 30px;
       background-color: #1a1a1a;
       color: #fff;
       border: 1px solid #555;
@@ -58,15 +76,15 @@ html {
       margin-right: auto;
     }
 
- .logo-title {
-  font-size: 1.4rem;       
-  font-weight:bold;        
-  margin-bottom: 25px;
-  color: #cebaba;
-  letter-spacing: 1.5px;    
-  text-align: left;
-  margin-left: 0;
-}
+    .logo-title {
+      font-size: 1.4rem;       
+      font-weight:bold;        
+      margin-bottom: 25px;
+      color: #cebaba;
+      letter-spacing: 1.5px;    
+      text-align: left;
+      margin-left: 0;
+    }
 
   </style>
 </head>
@@ -86,9 +104,12 @@ html {
     <input type="email" name="email" id="email" class="form-control" placeholder="Digite seu e-mail" required>
   </div>
   <div class="form-group text-left">
-    <label for="senha">Senha</label>
+  <label for="senha">Senha</label>
+  <div class="password-container">
     <input type="password" name="senha" id="senha" class="form-control" placeholder="Digite sua senha" required>
+    <i class="fas fa-eye toggle-password" id="togglePassword"></i>
   </div>
+</div>
       <button type="submit" class="btn btn-login btn-block">Entrar</button>
       <p class="mt-3 text-muted">
   Não possui conta? <a href="/register" class="text-light font-weight-bold">Cadastre-se!</a>
@@ -96,6 +117,22 @@ html {
 
     </form>
   </div>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('senha');
+
+    togglePassword.addEventListener('click', function() {
+      // Alterna o atributo 'type' entre 'password' e 'text'
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+
+      // Alterna a classe do ícone (olho aberto / olho fechado)
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+    });
+  });
+</script>
 </body>
 </html>
 

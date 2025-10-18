@@ -88,38 +88,41 @@ const materialController = {
     },
 
     // Pesquisar no acervo
-    renderPesquisarAcervo: async (req, res) => {
-        try {
-            const termo = req.query.query || '';
-            let materiais;
+  renderPesquisarAcervo: async (req, res) => {
+    try {
+        // Pega o termo de busca da URL
+        const termo = req.query.query ? req.query.query.trim() : ''; 
+        const categorias = await Categoria.getAll();
+        
+        let materiais;
 
-            const categorias = await Categoria.getAll();
+        // Busca os materiais com base no termo
+        if (termo) {
+            materiais = await Material.buscarPorTermo(termo);
+        } else {
+            // Se a busca estiver vazia, retorna todos os materiais
+            materiais = await Material.buscarTodos(); 
+        }
 
-            if (termo) {
-                materiais = await Material.buscarPorTermo(termo);
-            } else {
-                materiais = await Material.buscarTodos(); 
-            }
+        // 🔑 Apenas renderiza a página completa (material/index)
+        res.render('material/index', {
+            materiais,
+            categoria: categorias,
+            categoriaSelecionada: null, // Pode ser removido se não for usado, ou mantido como null
+            paginaAtual: 1,
+            totalPaginas: 1,
+            success: req.query.success || null,
+            userRole: req.session.userRole,
+            pendente: req.query.pendente,
+            erro: req.query.erro || null,
+            query: termo // Passa o termo de volta para preencher o campo de busca
+        });
 
-            res.render('material/index', {
-                materiais,
-                categoria: categorias,
-                categoriaSelecionada: null,
-                paginaAtual: 1,
-                totalPaginas: 1,
-                success: req.query.success || null,
-                userRole: req.session.userRole,
-                pendente: req.query.pendente,
-                erro: req.query.erro || null,
-                query: termo
-            });
-
-        } catch (err) {
-            console.error('Erro ao pesquisar acervo:', err); 
-            res.status(500).send('Erro interno ao pesquisar acervo');
-        }
-    },
-
+    } catch (err) {
+        console.error('Erro ao pesquisar acervo:', err);
+        res.status(500).send('Erro interno ao pesquisar acervo');
+    }
+},
     // Visualizar material
     verMaterial: async (req, res) => {
         const { n_registro } = req.params;
