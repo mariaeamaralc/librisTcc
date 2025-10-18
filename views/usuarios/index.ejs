@@ -1,163 +1,205 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Libris | Usuários</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <title>Libris | Usuários</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #151F55, #AD8D8D);
+      color: #cebaba;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .dashboard-container {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: #283372;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.7);
+    }
+
     
-    <% /* Estilos só para a página de usuários */ %>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #151F55, #AD8D8D);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #cebaba;
-        }
+     h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #cebaba;
+        text-transform: none; 
+     }
+    
 
-        .container-custom {
-            background-color: #283372;
-            margin: 10px auto;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.6);
-            max-width: 700px;
-        }
+    label {
+      color: #cebaba;
+      font-weight: 500;
+    }
 
-        h1 {
-            color: #cebaba;
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    .form-control {
+      background-color: #fff;
+      color: #000;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      height: 38px;
+      width: 500px; 
+      margin: 0 auto;
+    }
 
-        label, select, input, th, td {
-            color: #cebaba;
-        }
+    .btn {
+      background-color: #AD8D8D;
+      color: #040404;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
 
+    .btn:hover {
+      background-color: #151F55;
+      color: #AD8D8D;
+    }
 
-        .form-control {
-            background-color: #fff;
-            color: #000;
-            border: 1px solid #ccc;
-            font-size: 0.95rem;
-            padding: 8px 10px;
-            border-radius: 4px;
-            height: 38px;
-        }
-        
-       
-        .form-group-search .form-control {
-            font-size: 1.0rem; 
-            padding: 10px 12px;
-            height: 44px;
-        }
+     .table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+      margin-top: 25px;
+    }
 
-        .btn-custom {
-            background-color: #AD8D8D;
-            color: #fff;
-            border: none;
-        }
+    .table-custom {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background-color: #1e285e;
+      border-radius: 12px;
+      overflow: hidden;
+    }
 
-        .btn-custom:hover {
-            background-color: #151F55;
-            color: #AD8D8D;
-        }
-        
-       
-        .btn-lg-custom {
-            padding: 8px 16px; 
-            font-size: 1rem;
-            height: 44px; 
-        }
+    .table-custom thead tr {
+      background-color: #3b4a8a;
+    }
 
-        .table th, .table td {
-            vertical-align: middle;
-            border: 1px solid rgba(206, 186, 186, 0.3);
-            padding: 6px 10px;
-            font-size: 0.85rem;
-            line-height: 1.2;
-        }
+    .table-custom th {
+      color: #AD8D8D;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
+    }
 
-        .table th {
-            background-color: rgba(255, 255, 255, 0.06);
-        }
+    .table-custom td {
+      color: #AD8D8D;
+      padding: 14px;
+      text-align: center;
+      border-top: 1px solid #444;
+      font-size: 0.95rem;
+    }
 
-        .btn-sm {
-            padding: 4px 8px;
-            font-size: 0.8rem;
-        }
+    .table-custom tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      transition: background-color 0.3s ease;
+    }
 
-        .action-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
 
-        .action-buttons form {
-            margin: 0;
-        }
-    </style>
+    .btn-danger {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background-color: #151F55;
+      color: #dc3545;
+    }
+
+    /* ===== FORMULÁRIO DE BUSCA ===== */
+    .form-group-search {
+      margin-bottom: 25px;
+      text-align: left;
+
+    }
+
+    .input-group {
+        justify-content: center;
+        max-width: 400px; 
+        width: 100%;
+    }
+
+    .input-group .btn {
+      height: 38px;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="dashboard-container">
+    <h1>Lista de Usuários</h1>
 
-<div class="container-custom mt-5">
-    <h1 class="mb-4 text-center">Lista de Usuários</h1>
+    <form id="searchForm" method="GET" action="/usuarios">
+      <div class="form-group form-group-search">
+        <label for="search">Buscar Usuário:</label>
+        <div class="input-group">
+          <input 
+            type="text" 
+            id="search" 
+            name="search" 
+            class="form-control" 
+            placeholder="Digite o nome do usuário" 
+            autocomplete="off"
+            value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
+          >
+          <div class="input-group-append">
+            <button type="submit" class="btn">Buscar</button>
+          </div>
+        </div>
+      </div>
+    </form>
 
-    <div class="d-flex justify-content-start mb-4">
-        <form id="searchForm" method="GET" action="/usuarios" style="max-width: 450px;">
-            <div class="form-group mb-2 form-group-search">
-                <label for="search">Buscar Usuário:</label>
-                <div class="input-group">
-                    <input 
-                            type="text" 
-                            id="search" 
-                            name="search" 
-                            class="form-control" 
-                            placeholder="Digite o nome do usuário" 
-                            autocomplete="off"
-                            value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>"
-                        >
-                     <div class="input-group-append">
-                        <button type="submit" class="btn btn-custom btn-lg-custom">Buscar</button>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <table class="table table-bordered table-hover mt-4">
+    <div class="table-wrapper">
+      <table class="table-custom">
         <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Possui Empréstimo</th>
-                <th>Opções</th>
-            </tr>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Possui Empréstimo</th>
+            <th>Opções</th>
+          </tr>
         </thead>
         <tbody id="userTableBody">
-            <% usuarios.forEach(user => { %>
-                <tr>
-                    <td><%= user.id %></td>
-                    <td><%= user.nome %></td>
-                    <td><%= user.possuiEmprestimo %></td>
-                    <td>
-                        <div class="action-buttons">
-                            <a href="/usuarios/<%= user.id %>/edit" class="btn btn-sm btn-custom">Ver/Editar</a>
-                            <form action="/usuarios/<%= user.id %>?_method=DELETE" method="POST">
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            <% }) %>
+          <% usuarios.forEach(user => { %>
+            <tr>
+              <td><%= user.id %></td>
+              <td><%= user.nome %></td>
+              <td><%= user.possuiEmprestimo %></td>
+              <td>
+                <div class="action-buttons">
+                  <a href="/usuarios/<%= user.id %>/edit" class="btn btn-sm">Ver/Editar</a>
+                  <form action="/usuarios/<%= user.id %>?_method=DELETE" method="POST">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
         </tbody>
-    </table>
-</div>
+      </table>
+    </div>
+  </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

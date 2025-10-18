@@ -182,12 +182,10 @@ exports.recusarEmprestimo = async (req, res) => {
     }
 };
 
-// Dashboard admin com todos os empréstimos (MANTIDO)
 exports.dashboardAdmin = async (req, res) => {
     try {
-        // Buscar empréstimos pendentes
         const [pendentes] = await db.promise().query(`
-            SELECT e.id, e.n_registro, e.status, u.nome AS usuario_nome, m.titulo
+            SELECT e.id, e.n_registro, e.status, u.nome AS usuario_nome, u.matricula AS usuario_matricula, m.titulo
             FROM emprestimos e
             JOIN usuarios u ON e.usuario_id = u.id
             JOIN material m ON e.n_registro = m.n_registro
@@ -195,9 +193,9 @@ exports.dashboardAdmin = async (req, res) => {
             ORDER BY e.id DESC
         `);
 
-        // Buscar empréstimos autorizados (para receber devolução)
+
         const [ativos] = await db.promise().query(`
-            SELECT e.id, e.n_registro, e.status, e.data_devolucao, u.nome AS usuario_nome, m.titulo
+            SELECT e.id, e.n_registro, e.status, e.data_devolucao, u.nome AS usuario_nome, u.matricula AS usuario_matricula, m.titulo
             FROM emprestimos e
             JOIN usuarios u ON e.usuario_id = u.id
             JOIN material m ON e.n_registro = m.n_registro

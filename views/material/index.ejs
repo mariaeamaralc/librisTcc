@@ -31,9 +31,15 @@
       letter-spacing: 1px;
     }
 
+    .label-search {
+      color: #cebaba;
+      font-weight: 600;
+    }
+
     label {
       font-size: 1rem;
       margin-bottom: 4px;
+       color: #cebaba !important;
     }
 
     input.form-control, select.form-control {
@@ -49,52 +55,59 @@
     }
 
     .btn-custom {
-      background-color: #AD8D8D;
+      background-color: #AD8D8D!important;
       color: #0e0e0e;
       border: none;
       border-radius: 6px;
       padding: 5px 12px;
       font-size: 0.85rem;
-      font-weight: 400;
+      font-weight: 600;
       transition: 0.3s;
       letter-spacing: 0.3px;
     }
 
     .btn-custom:hover {
-      background-color: #283372;
-      color: #AD8D8D;
+      background-color: #283372 !important;
+      color: #AD8D8D ;
       box-shadow: 0 0 6px rgba(173, 141, 141, 0.5);
     }
 
-    .table {
-      background-color: rgba(255, 255, 255, 0.02);
-      border-collapse: separate;
-      border-spacing: 0;
-      width: 100%;
-      border-radius: 10px;
-      overflow: hidden;
+    .btn-success {
+       font-weight: 600;
+    }
+
+   .table {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-collapse: collapse; 
+    border-spacing: 0;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    border:none;
     }
 
     .table th {
-  background-color: #3b4a8a !important;
-  text-align: center;
-  font-weight: 500;
-  font-size: 0.9rem;
-  color: #AD8D8D;
-  padding: 10px;
-  border-bottom: 1px solid rgba(173, 141, 141, 0.4) !important; 
-}
+        background-color: #3b4a8a !important;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #AD8D8D;
+        padding: 10px;
+        border:none;
+        border-spacing: 0;
+        border-collapse: collapse; 
+    }
 
-.table td {
- background-color: #1e285e;
-  text-align: center;
-  padding: 10px 8px;
-  font-size: 0.88rem;
-  color: #AD8D8D;
-  border-bottom: 1px solid rgba(173, 141, 141, 0.4)  !important;
- 
-}
-
+    .table td {
+        border-collapse: collapse; 
+        border-spacing: 0;
+        background-color: #1e285e;
+        text-align: center;
+        padding: 10px 8px;
+        font-size: 0.88rem;
+        color: #AD8D8D;
+        border:none;
+    }
 
     .table tbody tr:hover {
       background-color: rgba(255, 255, 255, 0.06) !important;
@@ -126,37 +139,66 @@
 
     <% const termoBusca = typeof query !== 'undefined' ? query : ''; %>
 
-    <form method="GET" action="/material/pesquisar" class="mb-4" style="max-width: 500px;">
-      <label for="query">Buscar por:</label>
-      <div class="d-flex gap-2">
-        <input type="text" id="query" name="query" class="form-control" placeholder="Digite número de registro, título ou autor" value="<%= termoBusca %>">
-        <button type="submit" class="btn btn-custom">Buscar</button>
-      </div>
-    </form>
+  <div class="d-flex justify-content-center align-items-end flex-wrap mb-4" style="gap: 25px;">
+  <!-- Buscar por termo -->
+  <form method="GET" action="/material/pesquisar" class="flex-fill" style="max-width: 450px;">
+    <label for="query" class="label-search mb-2">Buscar por:</label>
+    <div class="d-flex align-items-center" style="gap: 10px;">
+      <input 
+        type="text" 
+        id="query" 
+        name="query" 
+        class="form-control" 
+        placeholder="Digite número de registro, título ou autor" 
+        value="<%= termoBusca %>" 
+        style="height: 40px;"
+      >
+      <button type="submit" class="btn btn-custom" style="height: 40px;">Buscar</button>
+    </div>
+  </form>
 
-    <form method="GET" action="/material" class="d-flex align-items-end mb-4" style="max-width: 500px;">
-      <div class="form-group flex-grow-1 mb-0 mr-2">
-        <label for="categoria">Filtrar por Categoria:</label>
-        <select id="categoria" name="categoria" class="form-control text-dark">
-          <option value="">Todas as categorias</option>
-          <% categoria.forEach(cat => { %>
-            <option value="<%= cat.id %>" <%= cat.id == categoriaSelecionada ? 'selected' : '' %>><%= cat.nome %></option>
-          <% }) %>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-custom">Filtrar</button>
-    </form>
+  <!-- Divisor translúcido -->
+  <div style="
+    width: 1.5px;
+    height: 65px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    align-self: center;
+  "></div>
 
-    <table class="table table-bordered mt-4">
+  <!-- Filtrar por categoria -->
+  <form method="GET" action="/material" class="flex-fill" style="max-width: 450px;">
+    <label for="categoria" class="label-search mb-2">Filtrar por Categoria:</label>
+    <div class="d-flex align-items-center" style="gap: 10px;">
+      <select 
+        id="categoria" 
+        name="categoria" 
+        class="form-control text-dark" 
+        style="height: 40px;"
+      >
+        <option value="">Todas as categorias</option>
+        <% categoria.forEach(cat => { %>
+          <option value="<%= cat.id %>" <%= cat.id == categoriaSelecionada ? 'selected' : '' %>>
+            <%= cat.nome %>
+          </option>
+        <% }) %>
+      </select>
+      <button type="submit" class="btn btn-custom" style="height: 40px;">Filtrar</button>
+    </div>
+  </form>
+</div>
+
+
+    <table class="table mt-4">
       <thead>
         <tr>
-          <th>N° Registro</th>
-          <th>Título</th>
-          <th>Autor</th>
-          <th>Editora</th>
-          <th>Idioma</th>
-          <th>Categoria</th>
-          <th>Ações</th>
+          <th>N° REGISTRO</th>
+          <th>TÍTULO</th>
+          <th>AUTOR</th>
+          <th>EDITORA</th>
+          <th>IDIOMA</th>
+          <th>CATEGORIA</th>
+          <th>AÇÕES</th>
         </tr>
       </thead>
       <tbody>

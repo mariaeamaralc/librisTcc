@@ -1,72 +1,83 @@
 <div class="dashboard-container">
-  <h2>Acompanhar Situação</h2>
+  <h1>Acompanhar Situação</h1>
 
   <% if (success) { %>
-    <div class="alert alert-success"><%= success %></div>
+    <div class="alert"><%= success %></div>
   <% } %>
   <% if (erro) { %>
-    <div class="alert alert-danger"><%= erro %></div>
+    <div class="alert"><%= erro %></div>
   <% } %>
 
   <h3>Empréstimos Pendentes</h3>
-  <table class="table-custom">
-    <thead>
-      <tr>
-        <th>Livro</th>
-        <th>Usuário</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% pendentes.forEach(e => { %>
+  <div class="table-wrapper">
+    <table class="table-custom">
+      <thead>
         <tr>
-          <td><%= e.titulo %></td>
-          <td><%= e.usuario_nome %></td>
-          <td>
-            <form action="/autorizar/<%= e.id %>" method="POST" style="display:inline;">
-              <button type="submit" class="btn btn-action">Autorizar</button>
-            </form>
-            <form action="/recusar/<%= e.id %>" method="POST" style="display:inline;">
-              <button type="submit" class="btn btn-action btn-danger">Recusar</button>
-            </form>
-          </td>
+          <th>Material</th>
+          <th>Usuário</th>
+          <th>Matrícula</th>
+          <th>Ações</th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% pendentes.forEach(e => { %>
+          <tr>
+            <td><%= e.titulo %></td>
+            <td><%= e.usuario_nome %></td>
+            <td><%= e.usuario_matricula %></td>
+            <td>
+              <div class="action-buttons">
+                <form action="/autorizar/<%= e.id %>" method="POST">
+                  <button type="submit" class="btn btn-custom">Autorizar</button>
+                </form>
+                <form action="/recusar/<%= e.id %>" method="POST">
+                  <button type="submit" class="btn btn-custom btn-danger">Recusar</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
 
   <h3>Empréstimos Ativos</h3>
-  <table class="table-custom">
-    <thead>
-      <tr>
-        <th>Livro</th>
-        <th>Usuário</th>
-        <th>Data de Devolução</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% ativos.forEach(e => { %>
+  <div class="table-wrapper">
+    <table class="table-custom">
+      <thead>
         <tr>
-          <td><%= e.titulo %></td>
-          <td><%= e.usuario_nome %></td>
-        <td>
-  <% if (e.data_devolucao) { %>
-    <%= new Date(e.data_devolucao).toISOString().split('T')[0] %>
-  <% } else { %>
-    N/A
-  <% } %>
-</td>
-
-          <td>
-           <form action="/receber/<%= e.id %>" method="POST" style="display:inline;">
-              <button type="submit" class="btn btn-action">Receber Devolução</button>
-            </form>
-          </td>
+          <th>Material</th>
+          <th>Usuário</th>
+          <th>Matrícula</th>
+          <th>Data de Devolução</th>
+          <th>Ações</th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% ativos.forEach(e => { %>
+          <tr>
+            <td><%= e.titulo %></td>
+            <td><%= e.usuario_nome %></td>
+            <td><%= e.usuario_matricula %></td>
+            <td>
+              <% if (e.data_devolucao) { %>
+                <%= new Date(e.data_devolucao).toISOString().split('T')[0] %>
+              <% } else { %>
+                N/A
+              <% } %>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <form action="/receber/<%= e.id %>" method="POST">
+                  <button type="submit" class="btn btn-custom">Receber Devolução</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>
@@ -83,40 +94,84 @@ body {
   margin: 40px auto;
   background-color: #283372;
   padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.7);
+  border-radius: 14px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.7);
 }
 
-h2, h3 {
-  color: #cebaba;
+h1 {
+  text-align: center;
   margin-bottom: 20px;
+  color: #cebaba;
+}
+
+h3 {
+  color: #cebaba;
+  margin-bottom: 9px;
+  font-size: 1.3rem;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+  margin-bottom: 30px;
 }
 
 .table-custom {
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 30px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #1e285e;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.table-custom th, .table-custom td {
-  border: 1px solid #555;
-  padding: 8px;
-  color: #fff;
-  text-align: left;
+.table-custom thead tr {
+  background-color: #3b4a8a;
 }
 
-.btn {
-  padding: 5px 10px;
-  margin-right: 5px;
+.table-custom th {
+  color: #AD8D8D;
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.table-custom td {
+  color: #AD8D8D;
+  padding: 14px;
+  text-align: center;
+  border-top: 1px solid #444;
+  font-size: 0.95rem;
+}
+
+.table-custom tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.3s ease;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-custom {
+  background-color: #AD8D8D;
+  color: #040404;
   border: none;
   border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
   cursor: pointer;
-  background-color: #AD8D8D;
-  color: #151F55;
-  transition: all 0.2s ease;
 }
 
-.btn:hover {
+.btn-custom:hover {
   background-color: #151F55;
   color: #AD8D8D;
 }
@@ -127,7 +182,7 @@ h2, h3 {
 }
 
 .btn-danger:hover {
-  background-color: #fff;
+  background-color: #151F55;
   color: #dc3545;
 }
 
@@ -135,15 +190,8 @@ h2, h3 {
   padding: 10px 15px;
   border-radius: 6px;
   margin-bottom: 20px;
-}
-
-.alert-success {
-  background-color: #28a745;
-  color: #fff;
-}
-
-.alert-danger {
-  background-color: #dc3545;
-  color: #fff;
+  background-color: #444;
+  border: 1px solid #AD8D8D;
+  color: #cebaba;
 }
 </style>
