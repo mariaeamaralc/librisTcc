@@ -9,17 +9,17 @@
   <style>
    
       .password-container {
-        position: relative; /* Importante para o posicionamento do ícone */
+        position: relative;
       }
 
       .toggle-password {
         position: absolute;
-        top: 50%; /* Centraliza verticalmente */
-        right: 10px; /* Distância da borda direita */
+        top: 50%; 
+        right: 10px; 
         transform: translateY(-50%);
         cursor: pointer;
-        color: #aaa; /* Cor do ícone */
-        z-index: 10; /* Garante que o ícone fique acima do input */
+        color: #aaa; 
+        z-index: 10; 
       }
 
       body {
@@ -123,11 +123,9 @@
     const passwordInput = document.getElementById('senha');
 
     togglePassword.addEventListener('click', function() {
-      // Alterna o atributo 'type' entre 'password' e 'text'
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordInput.setAttribute('type', type);
 
-      // Alterna a classe do ícone (olho aberto / olho fechado)
       this.classList.toggle('fa-eye');
       this.classList.toggle('fa-eye-slash');
     });

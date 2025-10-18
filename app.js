@@ -26,7 +26,9 @@ app.use(session({
   saveUninitialized: false,
 }));
 
-
+const favicon = require('serve-favicon');
+const faviconPath = path.join(__dirname, 'public', 'img', 'logoTitle.png'); 
+app.use(favicon(faviconPath));
 
 // Middleware global para controlar visibilidade de navbar e sessão
 app.use((req, res, next) => {
