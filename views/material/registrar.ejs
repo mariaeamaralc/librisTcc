@@ -100,7 +100,7 @@
           </div>
 
           <div class="form-group mb-2">
-            <label for="isbn">ISBN:</label>
+            <label for="isbn">ISBN-13:</label>
             <input type="text" class="form-control" id="isbn" name="ISBN" placeholder="Digite aqui..." 
               pattern="[0-9]{13}" title="O ISBN deve conter exatamente 13 dígitos numéricos." inputmode="numeric"
               value="<%= material.ISBN || '' %>">
@@ -115,7 +115,7 @@
         <div class="col-md-6">
           <div class="form-group mb-2">
             <label for="tipo">Tipo:</label>
-            <input type="text" class="form-control" id="tipo" name="tipo" placeholder="Digite aqui..." value="<%= material.tipo || '' %>">
+            <input type="text" class="form-control" id="tipo" name="tipo" placeholder="Livro, revista, etc..." value="<%= material.tipo || '' %>">
           </div>
 
           <div class="form-group mb-2">

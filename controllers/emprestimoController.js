@@ -79,7 +79,7 @@ exports.renovarEmprestimo = async (req, res) => {
         dataDevolucaoOriginal.setHours(0, 0, 0, 0); 
         
         if (hoje > dataDevolucaoOriginal) {
-            const erroMsg = 'Renovação não permitida. O livro está em **atraso**. Por favor, realize a devolução o mais breve possível.';
+            const erroMsg = 'Renovação não permitida. O livro está em atraso. Por favor, realize a devolução o mais breve possível.';
             return res.redirect('/meu-emprestimo?erro=' + encodeURIComponent(erroMsg));
         }
 
@@ -96,7 +96,7 @@ exports.renovarEmprestimo = async (req, res) => {
         
         await db.promise().query(updateQuery, [dataFormatada, emprestimoId, userId]); 
 
-        const successMsg = `Renovação automática realizada com sucesso! Nova data de devolução: **${dataFormatada}**`;
+        const successMsg = `Renovação automática realizada com sucesso! Nova data de devolução: ${dataFormatada}`;
         return res.redirect('/meu-emprestimo?success=' + encodeURIComponent(successMsg));
 
     } catch (err) {
@@ -150,7 +150,7 @@ exports.recusarEmprestimo = async (req, res) => {
             [id]
         );
         
-        res.redirect('/dashboard?success=' + encodeURIComponent('Empréstimo recusado com sucesso!'));
+        res.redirect('/dashboard?success=' + encodeURIComponent('Empréstimo recusado'));
     } catch (err) {
         console.error('Erro ao recusar empréstimo:', err);
         res.status(500).send('Erro ao recusar empréstimo');
@@ -206,7 +206,7 @@ exports.receberDevolucao = async (req, res) => {
             [id]
         );
 
-        res.redirect('/dashboard?success=' + encodeURIComponent('Devolução recebida e material liberado com sucesso!'));
+        res.redirect('/dashboard?success=' + encodeURIComponent('Devolução recebida e material liberado!'));
     } catch (err) {
         console.error('Erro ao receber devolução:', err);
         res.status(500).send('Erro ao processar devolução');
