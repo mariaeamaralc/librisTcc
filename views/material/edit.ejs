@@ -5,6 +5,13 @@
       box-shadow: 0 0 20px rgba(0,0,0,0.6);
        max-width: 800px;">
   <h1 class="text-center mb-4">Editar Material</h1>
+  
+  <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Erro de Validação:</strong> <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <% } %>
 
   <form action="/material/<%= material.n_registro %>?_method=PUT" method="POST" style="max-width: 800px; margin: auto;">
     <div class="row g-3">
@@ -57,8 +64,8 @@
         <label for="data_aquisicao">Data de Aquisição:</label>
         <input type="date" class="form-control" id="data_aquisicao" name="data_aquisicao" 
                value="<%= (material.data_aquisicao instanceof Date) ? 
-                material.data_aquisicao.toISOString().split('T')[0] : 
-                (material.data_aquisicao || '') %>" required>
+               material.data_aquisicao.toISOString().split('T')[0] : 
+                (material.data_aquisicao || '') %>" required>
       </div>
 
       <div class="col-md-12">

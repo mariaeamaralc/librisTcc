@@ -20,56 +20,60 @@ const materialController = {
     },
 
     registrarMaterial: async (req, res) => {
-        const {
-            n_registro, idioma, ISBN, autor,
-            data_aquisicao, prateleira, titulo,
-            n_paginas, tipo, editora, ano_publi, categoria
-        } = req.body;
+    const {
+        n_registro, idioma, ISBN, autor,
+        data_aquisicao, prateleira, titulo,
+        n_paginas, tipo, editora, ano_publi, categoria
+    } = req.body;
 
-        if (!n_registro || !titulo) {
-            return res.status(400).send('Número de registro e título são obrigatórios');
-        }
+    if (!n_registro || !titulo) {
+        return res.status(400).send('Número de registro e título são obrigatórios');
+    }
 
-        const newMaterial = {
-            n_registro, idioma, ISBN, autor,
-            data_aquisicao, prateleira, titulo,
-            n_paginas, tipo, editora, ano_publi, categoria
-        };
+    const newMaterial = {
+        n_registro, idioma, ISBN, autor,
+        data_aquisicao, prateleira, titulo,
+        n_paginas, tipo, editora, ano_publi, categoria
+    };
 
-        try {
-            await Material.registrar(newMaterial);
-            res.redirect('/material/pesquisar?success=' + encodeURIComponent('Material registrado com sucesso!'));
-        } catch (err) {
-            const categorias = await Categoria.getAll(); 
+    try {
+        await Material.registrar(newMaterial);
+        res.redirect('/material/pesquisar?success=' + encodeURIComponent('Material registrado com sucesso!'));
+    } catch (err) {
+        const categorias = await Categoria.getAll(); 
 
-            if (err.code === 'ER_DUP_ENTRY') {
-                return res.render('material/registrar', {
-                    error: 'Número de registro já existe.',
-                    material: newMaterial,
-                    categoria: categorias,
-                    userRole: req.session.userRole
-                });
-            }
+        if (err.code === 'ER_DUP_ENTRY') {
             
-            if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED' && err.sqlMessage.includes('chk_n_registro_8_digitos_exatos')) {
-                return res.render('material/registrar', {
-                    error: 'O Número de Registro deve ser um número inteiro de 8 dígitos (entre 10.000.000 e 99.999.999).',
-                    material: newMaterial,
-                    categoria: categorias,
-                    userRole: req.session.userRole
-                });
-            }
-
-            console.error('Erro ao registrar material:', err);
+            newMaterial.n_registro = ''; 
+            newMaterial.ISBN = ''; 
+            
             return res.render('material/registrar', {
-                error: 'Erro desconhecido ao registrar material.',
+                error: 'Número de registro e/ou ISBN já existem. Por favor, insira novos valores.',
                 material: newMaterial,
                 categoria: categorias,
                 userRole: req.session.userRole
             });
         }
-    },
+        
+        if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED' && err.sqlMessage.includes('chk_n_registro_8_digitos_exatos')) {
+            
+            return res.render('material/registrar', {
+                error: 'O Número de Registro deve ser um número inteiro de 8 dígitos (entre 10.000.000 e 99.999.999).',
+                material: newMaterial,
+                categoria: categorias,
+                userRole: req.session.userRole
+            });
+        }
 
+        console.error('Erro ao registrar material:', err);
+        return res.render('material/registrar', {
+            error: 'Erro desconhecido ao registrar material.',
+            material: newMaterial,
+            categoria: categorias,
+            userRole: req.session.userRole
+        });
+    }
+},
     listarMateriais: async (req, res) => {
         try {
             const categoriaSelecionada = req.query.categoria || null;
@@ -173,40 +177,52 @@ const materialController = {
         }
     },
 
-    updateMaterial: async (req, res) => {
-        const { n_registro } = req.params;
-        const updatedMaterial = req.body;
+   updateMaterial: async (req, res) => {
+    const { n_registro } = req.params;
+    const updatedMaterial = req.body;
 
-        if (!updatedMaterial.ISBN || updatedMaterial.ISBN.trim() === '' || updatedMaterial.ISBN.length !== 13) {
+    if (!updatedMaterial.ISBN || updatedMaterial.ISBN.trim() === '' || updatedMaterial.ISBN.length !== 13) {
+        const categorias = await Categoria.getAll();
+        const materialOriginal = await Material.findById(n_registro); 
+        let errorMessage = 'O campo ISBN é obrigatório.';
+        if (updatedMaterial.ISBN && updatedMaterial.ISBN.trim() !== '' && updatedMaterial.ISBN.length !== 13) {
+            errorMessage = 'O ISBN deve conter exatamente 13 dígitos.';
+        }
+
+        return res.render('material/edit', {
+            material: { ...materialOriginal, ...updatedMaterial }, 
+            categoria: categorias,
+            error: errorMessage,
+            userRole: req.session.userRole
+        });
+    }
+    
+    updatedMaterial.ISBN = updatedMaterial.ISBN.trim(); 
+
+    try {
+        const resultado = await Material.update(n_registro, updatedMaterial);
+        
+        if (!resultado) return res.status(404).send('Material não encontrado');
+        res.redirect('/material/pesquisar?success=' + encodeURIComponent('Material atualizado com sucesso!'));
+        
+    } catch (err) {
+        
+        if (err.code === 'ER_DUP_ENTRY') {
             const categorias = await Categoria.getAll();
             const materialOriginal = await Material.findById(n_registro); 
-            let errorMessage = 'O campo ISBN é obrigatório.';
-            if (updatedMaterial.ISBN && updatedMaterial.ISBN.trim() !== '' && updatedMaterial.ISBN.length !== 13) {
-                errorMessage = 'O ISBN deve conter exatamente 13 dígitos.';
-            }
-
+            
             return res.render('material/edit', {
                 material: { ...materialOriginal, ...updatedMaterial }, 
                 categoria: categorias,
-                error: errorMessage,
+                error: 'O ISBN já está sendo utilizados por outro material. Por favor, corrija para continuar.',
                 userRole: req.session.userRole
             });
         }
         
-        updatedMaterial.ISBN = updatedMaterial.ISBN.trim(); 
-
-        try {
-            const resultado = await Material.update(n_registro, updatedMaterial);
-            
-            if (!resultado) return res.status(404).send('Material não encontrado');
-            res.redirect('/material/pesquisar?success=' + encodeURIComponent('Material atualizado com sucesso!'));
-            
-        } catch (err) {
-            
-            console.error('Erro ao atualizar material:', err);
-            res.status(500).send('Erro interno ao atualizar material');
-        }
-    },
+        console.error('Erro ao atualizar material:', err);
+        res.status(500).send('Erro interno ao atualizar material');
+    }
+},
     
     excluirMaterial: async (req, res) => {
         const { n_registro } = req.params;
