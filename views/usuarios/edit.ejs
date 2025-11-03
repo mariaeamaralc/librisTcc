@@ -63,6 +63,12 @@
   }
 </style>
 
+<% if (typeof alerta !== 'undefined' && alerta) { %>
+    <script>
+        alert('<%- alerta %>');
+    </script>
+<% } %>
+
 <div class="container-custom">
   <h2 class="mb-3">Editar Usuário</h2>
 

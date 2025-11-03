@@ -1,12 +1,11 @@
 const db = require('../config/database');
 const Usuario = require('../models/usuarioModel');
 
-// Listar todos os usuários (com ou sem filtro de busca)
+
 exports.getAllUsuarios = (req, res) => {
-    // 1. Pega o termo de busca da query string (ex: /usuarios?search=joao)
+    
     const termo = req.query.search || ''; 
     
-    // 2. Define as cláusulas WHERE e os parâmetros para o SQL
     let whereClause = '';
     let params = [];
 
@@ -15,7 +14,6 @@ exports.getAllUsuarios = (req, res) => {
         params.push(`%${termo}%`);
     }
 
-    // 3. Monta a query SQL dinamicamente
     const query = `
         SELECT 
             u.id, 
@@ -36,14 +34,12 @@ exports.getAllUsuarios = (req, res) => {
         ORDER BY u.nome 
     `;
 
-    // 4. Executa a query com os parâmetros corretos (se houver)
     db.query(query, params, (err, results) => {
         if (err) {
             console.error('Erro ao buscar usuários:', err);
             return res.status(500).send('Erro ao buscar usuários');
         }
         
-        // 5. Renderiza a view, passando o termo de busca de volta para o input
         res.render('usuarios/index', {
             usuarios: results,
             userId: req.session.userId, 
@@ -52,17 +48,15 @@ exports.getAllUsuarios = (req, res) => {
         });
     });
 };
-// Renderizar formulário de criação
+
 exports.renderCreateForm = (req, res) => {
   res.render('usuarios/create');
 };
 
-// Renderizar formulário de edição + empréstimo ativo
 exports.renderEditForm = (req, res) => {
     const id = req.params.id;
     let user = {};
 
-    // 1. Busca os dados de login/email na tabela principal 'users'
     const findUserQuery = 'SELECT username, email FROM users WHERE id = ?';
 
     db.query(findUserQuery, [id], (errUser, userResults) => {
@@ -71,26 +65,21 @@ exports.renderEditForm = (req, res) => {
             return res.status(404).send('Usuário não encontrado ou erro ao buscar dados principais.');
         }
 
-        // Combina o ID, email e username
         user = { 
             id: id, 
             username: userResults[0].username, 
             email: userResults[0].email 
         };
         
-        // 2. Busca os dados do perfil (matrícula, nome) na tabela 'usuarios'
         Usuario.findById(id, (errPerfil, perfilResults) => {
             if (errPerfil || perfilResults.length === 0) {
-                // Se o perfil não for encontrado, tratamos como erro 404 (embora o 'user' exista)
                 console.error('Erro ao buscar dados do perfil:', errPerfil);
                 return res.status(404).send('Dados do perfil (Matrícula, Nome) não encontrados.');
             }
 
-            // Adiciona Matrícula e Nome ao objeto user
             user.matricula = perfilResults[0].matricula;
             user.nome = perfilResults[0].nome;
 
-          // 3. Busca o empréstimo ativo
             const queryEmprestimo = `
                 SELECT m.titulo, e.data_devolucao
                 FROM emprestimos e
@@ -109,39 +98,102 @@ exports.renderEditForm = (req, res) => {
                 
                 const emprestimo = (resultEmprestimo && resultEmprestimo.length > 0) ? resultEmprestimo[0] : null;
                 
-                // 4. Renderiza a view com TODOS os dados
                 res.render('usuarios/edit', { user, emprestimo });
             });
         });
     });
 };
 
-// Atualizar usuário
 exports.updateUsuarios = (req, res) => {
-  const id = req.params.id;
-  const { nome, matricula, email } = req.body;
+    const id = req.params.id;
+    const { nome, matricula, email } = req.body;
 
-  const query = `
-    UPDATE usuarios
-    SET nome = ?, matricula = ?, email = ?
-    WHERE id = ?
-  `;
+    const MATRICULA_TAMANHO_ESPERADO = 7; // Corrigido para 7 dígitos
+    
+    const renderEditPageWithError = (errorMessage) => {
+        const fetchUserQuery = `
+            SELECT u.*, us.username, us.email 
+            FROM usuarios u
+            JOIN users us ON u.id = us.id
+            WHERE u.id = ?;
+        `;
 
-  db.query(query, [nome, matricula, email, id], (err) => {
-    if (err) {
-      console.error('Erro ao atualizar usuário:', err);
-      return res.status(500).send('Erro ao atualizar usuário');
+        const fetchEmprestimoQuery = `
+            SELECT m.titulo, e.data_devolucao
+            FROM emprestimos e
+            JOIN material m ON e.n_registro = m.n_registro 
+            WHERE e.usuario_id = ? AND LOWER(e.status) = 'autorizado'
+        `;
+
+        db.query(fetchUserQuery, [id], (userErr, userResults) => {
+            if (userErr || userResults.length === 0) {
+                console.error('Erro ao buscar usuário para renderização:', userErr || 'Usuário não encontrado');
+                return res.status(500).send('Erro ao recarregar dados do usuário.');
+            }
+            
+            const user = userResults[0];
+
+            db.query(fetchEmprestimoQuery, [id], (empErr, empResults) => {
+                
+                if (empErr) {
+                    console.error('Erro ao buscar empréstimo para renderização:', empErr);
+                    empResults = []; 
+                }
+                
+                const emprestimo = empResults.length > 0 ? empResults[0] : null;
+
+                return res.render('usuarios/edit', { 
+                    user: user,
+                    emprestimo: emprestimo,
+                    alerta: errorMessage
+                });
+            });
+        });
+    };
+    
+    // Validação de tamanho agora funciona porque a função renderEditPageWithError está definida acima
+    if (matricula.length !== MATRICULA_TAMANHO_ESPERADO) {
+        const msg = `O número de matrícula deve ter exatamente ${MATRICULA_TAMANHO_ESPERADO} dígitos.`;
+        return renderEditPageWithError(msg); 
     }
-    res.redirect('/usuarios');
-  });
+
+    const updateUsuarioQuery = `
+        UPDATE usuarios
+        SET nome = ?, matricula = ?
+        WHERE id = ?
+    `;
+
+    const updateUserQuery = `
+        UPDATE users
+        SET email = ?
+        WHERE id = ?
+    `;
+
+    db.query(updateUsuarioQuery, [nome, matricula, id], (err) => {
+        if (err) {
+            if (err.code === 'ER_DUP_ENTRY' || err.errno === 1062) {
+                const msg = "Já existe um usuário com este número de matrícula.";
+                return renderEditPageWithError(msg);
+            }
+            
+            console.error('Erro geral ao atualizar usuário:', err);
+            return res.status(500).send('Erro interno do servidor ao atualizar usuário.');
+        }
+
+        db.query(updateUserQuery, [email, id], (err) => {
+            if (err) {
+                console.error('Erro ao atualizar email na tabela "users":', err);
+                return res.status(500).send('Erro ao atualizar e-mail do usuário.');
+            }
+
+            res.redirect('/usuarios');
+        });
+    });
 };
 
-// Excluir usuário (AGORA COMPLETO E SEGURO)
-// Excluir usuário (AGORA COMPLETO E SEGURO)
 exports.deleteUsuarios = (req, res) => {
     const userIdToDelete = req.params.id;
 
-    // 1. Inicia a Transação
     db.beginTransaction(err => {
         if (err) {
             console.error('Erro ao iniciar transação:', err);
