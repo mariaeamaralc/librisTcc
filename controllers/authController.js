@@ -103,21 +103,29 @@ exports.register = async (req, res) => {
                     });
                 }
 
-                const userId = result.insertId; 
+               const userId = result.insertId; 
 
-                if (role === 'user') {
-                    const insertUsuario = `
-                        INSERT INTO usuarios (id, matricula, nome) VALUES (?, ?, ?)
-                    `;
-                    db.query(insertUsuario, [userId, matricula, nome], (err2) => {
+                       if (role === 'user') {
+                         const insertUsuario = `
+                         INSERT INTO usuarios (id, matricula, nome) VALUES (?, ?, ?)
+                         `;
+                        db.query(insertUsuario, [userId, matricula, nome], (err2) => {
                         if (err2) {
-                            return db.rollback(() => {
-                                res.render('register', { error: 'Erro ao cadastrar usuário: ' + err2.message });
-                            });
-                        }
-                        db.commit(() => res.redirect('/login'));
-                    });
-                } else if (role === 'admin') {
+                           return db.rollback(() => {
+    
+                                if (err2.code === 'ER_DUP_ENTRY' && err2.message.includes('usuarios.matricula')) {
+                                    console.warn('Tentativa de registro com matrícula duplicada:', matricula);
+                                    return res.render('register', { 
+                                        error: `Já existe um usuário cadastrado com a matrícula "${matricula}".` 
+                                    });
+                                }
+                               
+                     res.render('register', { error: 'Erro ao cadastrar usuário: ' + err2.message });
+                     });
+                     }
+                     db.commit(() => res.redirect('/login'));
+                      });
+                    } else if (role === 'admin') {
                     const insertAdmin = `
                         INSERT INTO administradores (id, cpf, codigo_servidor, nome) VALUES (?, ?, ?, ?)
                     `;
