@@ -1,7 +1,6 @@
 const db = require('../config/database');
 const Emprestimo = require('../models/emprestimoModel'); 
 
-// Usuário solicita empréstimo
 exports.solicitarEmprestimo = (req, res) => {
     const { n_registro } = req.body;
     const usuario_id = req.session.userId; 
@@ -17,12 +16,6 @@ exports.solicitarEmprestimo = (req, res) => {
     });
 };
 
-// --- NOVAS FUNÇÕES PARA A TELA DO USUÁRIO ---
-
-/**
- * Busca e exibe o empréstimo ativo do usuário logado.
- * Retorna os detalhes do livro e a data de devolução.
- */
 exports.getEmprestimoAtivo = (req, res) => {
     const userId = req.session.userId; 
 
@@ -52,7 +45,6 @@ exports.getEmprestimoAtivo = (req, res) => {
 
         const emprestimo = results.length > 0 ? results[0] : null;
         
-        // Renderiza a view 'emprestimos/ativo' (você precisará criar essa view)
         res.render('emprestimos/ativo', {
             emprestimo: emprestimo,
             success: req.query.success || null,
@@ -61,13 +53,8 @@ exports.getEmprestimoAtivo = (req, res) => {
     });
 };
 
-/**
- * Usuário solicita a renovação do empréstimo.
- * Renovação é automática se estiver no prazo; caso contrário, é bloqueada.
- */
 exports.renovarEmprestimo = async (req, res) => {
     const userId = req.session.userId;
-    // Pega o ID do empréstimo do corpo da requisição (vindo do formulário na view)
     const { emprestimoId } = req.body; 
 
     if (!userId) {
@@ -75,7 +62,6 @@ exports.renovarEmprestimo = async (req, res) => {
     }
 
     try {
-        // 1. Consulta o empréstimo para verificar a data de devolução e status
         const [emprestimoResult] = await db.promise().query(
             'SELECT data_devolucao FROM emprestimos WHERE id = ? AND usuario_id = ? AND LOWER(status) = "autorizado"',
             [emprestimoId, userId]
@@ -89,19 +75,14 @@ exports.renovarEmprestimo = async (req, res) => {
         const dataDevolucaoOriginal = new Date(emprestimoResult[0].data_devolucao);
         const hoje = new Date();
         
-        // Zera o horário para comparação correta apenas da data
         hoje.setHours(0, 0, 0, 0); 
         dataDevolucaoOriginal.setHours(0, 0, 0, 0); 
         
-        // 2. Verifica se está em atraso
         if (hoje > dataDevolucaoOriginal) {
-            // *** CASO: ATRASADO (Bloqueia Renovação) ***
             const erroMsg = 'Renovação não permitida. O livro está em **atraso**. Por favor, realize a devolução o mais breve possível.';
             return res.redirect('/meu-emprestimo?erro=' + encodeURIComponent(erroMsg));
         }
 
-        // 3. CASO: NO PRAZO (Renovação Automática)
-        // Calcula a nova data de devolução (ex: +15 dias a partir da data de devolução original)
         const data_devolucao_nova = new Date(dataDevolucaoOriginal);
         data_devolucao_nova.setDate(dataDevolucaoOriginal.getDate() + 15);
         const dataFormatada = data_devolucao_nova.toISOString().split('T')[0];
@@ -125,13 +106,9 @@ exports.renovarEmprestimo = async (req, res) => {
     }
 };
 
-// --- FUNÇÕES DO ADMINISTRADOR (Seu código original) ---
-
-// Admin vê solicitações pendentes
 exports.listarPendentes = async (req, res) => {
     try {
         const emprestimos = await Emprestimo.getAllPendentes(); 
-        // ... (Renderiza a view)
         res.render('emprestimos/pendentes', {
             emprestimos,
             paginaAtual: 1, 
@@ -145,7 +122,6 @@ exports.listarPendentes = async (req, res) => {
     }
 };
 
-// Admin autoriza empréstimo e define data de devolução
 exports.autorizarEmprestimo = async (req, res) => {
     const { id } = req.params;
     try {
@@ -166,7 +142,6 @@ exports.autorizarEmprestimo = async (req, res) => {
     }
 };
 
-// Admin recusa empréstimo
 exports.recusarEmprestimo = async (req, res) => {
     const { id } = req.params;
     try {

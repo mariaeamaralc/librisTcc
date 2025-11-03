@@ -148,8 +148,6 @@ exports.deleteUsuarios = (req, res) => {
             return res.status(500).send('Erro ao excluir usuário.');
         }
 
-        // 2. CORREÇÃO CRUCIAL: Deleta todos os empréstimos (pendentes, ativos, devolvidos, etc.)
-        // relacionados a este usuário para evitar o erro de Foreign Key.
         const deleteEmprestimosQuery = 'DELETE FROM emprestimos WHERE usuario_id = ?';
         db.query(deleteEmprestimosQuery, [userIdToDelete], (err) => {
             if (err) return db.rollback(() => {
@@ -157,7 +155,6 @@ exports.deleteUsuarios = (req, res) => {
                 return res.status(500).send('Erro ao limpar empréstimos do usuário.');
             });
 
-            // 3. Query para obter a role do usuário (antigo passo 2)
             const findRoleQuery = 'SELECT role FROM users WHERE id = ?';
             db.query(findRoleQuery, [userIdToDelete], (err, results) => {
                 if (err) return db.rollback(() => {
@@ -170,7 +167,6 @@ exports.deleteUsuarios = (req, res) => {
                 const userRole = results[0].role;
                 let deleteProfileQuery = '';
 
-                // 4. Define qual tabela de perfil deletar (antigo passo 3)
                 if (userRole === 'user') {
                     deleteProfileQuery = 'DELETE FROM usuarios WHERE id = ?';
                 } else if (userRole === 'admin') {
@@ -179,7 +175,6 @@ exports.deleteUsuarios = (req, res) => {
                     deleteProfileQuery = null; 
                 }
 
-                // 5. Deleta o Perfil (se a role for válida - antigo passo 4)
                 if (deleteProfileQuery) {
                     db.query(deleteProfileQuery, [userIdToDelete], (err) => {
                         if (err) return db.rollback(() => {
@@ -187,7 +182,6 @@ exports.deleteUsuarios = (req, res) => {
                             return res.status(500).send('Erro ao excluir perfil do usuário.');
                         });
 
-                        // 6. Deleta o registro principal (da tabela users - antigo passo 5)
                         const deleteUserQuery = 'DELETE FROM users WHERE id = ?';
                         db.query(deleteUserQuery, [userIdToDelete], (err) => {
                             if (err) return db.rollback(() => {
@@ -195,12 +189,10 @@ exports.deleteUsuarios = (req, res) => {
                                 return res.status(500).send('Erro ao excluir conta principal.');
                             });
 
-                            // 7. Confirma (Commit) a transação (antigo passo 6)
                             db.commit(() => res.redirect('/usuarios'));
                         });
                     });
                 } else {
-                    // Se o perfil não foi deletado (role desconhecida), tenta deletar só o users
                     const deleteUserQuery = 'DELETE FROM users WHERE id = ?';
                     db.query(deleteUserQuery, [userIdToDelete], (err) => {
                         if (err) return db.rollback(() => {

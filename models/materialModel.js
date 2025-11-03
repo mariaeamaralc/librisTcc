@@ -1,7 +1,5 @@
 const db = require('../config/database');
-
 const Material = {
-  // Registrar material
   registrar: async (novoMaterial) => {
     const query = `
       INSERT INTO material
@@ -29,7 +27,6 @@ const Material = {
     return result;
   },
 
-  // NOVO: Busca TODOS os materiais (substitui buscarTodosPaginado)
   buscarTodos: async () => {
     const query = `
       SELECT m.*, c.nome AS categoria_nome
@@ -41,7 +38,6 @@ const Material = {
     return rows;
   },
 
-  // Busca por filtros (já existente)
   buscarPorFiltros: async (filtros) => {
     let query = `
       SELECT m.*, c.nome AS categoria_nome
@@ -50,21 +46,22 @@ const Material = {
     `;
     const values = [];
 
-    if (filtros && filtros.categoria) {
+    // ⬇️ CORREÇÃO APLICADA AQUI ⬇️
+    // A condição verifica se o filtro existe E se o valor não é 'todos' (ou equivalente)
+    if (filtros && filtros.categoria && filtros.categoria !== 'todos') { 
       query += ` WHERE m.categoria = ?`; 
       values.push(filtros.categoria);
     }
+    // ⬆️ CORREÇÃO APLICADA AQUI ⬆️
+    
     query += ` ORDER BY m.titulo`;
 
     const [rows] = await db.promise().query(query, values);
     return rows;
   },
 
-  // NOVO: Busca por termo (substitui buscarPorTermoPaginado)
   buscarPorTermo: async (termo) => {
     const termoBuscaParcial = `%${termo}%`;
-
-    // Removemos LIMIT, OFFSET e COUNT
     const [rows] = await db.promise().query(
         `SELECT m.*, c.nome AS categoria_nome
          FROM material m
@@ -77,13 +74,11 @@ const Material = {
     return rows;
   },
 
-  // Contar todos os materiais (ainda útil para dashboards, mas não para listagem)
   contarTodos: async () => {
     const [results] = await db.promise().query('SELECT COUNT(*) AS total FROM material');
     return results[0].total;
   },
 
-  // Buscar material por ID
   findById: async (n_registro) => {
     const query = `
       SELECT m.*, c.nome AS categoria_nome
@@ -95,7 +90,6 @@ const Material = {
     return results[0] || null;
   },
 
-  // Atualizar material
   update: async (n_registro, updatedMaterial) => {
     const query = `
      UPDATE material
@@ -121,7 +115,6 @@ const Material = {
     return result;
   },
 
-  // Excluir material
   delete: async (n_registro) => {
     const query = 'DELETE FROM material WHERE n_registro = ?';
     const [result] = await db.promise().query(query, [n_registro]);

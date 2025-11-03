@@ -3,23 +3,22 @@ const Categoria = require('../models/categoriaModel');
 const db = require('../config/database');
 
 const materialController = {
-    // Renderiza a página de registro de material
+
     renderRegistrarMaterial: async (req, res) => {
         try {
             const categorias = await Categoria.getAll();
-            res.render('material/registrar', {
+            res.render('material/registrar', { 
                 error: null,
-                material: {},
+                material: {}, 
                 categoria: categorias,
                 userRole: req.session.userRole
             });
-        } catch (err) {
-            console.error('Erro ao buscar categorias:', err);
-            res.status(500).send('Erro interno ao buscar categorias');
+        } catch (error) {
+            console.error('Erro ao renderizar registro de material:', error);
+            res.status(500).send('Erro ao carregar a página de registro.');
         }
     },
 
-    // Registrar material
     registrarMaterial: async (req, res) => {
         const {
             n_registro, idioma, ISBN, autor,
@@ -41,8 +40,9 @@ const materialController = {
             await Material.registrar(newMaterial);
             res.redirect('/material/pesquisar?success=' + encodeURIComponent('Material registrado com sucesso!'));
         } catch (err) {
+            const categorias = await Categoria.getAll(); 
+
             if (err.code === 'ER_DUP_ENTRY') {
-                const categorias = await Categoria.getAll();
                 return res.render('material/registrar', {
                     error: 'Número de registro já existe.',
                     material: newMaterial,
@@ -50,12 +50,26 @@ const materialController = {
                     userRole: req.session.userRole
                 });
             }
+            
+            if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED' && err.sqlMessage.includes('chk_n_registro_8_digitos_exatos')) {
+                return res.render('material/registrar', {
+                    error: 'O Número de Registro deve ser um número inteiro de 8 dígitos (entre 10.000.000 e 99.999.999).',
+                    material: newMaterial,
+                    categoria: categorias,
+                    userRole: req.session.userRole
+                });
+            }
+
             console.error('Erro ao registrar material:', err);
-            res.status(500).send('Erro ao registrar material');
+            return res.render('material/registrar', {
+                error: 'Erro desconhecido ao registrar material.',
+                material: newMaterial,
+                categoria: categorias,
+                userRole: req.session.userRole
+            });
         }
     },
 
-    // Listar materiais filtrando por categoria
     listarMateriais: async (req, res) => {
         try {
             const categoriaSelecionada = req.query.categoria || null;
@@ -87,43 +101,38 @@ const materialController = {
         }
     },
 
-    // Pesquisar no acervo
-  renderPesquisarAcervo: async (req, res) => {
-    try {
-        // Pega o termo de busca da URL
-        const termo = req.query.query ? req.query.query.trim() : ''; 
-        const categorias = await Categoria.getAll();
-        
-        let materiais;
+    renderPesquisarAcervo: async (req, res) => {
+        try {
+            const termo = req.query.query ? req.query.query.trim() : ''; 
+            const categorias = await Categoria.getAll();
+            
+            let materiais;
 
-        // Busca os materiais com base no termo
-        if (termo) {
-            materiais = await Material.buscarPorTermo(termo);
-        } else {
-            // Se a busca estiver vazia, retorna todos os materiais
-            materiais = await Material.buscarTodos(); 
-        }
+            if (termo) {
+                materiais = await Material.buscarPorTermo(termo);
+            } else {
+                materiais = await Material.buscarTodos(); 
+            }
 
-        // 🔑 Apenas renderiza a página completa (material/index)
-        res.render('material/index', {
-            materiais,
-            categoria: categorias,
-            categoriaSelecionada: null, // Pode ser removido se não for usado, ou mantido como null
-            paginaAtual: 1,
-            totalPaginas: 1,
-            success: req.query.success || null,
-            userRole: req.session.userRole,
-            pendente: req.query.pendente,
-            erro: req.query.erro || null,
-            query: termo // Passa o termo de volta para preencher o campo de busca
-        });
+            res.render('material/index', {
+                materiais,
+                categoria: categorias,
+                categoriaSelecionada: null, 
+                paginaAtual: 1,
+                totalPaginas: 1,
+                success: req.query.success || null,
+                userRole: req.session.userRole,
+                pendente: req.query.pendente,
+                erro: req.query.erro || null,
+                query: termo
+            });
 
-    } catch (err) {
-        console.error('Erro ao pesquisar acervo:', err);
-        res.status(500).send('Erro interno ao pesquisar acervo');
-    }
-},
-    // Visualizar material
+        } catch (err) {
+            console.error('Erro ao pesquisar acervo:', err);
+            res.status(500).send('Erro interno ao pesquisar acervo');
+        }
+    },
+
     verMaterial: async (req, res) => {
         const { n_registro } = req.params;
         try {
@@ -144,7 +153,6 @@ const materialController = {
         }
     },
 
-    // Formulário de edição
     renderEditForm: async (req, res) => {
         const { n_registro } = req.params;
         try {
@@ -165,7 +173,6 @@ const materialController = {
         }
     },
 
-    // Atualizar material
     updateMaterial: async (req, res) => {
         const { n_registro } = req.params;
         const updatedMaterial = req.body;
@@ -201,12 +208,10 @@ const materialController = {
         }
     },
     
-    // Excluir material
     excluirMaterial: async (req, res) => {
         const { n_registro } = req.params;
 
         try {
-            // 1. VERIFICAÇÃO DE EMPRÉSTIMO ATIVO
             const [bloqueio] = await db.promise().query(
                 "SELECT COUNT(id) AS count FROM emprestimos WHERE n_registro = ? AND (status = 'pendente' OR status = 'autorizado')",
                 [n_registro]
@@ -217,7 +222,6 @@ const materialController = {
                 return res.redirect('/material/pesquisar?erro=' + encodeURIComponent(erroMsg));
             }
 
-            // 2. EXCLUSÃO DO MATERIAL
             const resultado = await Material.delete(n_registro);
 
             if (resultado.affectedRows === 0) {

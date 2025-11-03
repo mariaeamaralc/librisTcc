@@ -12,9 +12,6 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 
-
-
-
 // Middlewares
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
@@ -49,15 +46,15 @@ app.use((req, res, next) => {
 const indexRoutes = require('./routes/indexRoutes');
 const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
-const categoriaRoutes = require('./routes/categoriaRoutes');
 const materialRoutes = require('./routes/materialRoutes');
 const emprestimoRoutes = require('./routes/emprestimoRoutes');
+const categoriaRoutes = require('./routes/categoriaRoutes');
 
+app.use('/categorias', categoriaRoutes); 
 app.use('/', indexRoutes);
 app.use('/', authRoutes);
 app.use('/usuarios', usuarioRoutes);
 app.use('/material', materialRoutes);
-app.use('/categorias', categoriaRoutes);
 app.use('/', emprestimoRoutes);
 
 

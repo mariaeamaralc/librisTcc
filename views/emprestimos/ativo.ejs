@@ -20,7 +20,7 @@
   <% } %>
 
   <% if (emprestimo) { %>
-   
+    
     <div class="table-wrapper">
       <table class="table-custom">
         <thead>
@@ -49,22 +49,17 @@
         </tbody>
       </table>
     </div>
-
-    <% if (atrasado) { %>
-      <div class="alert alert-danger">
-        Não é possível solicitar a renovação. O livro está em atraso.  
-        Por favor, devolva o material na biblioteca.
-      </div>
-    <% } else { %>
-        <br>
-      <form action="/emprestimo/renovar" method="POST">
-        <input type="hidden" name="emprestimoId" value="<%= emprestimo.emprestimoId %>">
-        <button type="submit" class="btn btn-action">Renovar</button>
-        <p class="text-info">
-          *A renovação será aplicada imediatamente se solicitada antes da data de devolução.
-        </p>
-      </form>
-    <% } %>
+    
+    <br>
+    <form action="/emprestimo/renovar" method="POST">
+      <input type="hidden" name="emprestimoId" value="<%= emprestimo.emprestimoId %>">
+      <button type="submit" class="btn btn-action">
+          Renovar
+      </button>
+      <p class="text-info">
+        *A renovação será aplicada imediatamente se solicitada antes da data de devolução.
+      </p>
+    </form>
 
   <% } else { %>
     <div class="alert alert-success">
@@ -74,6 +69,7 @@
       <a href="/material/pesquisar" class="link-acervo">Clique aqui</a> para navegar pelo acervo.
     </p>
   <% } %>
+
 </div>
 
 <style>
@@ -100,7 +96,6 @@ h2, h3 {
   text-align: center;
 }
 
-/* ===== TABELA ===== */
 .table-wrapper {
   overflow-x: auto;
   border-radius: 12px;
@@ -143,7 +138,6 @@ h2, h3 {
   transition: background-color 0.3s ease;
 }
 
-/* ===== STATUS ===== */
 .status-badge {
   display: inline-block;
   padding: 6px 12px;
@@ -172,7 +166,6 @@ h2, h3 {
   font-weight: bold;
 }
 
-/* ===== BOTÕES ===== */
 .btn {
   padding: 8px 14px;
   border: none;
@@ -189,7 +182,6 @@ h2, h3 {
   color: #AD8D8D;
 }
 
-/* ===== ALERTAS ===== */
 .alert {
   padding: 12px 18px;
   border-radius: 6px;
@@ -208,7 +200,6 @@ h2, h3 {
   color: #fff;
 }
 
-/* ===== TEXTO ===== */
 .text-info {
   color: #cebaba;
   font-size: 0.9rem;

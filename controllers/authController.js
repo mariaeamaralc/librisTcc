@@ -28,7 +28,6 @@ exports.login = (req, res) => {
             return res.render('login', { error: 'Email ou senha inválidos.' });
         }
 
-        // Sessão salva com dados corretos
         req.session.userId = user.id;
         req.session.userRole = user.role;
         req.session.userNome = user.username;
@@ -37,7 +36,6 @@ exports.login = (req, res) => {
         console.log('Login bem-sucedido:', user.username, '-', user.role);
         console.log(`Sessão -> userId=${req.session.userId}, role=${req.session.userRole}`);
 
-        // Redireciona conforme o tipo
         if (user.role === 'admin') {
             return res.redirect('/');
         } else {
@@ -46,34 +44,26 @@ exports.login = (req, res) => {
     });
 };
 
-// Renderiza tela de cadastro
+
 exports.renderRegister = (req, res) => {
     res.render('register', { error: null, isRegisterPage: true });
 };
 
-// Processa cadastro
+
 exports.register = async (req, res) => {
     const { username, email, password, role, matricula, cpf, codigo_servidor, nome } = req.body;
 
-    // ======================================================================
-    // 1. VALIDAÇÃO DA SENHA (MÍNIMO 4 DÍGITOS)
-    // ======================================================================
     if (!password || password.length < 4) {
         return res.render('register', { 
             error: 'A senha é obrigatória e deve ter no mínimo 4 caracteres.' 
         });
     }
     
-    // ======================================================================
-    // 2. VALIDAÇÃO DE MATRÍCULA (EXATAMENTE 7 DÍGITOS PARA 'user')
-    // ======================================================================
     if (role === 'user') {
-        // Verifica se o campo Matrícula foi enviado
         if (!matricula) {
             return res.render('register', { error: 'O campo Matrícula é obrigatório para usuários.' });
         }
         
-        // Verifica se a Matrícula tem exatamente 7 dígitos numéricos
         if (!/^\d{7}$/.test(matricula)) {
             return res.render('register', { 
                 error: 'A Matrícula deve conter exatamente 7 dígitos numéricos.' 
@@ -94,10 +84,8 @@ exports.register = async (req, res) => {
             db.query(insertUserQuery, [username, email, passwordHash, role], (err, result) => {
                 if (err) {
                     return db.rollback(() => {
-                        // ======================================================================
-                        // 3. TRATAMENTO DE ERRO DE DUPLICIDADE (Login/E-mail)
-                        // ======================================================================
-                        if (err.code === 'ER_DUP_ENTRY') { // Código de erro MySQL para Entrada Duplicada
+                        
+                        if (err.code === 'ER_DUP_ENTRY') { 
                             if (err.message.includes('users.username')) {
                                 return res.render('register', { 
                                     error: `Já existe um usuário cadastrado com o login "${username}".` 
@@ -110,14 +98,12 @@ exports.register = async (req, res) => {
                             }
                         }
 
-                        // Erro genérico se não for um dos tratados acima
                         console.error('Erro desconhecido de cadastro:', err);
                         res.render('register', { error: 'Erro ao cadastrar usuário: ' + err.message });
-                        // ======================================================================
                     });
                 }
 
-                const userId = result.insertId; // ID da tabela users
+                const userId = result.insertId; 
 
                 if (role === 'user') {
                     const insertUsuario = `
@@ -156,7 +142,6 @@ exports.register = async (req, res) => {
     }
 };
 
-// Faz logout
 exports.logout = (req, res) => {
     req.session.destroy(() => {
         res.redirect('/login');

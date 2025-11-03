@@ -140,7 +140,7 @@
     <% const termoBusca = typeof query !== 'undefined' ? query : ''; %>
 
   <div class="d-flex justify-content-center align-items-end flex-wrap mb-4" style="gap: 25px;">
-  <!-- Buscar por termo -->
+
   <form method="GET" action="/material/pesquisar" class="flex-fill" style="max-width: 450px;">
     <label for="query" class="label-search mb-2">Buscar por:</label>
     <div class="d-flex align-items-center" style="gap: 10px;">
@@ -157,17 +157,16 @@
     </div>
   </form>
 
-  <!-- Divisor translúcido -->
   <div style="
     width: 1.5px;
     height: 65px;
     background: rgba(255, 255, 255, 0.25);
     border-radius: 10px;
     align-self: center;
-  "></div>
+  ">
+  </div>
 
-  <!-- Filtrar por categoria -->
-  <form method="GET" action="/material" class="flex-fill" style="max-width: 450px;">
+ <form method="GET" action="/material" class="flex-fill" style="max-width: 450px;">
     <label for="categoria" class="label-search mb-2">Filtrar por Categoria:</label>
     <div class="d-flex align-items-center" style="gap: 10px;">
       <select 
@@ -176,19 +175,19 @@
         class="form-control text-dark" 
         style="height: 40px;"
       >
-        <option value="">Todas as categorias</option>
+        <option value="" <%= !categoriaSelecionada || categoriaSelecionada === "" ? 'selected' : '' %>>
+          Todas as categorias
+        </option>
         <% categoria.forEach(cat => { %>
-          <option value="<%= cat.id %>" <%= cat.id == categoriaSelecionada ? 'selected' : '' %>>
+          <option value="<%= cat.id %>" <%= String(cat.id) === categoriaSelecionada ? 'selected' : '' %>>
             <%= cat.nome %>
           </option>
         <% }) %>
       </select>
       <button type="submit" class="btn btn-custom" style="height: 40px;">Filtrar</button>
     </div>
-  </form>
+</form>
 </div>
-
-
     <table class="table mt-4">
       <thead>
         <tr>

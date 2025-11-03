@@ -61,20 +61,15 @@
   }
 
 </style>
-
 </head>
 <body>
-
-
   <% if (!(typeof isLoginPage !== 'undefined' && isLoginPage) && !(typeof isRegisterPage !== 'undefined' && isRegisterPage)) { %>
     <%- include('partials/navbar') %>
   <% } %>
 
   <main>
     <%- body %>
-  </main>
-
-   
+  </main> 
    <% if (
       (typeof isRegisterPage === 'undefined' || !isRegisterPage) &&
       (typeof isLoginPage === 'undefined' || !isLoginPage)

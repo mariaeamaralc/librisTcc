@@ -11,7 +11,6 @@ exports.requerLogin = (req, res, next) => {
   next();
 };
 
-// Middleware para permitir apenas administradores
 exports.isAdmin = (req, res, next) => {
   if (req.session.userRole === 'admin') {
     return next();

@@ -1,8 +1,5 @@
-// models/emprestimoModel.js
 const db = require('../config/database');
-
 const Emprestimo = {
-  // Lista empréstimos pendentes com paginação
   getAllPendentes: async () => {
         const query = `
             SELECT e.id, e.n_registro, e.status, u.nome AS usuario_nome, m.titulo

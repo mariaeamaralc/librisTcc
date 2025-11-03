@@ -1,35 +1,60 @@
-const db = require('../config/database');
+const db = require('../config/database'); 
 
 const Categoria = {
-  findById: async (id) => {
-    const query = 'SELECT * FROM categoria WHERE id = ?';
-    const [results] = await db.promise().query(query, [id]);
-    return results[0];
-  },
+    getAll: async () => {
+        const query = 'SELECT id, nome FROM categoria ORDER BY nome';
+        try {
+            const [rows] = await db.promise().query(query); 
+            return rows;
+        } catch (error) {
+            console.error('Erro ao buscar categorias:', error);
+            throw error;
+        }
+    },
+    
+    create: async (nome) => {
+        const query = 'INSERT INTO categoria (nome) VALUES (?)';
+        try {
+            const [result] = await db.promise().query(query, [nome]);
+            return result;
+        } catch (error) {
+            console.error('Erro ao criar categoria:', error);
+            throw error;
+        }
+    },
 
-  findByCategorianame: async (nome) => {
-    const query = 'SELECT * FROM categoria WHERE nome = ?';
-    const [results] = await db.promise().query(query, [nome]);
-    return results[0];
-  },
+    findById: async (id) => {
+        const query = 'SELECT id, nome FROM categoria WHERE id = ?';
+        try {
+            const [rows] = await db.promise().query(query, [id]);
+            return rows[0] || null;
+        } catch (error) {
+            console.error('Erro ao buscar categoria por ID:', error);
+            throw error;
+        }
+    },
+    
+    update: async (id, nome) => {
+        const query = 'UPDATE categoria SET nome = ? WHERE id = ?';
+        try {
+            const [result] = await db.promise().query(query, [nome, id]);
+            return result;
+        } catch (error) {
+            console.error('Erro ao atualizar categoria:', error);
+            throw error;
+        }
+    },
 
-  update: async (id, categoria) => {
-    const query = 'UPDATE categoria SET nome = ? WHERE id = ?';
-    const [result] = await db.promise().query(query, [categoria.nome, id]);
-    return result;
-  },
-
-  delete: async (id) => {
-    const query = 'DELETE FROM categoria WHERE id = ?';
-    const [result] = await db.promise().query(query, [id]);
-    return result;
-  },
-
-  getAll: async () => {
-    const query = 'SELECT * FROM categoria';
-    const [results] = await db.promise().query(query);
-    return results;
-  }
+    delete: async (id) => {
+        const query = 'DELETE FROM categoria WHERE id = ?';
+        try {
+            const [result] = await db.promise().query(query, [id]);
+            return result;
+        } catch (error) {
+            console.error('Erro ao deletar categoria:', error);
+            throw error;
+        }
+    }
 };
 
 module.exports = Categoria;
