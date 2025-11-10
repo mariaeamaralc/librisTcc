@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Libris | Materiais</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     html, body {
       height: 100%;
@@ -39,7 +40,7 @@
     label {
       font-size: 1rem;
       margin-bottom: 4px;
-       color: #cebaba !important;
+      color: #cebaba !important;
     }
 
     input.form-control, select.form-control {
@@ -55,8 +56,8 @@
     }
 
     .btn-custom {
-      background-color: #AD8D8D!important;
-      color: #0e0e0e;
+      background-color: #AD8D8D !important;
+      color: #0e0e0e !important;
       border: none;
       border-radius: 6px;
       padding: 5px 12px;
@@ -68,45 +69,36 @@
 
     .btn-custom:hover {
       background-color: #283372 !important;
-      color: #AD8D8D ;
+      color: #AD8D8D !important;
       box-shadow: 0 0 6px rgba(173, 141, 141, 0.5);
     }
 
-    .btn-success {
-       font-weight: 600;
-    }
-
-   .table {
-    background-color: rgba(255, 255, 255, 0.02);
-    border-collapse: collapse; 
-    border-spacing: 0;
-    width: 100%;
-    border-radius: 10px;
-    overflow: hidden;
-    border:none;
+    .table {
+      background-color: rgba(255, 255, 255, 0.02);
+      border-collapse: collapse; 
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      border: none;
     }
 
     .table th {
-        background-color: #3b4a8a !important;
-        text-align: center;
-        font-weight: 700;
-        font-size: 1rem;
-        color: #AD8D8D;
-        padding: 10px;
-        border:none;
-        border-spacing: 0;
-        border-collapse: collapse; 
+      background-color: #3b4a8a !important;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #AD8D8D;
+      padding: 10px;
+      border: none;
     }
 
     .table td {
-        border-collapse: collapse; 
-        border-spacing: 0;
-        background-color: #1e285e;
-        text-align: center;
-        padding: 10px 8px;
-        font-size: 0.88rem;
-        color: #AD8D8D;
-        border:none;
+      background-color: #1e285e;
+      text-align: center;
+      padding: 10px 8px;
+      font-size: 0.88rem;
+      color: #AD8D8D;
+      border: none;
     }
 
     .table tbody tr:hover {
@@ -117,12 +109,17 @@
     .action-buttons {
       display: flex;
       justify-content: center;
+      align-items: center;
+      gap: 8px;
       flex-wrap: wrap;
-      gap: 6px;
     }
 
     .action-buttons form {
       margin: 0;
+    }
+
+    .action-buttons .btn i {
+      font-size: 14px;
     }
 
     .alert {
@@ -131,6 +128,20 @@
       color: #cebaba;
       font-size: 0.9rem;
     }
+
+    .btn-warning {
+      background-color: #AD8D8D !important;
+      color: #0e0e0e !important;
+      border: none !important;
+      font-weight: 600;
+    }
+
+    .btn-warning:hover {
+      background-color: #283372 !important;
+      color: #AD8D8D !important;
+      box-shadow: 0 0 6px rgba(173, 141, 141, 0.5);
+    }
+
   </style>
 </head>
 <body>
@@ -139,55 +150,53 @@
 
     <% const termoBusca = typeof query !== 'undefined' ? query : ''; %>
 
-  <div class="d-flex justify-content-center align-items-end flex-wrap mb-4" style="gap: 25px;">
+    <div class="d-flex justify-content-center align-items-end flex-wrap mb-4" style="gap: 25px;">
+      <form method="GET" action="/material/pesquisar" class="flex-fill" style="max-width: 450px;">
+        <label for="query" class="label-search mb-2">Buscar por:</label>
+        <div class="d-flex align-items-center" style="gap: 10px;">
+          <input 
+            type="text" 
+            id="query" 
+            name="query" 
+            class="form-control" 
+            placeholder="Digite número de registro, título ou autor" 
+            value="<%= termoBusca %>" 
+            style="height: 40px;"
+          >
+          <button type="submit" class="btn btn-custom" style="height: 40px;">Buscar</button>
+        </div>
+      </form>
 
-  <form method="GET" action="/material/pesquisar" class="flex-fill" style="max-width: 450px;">
-    <label for="query" class="label-search mb-2">Buscar por:</label>
-    <div class="d-flex align-items-center" style="gap: 10px;">
-      <input 
-        type="text" 
-        id="query" 
-        name="query" 
-        class="form-control" 
-        placeholder="Digite número de registro, título ou autor" 
-        value="<%= termoBusca %>" 
-        style="height: 40px;"
-      >
-      <button type="submit" class="btn btn-custom" style="height: 40px;">Buscar</button>
+      <div style="
+        width: 1.5px;
+        height: 65px;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 10px;
+        align-self: center;">
+      </div>
+
+      <form method="GET" action="/material" class="flex-fill" style="max-width: 450px;">
+        <label for="categoria" class="label-search mb-2">Filtrar por Categoria:</label>
+        <div class="d-flex align-items-center" style="gap: 10px;">
+          <select 
+            id="categoria" 
+            name="categoria" 
+            class="form-control text-dark" 
+            style="height: 40px;">
+            <option value="" <%= !categoriaSelecionada || categoriaSelecionada === "" ? 'selected' : '' %>>
+              Todas as categorias
+            </option>
+            <% categoria.forEach(cat => { %>
+              <option value="<%= cat.id %>" <%= String(cat.id) === categoriaSelecionada ? 'selected' : '' %>>
+                <%= cat.nome %>
+              </option>
+            <% }) %>
+          </select>
+          <button type="submit" class="btn btn-custom" style="height: 40px;">Filtrar</button>
+        </div>
+      </form>
     </div>
-  </form>
 
-  <div style="
-    width: 1.5px;
-    height: 65px;
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 10px;
-    align-self: center;
-  ">
-  </div>
-
- <form method="GET" action="/material" class="flex-fill" style="max-width: 450px;">
-    <label for="categoria" class="label-search mb-2">Filtrar por Categoria:</label>
-    <div class="d-flex align-items-center" style="gap: 10px;">
-      <select 
-        id="categoria" 
-        name="categoria" 
-        class="form-control text-dark" 
-        style="height: 40px;"
-      >
-        <option value="" <%= !categoriaSelecionada || categoriaSelecionada === "" ? 'selected' : '' %>>
-          Todas as categorias
-        </option>
-        <% categoria.forEach(cat => { %>
-          <option value="<%= cat.id %>" <%= String(cat.id) === categoriaSelecionada ? 'selected' : '' %>>
-            <%= cat.nome %>
-          </option>
-        <% }) %>
-      </select>
-      <button type="submit" class="btn btn-custom" style="height: 40px;">Filtrar</button>
-    </div>
-</form>
-</div>
     <table class="table mt-4">
       <thead>
         <tr>
@@ -216,17 +225,28 @@
             <td><%= material.categoria_nome %></td>
             <td>
               <div class="action-buttons">
-                <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-custom">Ver</a>
+                <a href="/material/<%= material.n_registro %>" class="btn btn-sm btn-info" title="Ver">
+                  <i class="fas fa-search"></i>
+                </a>
                 <% if (userRole === 'admin') { %>
-                  <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-custom">Editar</a>
-                  <form action="/material/<%= material.n_registro %>/delete" method="POST">
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este material?')">Excluir</button>
+                  <a href="/material/<%= material.n_registro %>/edit" class="btn btn-sm btn-warning" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <form action="/material/<%= material.n_registro %>/delete" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" title="Excluir"
+                      onclick="return confirm('Tem certeza que deseja excluir este material?')">
+                      <i class="fas fa-trash"></i>
+                    </button>
                   </form>
                 <% } %>
+
                 <% if (userRole === 'user') { %>
+                
                   <form action="/solicitar" method="POST" style="display:inline;">
                     <input type="hidden" name="n_registro" value="<%= material.n_registro %>">
-                    <button type="submit" class="btn btn-sm btn-success">Solicitar</button>
+                    <button type="submit" class="btn btn-sm btn-success" title="Solicitar">
+                      <i class="fas fa-book"></i>
+                    </button>
                   </form>
                 <% } %>
               </div>
