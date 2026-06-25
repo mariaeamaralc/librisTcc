@@ -48,7 +48,12 @@ Antes de começar, você vai precisar ter instalado em sua máquina:
 ```bash
    git clone [https://github.com/mariaeamaralc/librisTcc.git]
    cd librisTcc
+```
 2. **Instale as dependências:**
+```bash
    npm install
+```
 3. **Inicie o servidor:**
+```bash
 npm start ou node app.js dependendo de como está configurado no package.json
+```
